@@ -17,15 +17,7 @@ public interface HHDeviceService {
 
     Mono<ResponseEntity<ApiResponse<ComponentVerificationResponse>>> verifyComponent(ValidateRequest request, UserDetails userDetails);
 
-    Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validatePcbTestCode(ValidateRequest request, UserDetails userDetails);
-
     Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateAirPumpTestCode(ValidateRequest request, UserDetails userDetails);
-
-    Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateBatteryTestCode(ValidateRequest request, UserDetails userDetails);
-
-    Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateLatchButtonTestCode(ValidateRequest request, UserDetails userDetails);
-
-    Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateOverPressureValveTestCode(ValidateRequest request, UserDetails userDetails);
 
     Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validatePowerSupplyTestCode(ValidateRequest request, UserDetails userDetails);
 

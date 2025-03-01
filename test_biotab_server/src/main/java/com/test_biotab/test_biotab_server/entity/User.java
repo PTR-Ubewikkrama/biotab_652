@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 @Entity
-@Table(name = "wt_user")
+@Table(name = "bt_user")
 @Data
 @Builder
 @NoArgsConstructor

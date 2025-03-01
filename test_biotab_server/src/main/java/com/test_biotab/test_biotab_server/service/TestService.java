@@ -17,20 +17,4 @@ public interface TestService {
     Mono<ResponseEntity<CommonResponse>> addAirPumpTest(AirPumpTestAddRequest airPumpTestAddRequest);
 
     Mono<ResponseEntity<ApiResponse<GetAirPumpTestResponse>>> getAirPumpTest(GetByPatternRequest request, UserDetails userDetails, String pageNo);
-
-    Mono<ResponseEntity<CommonResponse>> addBatteryTest(BatteryTestAddRequest batteryTestAddRequest);
-
-    Mono<ResponseEntity<ApiResponse<GetBatteryTestResponse>>> getBatteryTest(GetByPatternRequest request, UserDetails userDetails, String pageNo);
-
-    Mono<ResponseEntity<CommonResponse>> addOverPressureTest(OverPressureValveTestAddRequest overPressureTestAddRequest);
-
-    Mono<ResponseEntity<ApiResponse<GetOverPressureValveTestResponse>>> getOverPressureTest(GetByPatternRequest request, UserDetails userDetails, String pageNo);
-
-    Mono<ResponseEntity<CommonResponse>> addLatchButtonTest(LatchButtonAddRequest latchButtonAddRequest);
-
-    Mono<ResponseEntity<ApiResponse<GetLatchButtonTestResponse>>> getLatchButtonTest(GetByPatternRequest request, UserDetails userDetails, String pageNo);
-
-    Mono<ResponseEntity<CommonResponse>> addPcbTest(PcbTestAddRequest pcbTestAddRequest);
-
-    Mono<ResponseEntity<ApiResponse<GetPcbTestResponse>>> getPcbTest(GetByPatternRequest request, UserDetails userDetails, String pageNo);
 }

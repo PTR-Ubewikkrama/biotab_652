@@ -86,17 +86,6 @@ public class HHDeviceController {
                 });
     }
 
-    @PostMapping("/validate/pcbTestCode")
-    public Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validatePcbTestCode(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                                            @RequestBody ValidateRequest request) {
-        log.info("Received request to validate PCB test code: {}", request);
-        return principal
-                .flatMap(userDetails -> {
-                    log.info("Validating PCB test code: {} by user: {}", request, userDetails.getUsername());
-                    return service.validatePcbTestCode(request, userDetails);
-                });
-    }
-
     @PostMapping("/validate/airPumpTestCode")
     public Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateAirPumpTestCode(@AuthenticationPrincipal Mono<UserDetails> principal,
                                                                                                 @RequestBody ValidateRequest request) {
@@ -105,39 +94,6 @@ public class HHDeviceController {
                 .flatMap(userDetails -> {
                     log.info("Validating Air Pump test code: {} by user: {}", request, userDetails.getUsername());
                     return service.validateAirPumpTestCode(request, userDetails);
-                });
-    }
-
-    @PostMapping("/validate/batteryTestCode")
-    public Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateBatteryTestCode(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                                                @RequestBody ValidateRequest request) {
-        log.info("Received request to validate Battery test code: {}", request);
-        return principal
-                .flatMap(userDetails -> {
-                    log.info("Validating Battery test code: {} by user: {}", request, userDetails.getUsername());
-                    return service.validateBatteryTestCode(request, userDetails);
-                });
-    }
-
-    @PostMapping("/validate/latchButtonTestCode")
-    public Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateLatchButtonTestCode(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                                                    @RequestBody ValidateRequest request) {
-        log.info("Received request to validate Latch Button test code: {}", request);
-        return principal
-                .flatMap(userDetails -> {
-                    log.info("Validating Latch Button test code: {} by user: {}", request, userDetails.getUsername());
-                    return service.validateLatchButtonTestCode(request, userDetails);
-                });
-    }
-
-    @PostMapping("/validate/overPressureValveTestCode")
-    public Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateOverPressureValveTestCode(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                                                          @RequestBody ValidateRequest request) {
-        log.info("Received request to validate Over Pressure Valve test code: {}", request);
-        return principal
-                .flatMap(userDetails -> {
-                    log.info("Validating Over Pressure Valve test code: {} by user: {}", request, userDetails.getUsername());
-                    return service.validateOverPressureValveTestCode(request, userDetails);
                 });
     }
 

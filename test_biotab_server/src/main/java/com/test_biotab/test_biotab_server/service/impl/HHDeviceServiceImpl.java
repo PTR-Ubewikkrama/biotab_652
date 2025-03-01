@@ -30,11 +30,7 @@ public class HHDeviceServiceImpl implements HHDeviceService {
 
     private final HHDeviceRepository hhDeviceRepository;
     private final AirPumpTestRepository airPumpTestRepository;
-    private final BatteryTestRepository batteryTestRepository;
-    private final LatchButtonTestRepository latchButtonTestRepository;
-    private final OverPressureValveTestRepository overPressureValveTestRepository;
     private final PowerSupplyTestRepository powerSupplyTestRepository;
-    private final PcbTestRepository pcbTestRepository;
     private final ValveTestRepository valveTestRepository;
 
     @PersistenceContext
@@ -278,21 +274,6 @@ public class HHDeviceServiceImpl implements HHDeviceService {
                         } else {
                             for (String componentType : componentTypes) {
                                 switch (componentType) {
-                                    case "PCB" -> {
-                                        PcbTestData pcbTest = pcbTestRepository.findByCode(request.getCode());
-                                        if (pcbTest != null) {
-                                            return ResponseEntity.ok(ApiResponse.<ComponentVerificationResponse>builder()
-                                                    .status("S1000")
-                                                    .statusDescription("Component verified successfully")
-                                                    .data(ComponentVerificationResponse.builder()
-                                                            .hhDeviceCode("UNKNOWN")
-                                                            .componentCode(request.getCode())
-                                                            .componentType("PCB")
-                                                            .componentStatus(pcbTest.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
-                                                            .build())
-                                                    .build());
-                                        }
-                                    }
                                     case "VALVE" -> {
                                         ValveTestData valveTest = valveTestRepository.findByCode(request.getCode());
                                         if (valveTest != null) {
@@ -320,51 +301,6 @@ public class HHDeviceServiceImpl implements HHDeviceService {
                                                             .componentType("AIR_PUMP")
                                                             .componentStatus(airPumpTest.getFlowRateStatus() && airPumpTest.getIdleVoltageStatus() && airPumpTest.getIdleCurrentStatus() && airPumpTest.getLoadVoltageStatus() && airPumpTest.getLoadCurrentStatus()
                                                                     ? "VERIFIED" : "NOT_VERIFIED")
-                                                            .build())
-                                                    .build());
-                                        }
-                                    }
-                                    case "LATCH_BUTTON" -> {
-                                        LatchButtonTestData latchButtonTest = latchButtonTestRepository.findByCode(request.getCode());
-                                        if (latchButtonTest != null) {
-                                            return ResponseEntity.ok(ApiResponse.<ComponentVerificationResponse>builder()
-                                                    .status("S1000")
-                                                    .statusDescription("Component verified successfully")
-                                                    .data(ComponentVerificationResponse.builder()
-                                                            .hhDeviceCode("UNKNOWN")
-                                                            .componentCode(request.getCode())
-                                                            .componentType("LATCH_BUTTON")
-                                                            .componentStatus(latchButtonTest.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
-                                                            .build())
-                                                    .build());
-                                        }
-                                    }
-                                    case "OVER_PRESSURE_VALVE" -> {
-                                        OverPressureValveTestData overPressureValveTest = overPressureValveTestRepository.findByCode(request.getCode());
-                                        if (overPressureValveTest != null) {
-                                            return ResponseEntity.ok(ApiResponse.<ComponentVerificationResponse>builder()
-                                                    .status("S1000")
-                                                    .statusDescription("Component verified successfully")
-                                                    .data(ComponentVerificationResponse.builder()
-                                                            .hhDeviceCode("UNKNOWN")
-                                                            .componentCode(request.getCode())
-                                                            .componentType("OVER_PRESSURE_VALVE")
-                                                            .componentStatus(overPressureValveTest.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
-                                                            .build())
-                                                    .build());
-                                        }
-                                    }
-                                    case "BATTERY" -> {
-                                        BatteryTestData batteryTest = batteryTestRepository.findByCode(request.getCode());
-                                        if (batteryTest != null) {
-                                            return ResponseEntity.ok(ApiResponse.<ComponentVerificationResponse>builder()
-                                                    .status("S1000")
-                                                    .statusDescription("Component verified successfully")
-                                                    .data(ComponentVerificationResponse.builder()
-                                                            .hhDeviceCode("UNKNOWN")
-                                                            .componentCode(request.getCode())
-                                                            .componentType("BATTERY")
-                                                            .componentStatus(batteryTest.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
                                                             .build())
                                                     .build());
                                         }
@@ -506,50 +442,6 @@ public class HHDeviceServiceImpl implements HHDeviceService {
     }
 
     @Override
-    public Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validatePcbTestCode(ValidateRequest request, UserDetails userDetails) {
-        return Mono.just(request)
-                .map(validateRequest -> {
-                    log.info("Validating PCB test code: {} by user: {}", validateRequest, userDetails.getUsername());
-                    TypedQuery<HHDevice> query = entityManager.createQuery("SELECT d FROM HHDevice d WHERE d.pcbTestCode LIKE '%" + validateRequest.getCode() + "%'", HHDevice.class);
-                    List<HHDevice> devices = query.getResultList();
-
-                    if (!devices.isEmpty()) {
-                        HHDevice device = devices.getFirst();
-                        return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
-                                .status("E1000")
-                                .statusDescription("PCB test code found")
-                                .data(ValidateComponentResponse.builder()
-                                        .hhDeviceCode(device.getDeviceCode())
-                                        .build())
-                                .build());
-                    } else {
-                        PcbTestData pcbTest = pcbTestRepository.findByCode(validateRequest.getCode());
-                        if (pcbTest == null) {
-                            return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
-                                    .status("E1000")
-                                    .statusDescription("PCB test code not found")
-                                    .data(ValidateComponentResponse.builder()
-                                            .hhDeviceCode(null)
-                                            .build())
-                                    .build());
-                        } else {
-                            return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
-                                    .status("S1000")
-                                    .statusDescription("PCB test code found")
-                                    .data(ValidateComponentResponse.builder()
-                                            .hhDeviceCode(null)
-                                            .build())
-                                    .build());
-                        }
-                    }
-                })
-                .onErrorResume(e -> Mono.just(ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
-                        .status("E1000")
-                        .statusDescription("Error occurred while validating PCB test code")
-                        .build())));
-    }
-
-    @Override
     public Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateAirPumpTestCode(ValidateRequest request, UserDetails userDetails) {
         return Mono.just(request)
                 .map(validateRequest -> {
@@ -590,138 +482,6 @@ public class HHDeviceServiceImpl implements HHDeviceService {
                 .onErrorResume(e -> Mono.just(ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
                         .status("E1000")
                         .statusDescription("Error occurred while validating Air Pump test code")
-                        .build())));
-    }
-
-    @Override
-    public Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateBatteryTestCode(ValidateRequest request, UserDetails userDetails) {
-        return Mono.just(request)
-                .map(validateRequest -> {
-                    log.info("Validating Battery test code: {} by user: {}", validateRequest, userDetails.getUsername());
-                    TypedQuery<HHDevice> query = entityManager.createQuery("SELECT d FROM HHDevice d WHERE d.batteryTestCode LIKE '%" + validateRequest.getCode() + "%'", HHDevice.class);
-                    List<HHDevice> devices = query.getResultList();
-
-                    if (!devices.isEmpty()) {
-                        HHDevice device = devices.getFirst();
-                        return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
-                                .status("E1000")
-                                .statusDescription("Battery test code found")
-                                .data(ValidateComponentResponse.builder()
-                                        .hhDeviceCode(device.getDeviceCode())
-                                        .build())
-                                .build());
-                    } else {
-                        BatteryTestData batteryTest = batteryTestRepository.findByCode(validateRequest.getCode());
-                        if (batteryTest == null) {
-                            return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
-                                    .status("E1000")
-                                    .statusDescription("Battery test code not found")
-                                    .data(ValidateComponentResponse.builder()
-                                            .hhDeviceCode(null)
-                                            .build())
-                                    .build());
-                        } else {
-                            return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
-                                    .status("S1000")
-                                    .statusDescription("Battery test code found")
-                                    .data(ValidateComponentResponse.builder()
-                                            .hhDeviceCode(null)
-                                            .build())
-                                    .build());
-                        }
-                    }
-                })
-                .onErrorResume(e -> Mono.just(ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
-                        .status("E1000")
-                        .statusDescription("Error occurred while validating Battery test code")
-                        .build())));
-    }
-
-    @Override
-    public Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateLatchButtonTestCode(ValidateRequest request, UserDetails userDetails) {
-        return Mono.just(request)
-                .map(validateRequest -> {
-                    log.info("Validating Latch Button test code: {} by user: {}", validateRequest, userDetails.getUsername());
-                    TypedQuery<HHDevice> query = entityManager.createQuery("SELECT d FROM HHDevice d WHERE d.latchButtonTestCode LIKE '%" + validateRequest.getCode() + "%'", HHDevice.class);
-                    List<HHDevice> devices = query.getResultList();
-
-                    if (!devices.isEmpty()) {
-                        HHDevice device = devices.getFirst();
-                        return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
-                                .status("E1000")
-                                .statusDescription("Latch Button test code found")
-                                .data(ValidateComponentResponse.builder()
-                                        .hhDeviceCode(device.getDeviceCode())
-                                        .build())
-                                .build());
-                    } else {
-                        LatchButtonTestData latchButtonTest = latchButtonTestRepository.findByCode(validateRequest.getCode());
-                        if (latchButtonTest == null) {
-                            return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
-                                    .status("E1000")
-                                    .statusDescription("Latch Button test code not found")
-                                    .data(ValidateComponentResponse.builder()
-                                            .hhDeviceCode(null)
-                                            .build())
-                                    .build());
-                        } else {
-                            return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
-                                    .status("S1000")
-                                    .statusDescription("Latch Button test code found")
-                                    .data(ValidateComponentResponse.builder()
-                                            .hhDeviceCode(null)
-                                            .build())
-                                    .build());
-                        }
-                    }
-                })
-                .onErrorResume(e -> Mono.just(ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
-                        .status("E1000")
-                        .statusDescription("Error occurred while validating Latch Button test code")
-                        .build())));
-    }
-
-    @Override
-    public Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateOverPressureValveTestCode(ValidateRequest request, UserDetails userDetails) {
-        return Mono.just(request)
-                .map(validateRequest -> {
-                    log.info("Validating Over Pressure Valve test code: {} by user: {}", validateRequest, userDetails.getUsername());
-                    TypedQuery<HHDevice> query = entityManager.createQuery("SELECT d FROM HHDevice d WHERE d.overPressureValveTestCode LIKE '%" + validateRequest.getCode() + "%'", HHDevice.class);
-                    List<HHDevice> devices = query.getResultList();
-
-                    if (!devices.isEmpty()) {
-                        HHDevice device = devices.getFirst();
-                        return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
-                                .status("E1000")
-                                .statusDescription("Over Pressure Valve test code found")
-                                .data(ValidateComponentResponse.builder()
-                                        .hhDeviceCode(device.getDeviceCode())
-                                        .build())
-                                .build());
-                    } else {
-                        OverPressureValveTestData overPressureValveTest = overPressureValveTestRepository.findByCode(validateRequest.getCode());
-                        if (overPressureValveTest == null) {
-                            return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
-                                    .status("E1000")
-                                    .statusDescription("Over Pressure Valve test code not found")
-                                    .data(ValidateComponentResponse.builder()
-                                            .hhDeviceCode(null)
-                                            .build())
-                                    .build());
-                        } else {
-                            return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
-                                    .status("S1000")
-                                    .statusDescription("Over Pressure Valve test code found")
-                                    .data(ValidateComponentResponse.builder()
-                                            .hhDeviceCode(null)
-                                            .build())
-                                    .build());
-                        }
-                    }
-                })
-                .onErrorResume(e -> Mono.just(ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
-                        .status("E1000")
-                        .statusDescription("Error occurred while validating Over Pressure Valve test code")
                         .build())));
     }
 

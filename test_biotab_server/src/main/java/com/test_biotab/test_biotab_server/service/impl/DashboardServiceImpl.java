@@ -22,10 +22,6 @@ public class DashboardServiceImpl implements DashboardService {
     private final ValveTestRepository valveTestRepository;
     private final PowerSupplyTestRepository powerSupplyTestRepository;
     private final AirPumpTestRepository airPumpTestRepository;
-    private final BatteryTestRepository batteryTestRepository;
-    private final OverPressureValveTestRepository overPressureValveTestRepository;
-    private final PcbTestRepository pcbTestRepository;
-    private final LatchButtonTestRepository latchButtonTestRepository;
     private final HHDeviceRepository hhDeviceRepository;
     private final FinalAssemblyRepository finalAssemblyRepository;
 
@@ -37,72 +33,32 @@ public class DashboardServiceImpl implements DashboardService {
         return Mono.zip(
                         Mono.zip(
                                 Mono.fromSupplier(() -> valveTestRepository.countByCustomQuery(entityManager.createQuery(
-                                        "SELECT COUNT(v) FROM ValveTestData v WHERE v.status = true",
+                                        "SELECT COUNT(v) FROM ValveTestData v WHERE v.flowRateStatus = true AND v.idleCurrentStatus = true AND v.idleVoltageStatus = true",
                                         Long.class
                                 ))),
                                 Mono.fromSupplier(() -> valveTestRepository.countByCustomQuery(entityManager.createQuery(
-                                        "SELECT COUNT(v) FROM ValveTestData v WHERE v.status = false",
+                                        "SELECT COUNT(v) FROM ValveTestData v WHERE v.flowRateStatus = false OR v.idleCurrentStatus = false OR v.idleVoltageStatus = false",
                                         Long.class
                                 )))
                         ),
                         Mono.zip(
                                 Mono.fromSupplier(() -> powerSupplyTestRepository.countByCustomQuery(entityManager.createQuery(
-                                        "SELECT COUNT(p) FROM PowerSupplyTestData p WHERE p.status = true",
+                                        "SELECT COUNT(p) FROM PowerSupplyTestData p WHERE p.idleVolStatus = true AND p.loadCurrentStatus = true AND p.loadVolStatus = true",
                                         Long.class
                                 ))),
                                 Mono.fromSupplier(() -> powerSupplyTestRepository.countByCustomQuery(entityManager.createQuery(
-                                        "SELECT COUNT(p) FROM PowerSupplyTestData p WHERE p.status = false",
+                                        "SELECT COUNT(p) FROM PowerSupplyTestData p WHERE p.idleVolStatus = false OR p.loadCurrentStatus = false OR p.loadVolStatus = false",
                                         Long.class
                                 )))
                         ),
 
                         Mono.zip(
                                 Mono.fromSupplier(() -> airPumpTestRepository.countByCustomQuery(entityManager.createQuery(
-                                        "SELECT COUNT(a) FROM AirPumpTestData a WHERE a.status = true",
+                                        "SELECT COUNT(a) FROM AirPumpTestData a WHERE a.loadCurrentStatus = true AND a.loadVoltageStatus = true AND a.flowRateStatus = true AND a.idleCurrentStatus = true AND a.idleVoltageStatus = true AND a.flowRateStatus = true AND a.noiseLevelStatus = true",
                                         Long.class
                                 ))),
                                 Mono.fromSupplier(() -> airPumpTestRepository.countByCustomQuery(entityManager.createQuery(
-                                        "SELECT COUNT(a) FROM AirPumpTestData a WHERE a.status = false",
-                                        Long.class
-                                )))
-                        ),
-                        Mono.zip(
-                                Mono.fromSupplier(() -> batteryTestRepository.countByCustomQuery(entityManager.createQuery(
-                                        "SELECT COUNT(b) FROM BatteryTestData b WHERE b.status = true",
-                                        Long.class
-                                ))),
-                                Mono.fromSupplier(() -> batteryTestRepository.countByCustomQuery(entityManager.createQuery(
-                                        "SELECT COUNT(b) FROM BatteryTestData b WHERE b.status = false",
-                                        Long.class
-                                )))
-                        ),
-                        Mono.zip(
-                                Mono.fromSupplier(() -> overPressureValveTestRepository.countByCustomQuery(entityManager.createQuery(
-                                        "SELECT COUNT(o) FROM OverPressureValveTestData o WHERE o.status = true",
-                                        Long.class
-                                ))),
-                                Mono.fromSupplier(() -> overPressureValveTestRepository.countByCustomQuery(entityManager.createQuery(
-                                        "SELECT COUNT(o) FROM OverPressureValveTestData o WHERE o.status = false",
-                                        Long.class
-                                )))
-                        ),
-                        Mono.zip(
-                                Mono.fromSupplier(() -> pcbTestRepository.countByCustomQuery(entityManager.createQuery(
-                                        "SELECT COUNT(p) FROM PcbTestData p WHERE p.status = true",
-                                        Long.class
-                                ))),
-                                Mono.fromSupplier(() -> pcbTestRepository.countByCustomQuery(entityManager.createQuery(
-                                        "SELECT COUNT(p) FROM PcbTestData p WHERE p.status = false",
-                                        Long.class
-                                )))
-                        ),
-                        Mono.zip(
-                                Mono.fromSupplier(() -> latchButtonTestRepository.countByCustomQuery(entityManager.createQuery(
-                                        "SELECT COUNT(l) FROM LatchButtonTestData l WHERE l.status = true",
-                                        Long.class
-                                ))),
-                                Mono.fromSupplier(() -> latchButtonTestRepository.countByCustomQuery(entityManager.createQuery(
-                                        "SELECT COUNT(l) FROM LatchButtonTestData l WHERE l.status = false",
+                                        "SELECT COUNT(a) FROM AirPumpTestData a WHERE a.loadCurrentStatus = false OR a.loadVoltageStatus = false OR a.flowRateStatus = false OR a.idleCurrentStatus = false OR a.idleVoltageStatus = false OR a.flowRateStatus = false OR a.noiseLevelStatus = false",
                                         Long.class
                                 )))
                         ),
@@ -120,11 +76,7 @@ public class DashboardServiceImpl implements DashboardService {
                     Tuple2<Long, Long> valueTestCounts = results.getT1();
                     Tuple2<Long, Long> powerSupplyTestCounts = results.getT2();
                     Tuple2<Long, Long> airPumpTestCounts = results.getT3();
-                    Tuple2<Long, Long> batteryTestCounts = results.getT4();
-                    Tuple2<Long, Long> overPressureValveTestCounts = results.getT5();
-                    Tuple2<Long, Long> pcbTestCounts = results.getT6();
-                    Tuple2<Long, Long> latchButtonTestCounts = results.getT7();
-                    Tuple2<Long, Long> t8Counts = results.getT8();
+                    Tuple2<Long, Long> t8Counts = results.getT4();
 
                     Long totalSuccessValueTest = valueTestCounts.getT1();
                     Long totalFailedValueTest = valueTestCounts.getT2();
@@ -134,18 +86,6 @@ public class DashboardServiceImpl implements DashboardService {
 
                     Long totalSuccessAirPumpTest = airPumpTestCounts.getT1();
                     Long totalFailedAirPumpTest = airPumpTestCounts.getT2();
-
-                    Long totalSuccessBatteryTest = batteryTestCounts.getT1();
-                    Long totalFailedBatteryTest = batteryTestCounts.getT2();
-
-                    Long totalSuccessOverPressureTest = overPressureValveTestCounts.getT1();
-                    Long totalFailedOverPressureTest = overPressureValveTestCounts.getT2();
-
-                    Long totalSuccessPcbTest = pcbTestCounts.getT1();
-                    Long totalFailedPcbTest = pcbTestCounts.getT2();
-
-                    Long totalSuccessLatchButtonTest = latchButtonTestCounts.getT1();
-                    Long totalFailedLatchButtonTest = latchButtonTestCounts.getT2();
 
                     Long totalFinalAssembly = t8Counts.getT1();
                     Long totalHHDevice = t8Counts.getT2();
@@ -161,14 +101,6 @@ public class DashboardServiceImpl implements DashboardService {
                                             .totalFailedPowerSupplyTest(totalFailedPowerSupplyTest)
                                             .totalSuccessAirPumpTest(totalSuccessAirPumpTest)
                                             .totalFailedAirPumpTest(totalFailedAirPumpTest)
-                                            .totalSuccessBatteryTest(totalSuccessBatteryTest)
-                                            .totalFailedBatteryTest(totalFailedBatteryTest)
-                                            .totalSuccessOverPressureTest(totalSuccessOverPressureTest)
-                                            .totalFailedOverPressureTest(totalFailedOverPressureTest)
-                                            .totalSuccessPcbTest(totalSuccessPcbTest)
-                                            .totalFailedPcbTest(totalFailedPcbTest)
-                                            .totalSuccessLatchButtonTest(totalSuccessLatchButtonTest)
-                                            .totalFailedLatchButtonTest(totalFailedLatchButtonTest)
                                             .totalFinalAssembly(totalFinalAssembly)
                                             .totalHHDevice(totalHHDevice)
                                             .build()
