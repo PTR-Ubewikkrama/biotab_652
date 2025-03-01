@@ -1,0 +1,32 @@
+server:
+  port: 6500
+
+spring:
+  application:
+    name: test-biotab-server
+  datasource:
+    url: jdbc:mysql://localhost:3306/biotab_e652
+    username: user
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        show_sql: true
+application:
+  security:
+    test-add-hash-key: asdfghjkljhgfdlsmsfdfsmfsdfsdfj
+    jwt:
+      secret: secretfhsdkhgeogdgdt0p4gtlsdahgldsjf;lgoedwryg9pdpgdfo
+      expiration: 8640000000
+      refreshExpiration: 8640000000
+      password:
+        encoder:
+          secret: secret
+          iteration: 10
+          key-length: 256
+
+
