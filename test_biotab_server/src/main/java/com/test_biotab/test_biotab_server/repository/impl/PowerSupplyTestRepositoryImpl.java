@@ -48,12 +48,6 @@ public class PowerSupplyTestRepositoryImpl implements PowerSupplyTestRepository 
     }
 
     @Override
-    public void deleteById(int l) {
-        PowerSupplyTestData PowerSupplyTestData = entityManager.find(PowerSupplyTestData.class, l);
-        entityManager.remove(PowerSupplyTestData);
-    }
-
-    @Override
     public PowerSupplyTestData findByCode(String code) {
         log.info("Finding PowerSupplyTestData by code: {}", code);
         TypedQuery<PowerSupplyTestData> query = entityManager.createQuery("SELECT v FROM PowerSupplyTestData v WHERE v.serialNumber = :code AND v.status = :status", PowerSupplyTestData.class);

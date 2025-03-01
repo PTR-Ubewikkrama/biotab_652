@@ -378,7 +378,7 @@ public class HHDeviceServiceImpl implements HHDeviceService {
                                                             .hhDeviceCode("UNKNOWN")
                                                             .componentCode(request.getCode())
                                                             .componentType("POWER_SUPPLY")
-                                                            .componentStatus(powerSupplyTest.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
+                                                            .componentStatus(powerSupplyTest.getIdleVolStatus() && powerSupplyTest.getLoadVolStatus() && powerSupplyTest.getLoadCurrentStatus() ? "VERIFIED" : "NOT_VERIFIED")
                                                             .build())
                                                     .build());
                                         }

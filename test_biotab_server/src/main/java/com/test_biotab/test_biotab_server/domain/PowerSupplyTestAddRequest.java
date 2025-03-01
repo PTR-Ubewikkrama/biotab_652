@@ -5,36 +5,19 @@ import lombok.Data;
 @Data
 public class PowerSupplyTestAddRequest {
     private String hashKey;
-
     private String deviceMac;
-
-    private Double idleVolLowTh;
-
-    private Double idleVolUpTh;
-
-    private Double loadVolLowTh;
-
-    private Double loadVolUpTh;
-
-    private Double loadCurUpTh;
-
+    private double idleVoltageLowTh;
+    private double idleVoltageUpTh;
+    private double loadVoltageLowTh;
+    private double loadVoltageUpTh;
+    private double loadCurrentUpTh;
     private String serialNumber;
-
-    private Double idleVol;
-
+    private double idleVol;
     private Boolean idleVolStatus;
-
-    private Double loadVol;
-
+    private double loadVol;
     private Boolean loadVolStatus;
-
-    private Double loadCurrent;
-
+    private double loadCurrent;
     private Boolean loadCurrentStatus;
-
-    private Double operatingPower;
-
+    private double operatingPower;
     private Boolean noiseLevel;
-
-    private String deviceStatus;
 }

@@ -14,7 +14,5 @@ public interface PowerSupplyTestRepository {
 
     Long countByCustomQuery(TypedQuery<Long> query);
 
-    void deleteById(int l);
-
     PowerSupplyTestData findByCode(String code);
 }

@@ -41,6 +41,167 @@ public class TestServiceImpl implements TestService {
     private EntityManager entityManager;
 
     @Override
+    public Mono<ResponseEntity<CommonResponse>> addPowerSupplyTest(PowerSupplyTestAddRequest powerSupplyTestAddRequest) {
+        return Mono.just(powerSupplyTestAddRequest)
+                .flatMap(request -> deviceService.getDeviceByMac(powerSupplyTestAddRequest.getDeviceMac())
+                        .map(device -> toPowerSupplyTest(powerSupplyTestAddRequest, device))
+                        .map(powerSupplyTestRepository::save))
+                .switchIfEmpty(Mono.error(new RuntimeException("Device not found")))
+                .map(powerSupplyTest -> ResponseEntity.ok(CommonResponse.builder().message("Power supply test added successfully").status("SUCCESS").build()));
+    }
+
+    private PowerSupplyTestData toPowerSupplyTest(PowerSupplyTestAddRequest powerSupplyTestAddRequest, Device device) {
+        return PowerSupplyTestData.builder()
+                .device(device)
+                .idleVoltageLowTh(powerSupplyTestAddRequest.getIdleVoltageLowTh())
+                .idleVoltageUpTh(powerSupplyTestAddRequest.getIdleVoltageUpTh())
+                .loadVoltageLowTh(powerSupplyTestAddRequest.getLoadVoltageLowTh())
+                .loadVoltageUpTh(powerSupplyTestAddRequest.getLoadVoltageUpTh())
+                .loadCurrentUpTh(powerSupplyTestAddRequest.getLoadCurrentUpTh())
+                .serialNumber(powerSupplyTestAddRequest.getSerialNumber())
+                .idleVol(powerSupplyTestAddRequest.getIdleVol())
+                .idleVolStatus(powerSupplyTestAddRequest.getIdleVolStatus())
+                .loadVol(powerSupplyTestAddRequest.getLoadVol())
+                .loadVolStatus(powerSupplyTestAddRequest.getLoadVolStatus())
+                .loadCurrent(powerSupplyTestAddRequest.getLoadCurrent())
+                .loadCurrentStatus(powerSupplyTestAddRequest.getLoadCurrentStatus())
+                .operatingPower(powerSupplyTestAddRequest.getOperatingPower())
+                .noiseLevel(powerSupplyTestAddRequest.getNoiseLevel())
+                .dateTime(LocalDateTime.now())
+                .build();
+    }
+
+    @Override
+    public Mono<ResponseEntity<ApiResponse<GetPowerSupplyTestResponse>>> getPowerSupplyTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
+        return Mono.just(request)
+                .map(req -> {
+                    log.info("Getting power supply test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
+                    if (pageNo != null && pageNo.equals("all")) {
+                        return powerSupplyTestRepository.findByCustomQuery(getCustomQueryPowerSupplyTest(request, userDetails));
+                    } else {
+                        return powerSupplyTestRepository.findByCustomQuery(getCustomQueryPowerSupplyTest(request, userDetails), Integer.parseInt(pageNo) - 1);
+                    }
+                })
+                .flatMap(powerSupplyTestData -> {
+                    long total = powerSupplyTestData.size();
+                    long totalFailed = powerSupplyTestData.stream()
+                            .filter(data -> !data.getIdleVolStatus() || !data.getLoadVolStatus() || !data.getLoadCurrentStatus())
+                            .count();
+                    return Mono.just(ApiResponse.<GetPowerSupplyTestResponse>builder()
+                            .status("S1000")
+                            .statusDescription("Request successful")
+                            .data(GetPowerSupplyTestResponse.builder()
+                                    .powerSupplyTests(getPowerSupplyDtoFromEntity(powerSupplyTestData))
+                                    .totalRecords(total)
+                                    .totalFailed(totalFailed)
+                                    .build())
+                            .build());
+                })
+                .map(ResponseEntity::ok)
+                .onErrorResume(e -> {
+                    log.error("Error getting power supply tests", e);
+                    return Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Power Supply Tests"));
+                });
+    }
+
+    private List<PowerSupplyTestDto> getPowerSupplyDtoFromEntity(List<PowerSupplyTestData> powerSupplyTestData) {
+        return powerSupplyTestData.stream()
+                .map(powerSupplyTest -> PowerSupplyTestDto.builder()
+                        .testId(powerSupplyTest.getTestId())
+                        .deviceId(powerSupplyTest.getDevice().getDeviceId())
+                        .idleVolLowTh(powerSupplyTest.getIdleVoltageLowTh())
+                        .idleVolUpTh(powerSupplyTest.getIdleVoltageUpTh())
+                        .loadVolLowTh(powerSupplyTest.getLoadVoltageLowTh())
+                        .loadVolUpTh(powerSupplyTest.getLoadVoltageUpTh())
+                        .loadCurUpTh(powerSupplyTest.getLoadCurrentUpTh())
+                        .serialNumber(powerSupplyTest.getSerialNumber())
+                        .idleVol(powerSupplyTest.getIdleVol())
+                        .idleVolStatus(powerSupplyTest.getIdleVolStatus())
+                        .loadVol(powerSupplyTest.getLoadVol())
+                        .loadVolStatus(powerSupplyTest.getLoadVolStatus())
+                        .loadCurrent(powerSupplyTest.getLoadCurrent())
+                        .loadCurrentStatus(powerSupplyTest.getLoadCurrentStatus())
+                        .operatingPower(powerSupplyTest.getOperatingPower())
+                        .noiseLevel(powerSupplyTest.getNoiseLevel())
+                        .status(powerSupplyTest.getIdleVolStatus() && powerSupplyTest.getLoadVolStatus() && powerSupplyTest.getLoadCurrentStatus())
+                        .dateTime(powerSupplyTest.getDateTime())
+                        .build())
+                .toList();
+    }
+
+    private TypedQuery<PowerSupplyTestData> getCustomQueryPowerSupplyTest(GetByPatternRequest request, UserDetails userDetails) {
+        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM PowerSupplyTestData v JOIN v.device d");
+
+        List<String> filterParts = new ArrayList<>();
+
+        calculateFilterParts(request, filterParts, userDetails);
+
+        TypedQuery<PowerSupplyTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
+                .append(" ORDER BY v.dateTime DESC").toString(), PowerSupplyTestData.class);
+
+        return exchangeDateFilterInQuery(query, request);
+    }
+
+    private static void calculateFilterParts(GetByPatternRequest request, List<String> filterParts, UserDetails userDetails) {
+        if (request.getFilterType() != null && !request.getFilterValue().isEmpty()) {
+            switch (request.getFilterType()) {
+                case "DEVICE_MAC" -> filterParts.add("d.deviceMac LIKE '%" + request.getFilterValue() + "%'");
+                case "CREATED_BY" -> filterParts.add("createdBy LIKE '%" + request.getFilterValue() + "%'");
+                case "TEST_ID" -> filterParts.add("serialNumber LIKE '%" + request.getFilterValue() + "%'");
+            }
+        }
+
+        if (request.getFromDate() != null && !request.getFromDate().isEmpty()) {
+            filterParts.add("v.dateTime > :startDate");
+        }
+
+        if (request.getToDate() != null && !request.getToDate().isEmpty()) {
+            filterParts.add("v.dateTime < :endDate");
+        }
+
+        setStatusFilter(request, filterParts);
+    }
+
+    private static void setStatusFilter(GetByPatternRequest request, List<String> filterParts) {
+        List<String> availableStatusList = List.of("PASS", "FAIL");
+        if (request.getStatus() != null && !request.getStatus().isEmpty() && availableStatusList.contains(request.getStatus())) {
+            boolean status = request.getStatus().equals("PASS");
+            switch (request.getRequestType()) {
+                case "AIR_PUMP", "POWER_PCB", "POWER_SUPPLY", "VALVE" -> filterParts.add("v.status = " + status);
+            }
+        }
+    }
+
+    private <T> TypedQuery<T> exchangeDateFilterInQuery(TypedQuery<T> query, GetByPatternRequest request) {
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+
+        if (request.getFromDate() != null && !request.getFromDate().isEmpty()) {
+            LocalDateTime lastDateStart = LocalDateTime.of(LocalDateTime.parse(request.getFromDate(), formatter).toLocalDate(), LocalTime.MIDNIGHT);
+            query.setParameter("startDate", lastDateStart);
+        }
+
+        if (request.getToDate() != null && !request.getToDate().isEmpty()) {
+            LocalDateTime lastDateEnd = LocalDateTime.of(LocalDateTime.parse(request.getToDate(), formatter).toLocalDate(), LocalTime.MAX);
+            query.setParameter("endDate", lastDateEnd);
+        }
+        return query;
+    }
+
+    private StringBuilder getQueryByFilterPartsAndBaseQuery(List<String> filterParts, StringBuilder query) {
+        if (!filterParts.isEmpty()) {
+            query.append(" WHERE ");
+            for (int i = 0; i < filterParts.size(); i++) {
+                query.append(filterParts.get(i));
+                if (i < filterParts.size() - 1) {
+                    query.append(" AND ");
+                }
+            }
+        }
+
+        return query;
+    }
+
+    @Override
     public Mono<ResponseEntity<CommonResponse>> addAirPumpTest(AirPumpTestAddRequest airPumpTestAddRequest) {
         return Mono.just(airPumpTestAddRequest)
                 .flatMap(request -> deviceService.getDeviceByMac(request.getDeviceMac())
@@ -83,41 +244,6 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public Mono<ResponseEntity<CommonResponse>> addPowerSupplyTest(PowerSupplyTestAddRequest powerSupplyTestAddRequest) {
-        return Mono.just(powerSupplyTestAddRequest)
-                .flatMap(request -> deviceService.getDeviceByMac(powerSupplyTestAddRequest.getDeviceMac())
-                        .map(device -> toPowerSupplyTest(powerSupplyTestAddRequest, device))
-                        .map(powerSupplyTestRepository::save))
-                .switchIfEmpty(Mono.error(new RuntimeException("Device not found")))
-                .map(powerSupplyTest -> ResponseEntity.ok(CommonResponse.builder().message("Power supply test added successfully").status("SUCCESS").build()));
-    }
-
-    private PowerSupplyTestData toPowerSupplyTest(PowerSupplyTestAddRequest powerSupplyTestAddRequest, Device device) {
-        return PowerSupplyTestData.builder()
-                .device(device)
-                .idleVolLowTh(powerSupplyTestAddRequest.getIdleVolLowTh())
-                .idleVolUpTh(powerSupplyTestAddRequest.getIdleVolUpTh())
-                .loadVolLowTh(powerSupplyTestAddRequest.getLoadVolLowTh())
-                .loadVolUpTh(powerSupplyTestAddRequest.getLoadVolUpTh())
-                .loadCurUpTh(powerSupplyTestAddRequest.getLoadCurUpTh())
-                .serialNumber(powerSupplyTestAddRequest.getSerialNumber())
-                .idleVol(powerSupplyTestAddRequest.getIdleVol())
-                .idleVolStatus(powerSupplyTestAddRequest.getIdleVolStatus())
-                .loadVol(powerSupplyTestAddRequest.getLoadVol())
-                .loadVolStatus(powerSupplyTestAddRequest.getLoadVolStatus())
-                .loadCurrent(powerSupplyTestAddRequest.getLoadCurrent())
-                .loadCurrentStatus(powerSupplyTestAddRequest.getLoadCurrentStatus())
-                .operatingPower(powerSupplyTestAddRequest.getOperatingPower())
-                .noiseLevel(powerSupplyTestAddRequest.getNoiseLevel())
-                .deviceStatus(powerSupplyTestAddRequest.getDeviceStatus())
-                .status(powerSupplyTestAddRequest.getIdleVolStatus() &&
-                        powerSupplyTestAddRequest.getLoadVolStatus() &&
-                        powerSupplyTestAddRequest.getLoadCurrentStatus())
-                .dateTime(LocalDateTime.now())
-                .build();
-    }
-
-    @Override
     public Mono<ResponseEntity<CommonResponse>> addBatteryTest(BatteryTestAddRequest batteryTestAddRequest) {
         return Mono.just(batteryTestAddRequest)
                 .flatMap(request -> deviceService.getDeviceByMac(batteryTestAddRequest.getDeviceMac())
@@ -139,17 +265,17 @@ public class TestServiceImpl implements TestService {
                     }
                 })
                 .flatMap(airPumpTestData -> Mono.just(airPumpTestRepository.countByCustomQuery(getCustomCountQueryAirPumpTest(request, userDetails)))
-                        .map(total -> ApiResponse.<GetAirPumpTestResponse>builder()
-                                .status("S1000")
-                                .statusDescription("Request successful")
-                                .data(GetAirPumpTestResponse.builder()
-                                        .airPumpTests(getAirPumpDtoFromEntity(airPumpTestData))
-                                        .totalRecords(total)
+                                .map(total -> ApiResponse.<GetAirPumpTestResponse>builder()
+                                        .status("S1000")
+                                        .statusDescription("Request successful")
+                                        .data(GetAirPumpTestResponse.builder()
+                                                .airPumpTests(getAirPumpDtoFromEntity(airPumpTestData))
+                                                .totalRecords(total)
 //                                        .totalFailed(airPumpTestRepository.countByCustomQuery(
 //                                                getCustomQueryForAirPumpFailedTests(request)
 //                                        ))
+                                                .build())
                                         .build())
-                                .build())
                 )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Air Pump Tests")));
@@ -169,96 +295,6 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public Mono<ResponseEntity<ApiResponse<GetPowerSupplyTestResponse>>> getPowerSupplyTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
-        return Mono.just(request)
-                .map(req -> {
-                    log.info("Getting power supply test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
-                    if (pageNo != null && pageNo.equals("all")) {
-                        return powerSupplyTestRepository.findByCustomQuery(getCustomQueryPowerSupplyTest(request, userDetails));
-                    } else {
-                        return powerSupplyTestRepository.findByCustomQuery(getCustomQueryPowerSupplyTest(request, userDetails), Integer.parseInt(pageNo) - 1);
-                    }
-                })
-                .flatMap(powerSupplyTestData -> Mono.just(powerSupplyTestRepository.countByCustomQuery(getCustomCountQueryPowerSupplyTest(request, userDetails)))
-                        .map(total -> ApiResponse.<GetPowerSupplyTestResponse>builder()
-                                .status("S1000")
-                                .statusDescription("Request successful")
-                                .data(GetPowerSupplyTestResponse.builder()
-                                        .powerSupplyTests(getPowerSupplyDtoFromEntity(powerSupplyTestData))
-                                        .totalRecords(total)
-//                                        .totalFailed(powerSupplyTestRepository.countByCustomQuery(
-//                                                getCustomQueryForPowerSupplyFailedTests(request)
-//                                        ))
-                                        .build())
-                                .build())
-                )
-                .map(ResponseEntity::ok)
-                .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Power Supply Tests")));
-    }
-
-    private TypedQuery<Long> getCustomQueryForPowerSupplyFailedTests(GetByPatternRequest request) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT COUNT(v) FROM PowerSupplyTestData v JOIN v.device d");
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, null);
-
-        TypedQuery<Long> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
-                .append(" AND v.status = false").toString(), Long.class);
-
-        return exchangeDateFilterInQuery(query, request);
-    }
-
-    private List<PowerSupplyTestDto> getPowerSupplyDtoFromEntity(List<PowerSupplyTestData> powerSupplyTestData) {
-        return powerSupplyTestData.stream()
-                .map(powerSupplyTest -> PowerSupplyTestDto.builder()
-                        .testId(powerSupplyTest.getTestId())
-                        .deviceId(powerSupplyTest.getDevice().getDeviceId())
-                        .idleVolLowTh(powerSupplyTest.getIdleVolLowTh())
-                        .idleVolUpTh(powerSupplyTest.getIdleVolUpTh())
-                        .loadVolLowTh(powerSupplyTest.getLoadVolLowTh())
-                        .loadVolUpTh(powerSupplyTest.getLoadVolUpTh())
-                        .loadCurUpTh(powerSupplyTest.getLoadCurUpTh())
-                        .serialNumber(powerSupplyTest.getSerialNumber())
-                        .idleVol(powerSupplyTest.getIdleVol())
-                        .idleVolStatus(powerSupplyTest.getIdleVolStatus())
-                        .loadVol(powerSupplyTest.getLoadVol())
-                        .loadVolStatus(powerSupplyTest.getLoadVolStatus())
-                        .loadCurrent(powerSupplyTest.getLoadCurrent())
-                        .loadCurrentStatus(powerSupplyTest.getLoadCurrentStatus())
-                        .operatingPower(powerSupplyTest.getOperatingPower())
-                        .noiseLevel(powerSupplyTest.getNoiseLevel())
-                        .dateTime(powerSupplyTest.getDateTime())
-                        .deviceStatus(powerSupplyTest.getDeviceStatus())
-                        .status(powerSupplyTest.getStatus())
-                        .build())
-                .toList();
-    }
-
-    private TypedQuery<Long> getCustomCountQueryPowerSupplyTest(GetByPatternRequest request, UserDetails userDetails) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT COUNT(v) FROM PowerSupplyTestData v JOIN v.device d");
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, userDetails);
-
-        TypedQuery<Long> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder).toString(), Long.class);
-
-        return exchangeDateFilterInQuery(query, request);
-    }
-
-    private TypedQuery<PowerSupplyTestData> getCustomQueryPowerSupplyTest(GetByPatternRequest request, UserDetails userDetails) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM PowerSupplyTestData v JOIN v.device d");
-
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, userDetails);
-
-        TypedQuery<PowerSupplyTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
-                .append(" ORDER BY v.dateTime DESC").toString(), PowerSupplyTestData.class);
-
-        return exchangeDateFilterInQuery(query, request);
-    }
-
-    @Override
     public Mono<ResponseEntity<ApiResponse<GetBatteryTestResponse>>> getBatteryTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
         return Mono.just(request)
                 .map(req -> {
@@ -270,17 +306,17 @@ public class TestServiceImpl implements TestService {
                     }
                 })
                 .flatMap(valueTestData -> Mono.just(batteryTestRepository.countByCustomQuery(getCustomCountQueryValueTest(request, userDetails)))
-                        .map(total -> ApiResponse.<GetBatteryTestResponse>builder()
-                                .status("S1000")
-                                .statusDescription("Request successful")
-                                .data(GetBatteryTestResponse.builder()
-                                        .batteryTests(getValueTestDtoFromEntity(valueTestData))
-                                        .totalRecords(total)
+                                .map(total -> ApiResponse.<GetBatteryTestResponse>builder()
+                                        .status("S1000")
+                                        .statusDescription("Request successful")
+                                        .data(GetBatteryTestResponse.builder()
+                                                .batteryTests(getValueTestDtoFromEntity(valueTestData))
+                                                .totalRecords(total)
 //                                        .totalFailed(batteryTestRepository.countByCustomQuery(
 //                                                getCustomQueryForBatteryFailedTests(request)
 //                                        ))
+                                                .build())
                                         .build())
-                                .build())
                 )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get battery Tests")));
@@ -336,17 +372,17 @@ public class TestServiceImpl implements TestService {
                     }
                 })
                 .flatMap(overPressureValveTestData -> Mono.just(overPressureValveTestRepository.countByCustomQuery(getCustomCountQueryOverPressureTest(request, userDetails)))
-                        .map(total -> ApiResponse.<GetOverPressureValveTestResponse>builder()
-                                .status("S1000")
-                                .statusDescription("Request successful")
-                                .data(GetOverPressureValveTestResponse.builder()
-                                        .overPressureValveTests(getOverPressureValveDtoFromEntity(overPressureValveTestData))
-                                        .totalRecords(total)
+                                .map(total -> ApiResponse.<GetOverPressureValveTestResponse>builder()
+                                        .status("S1000")
+                                        .statusDescription("Request successful")
+                                        .data(GetOverPressureValveTestResponse.builder()
+                                                .overPressureValveTests(getOverPressureValveDtoFromEntity(overPressureValveTestData))
+                                                .totalRecords(total)
 //                                        .totalFailed(overPressureValveTestRepository.countByCustomQuery(
 //                                                getCustomQueryForOverPressureFailedTests(request)
 //                                        ))
+                                                .build())
                                         .build())
-                                .build())
                 )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Over Pressure Valve Tests")));
@@ -399,17 +435,17 @@ public class TestServiceImpl implements TestService {
                     }
                 })
                 .flatMap(latchButtonTestData -> Mono.just(latchButtonTestRepository.countByCustomQuery(getCustomCountQueryLatchButtonTest(request, userDetails)))
-                        .map(total -> ApiResponse.<GetLatchButtonTestResponse>builder()
-                                .status("S1000")
-                                .statusDescription("Request successful")
-                                .data(GetLatchButtonTestResponse.builder()
-                                        .latchButtonTests(getLatchButtonDtoFromEntity(latchButtonTestData))
-                                        .totalRecords(total)
+                                .map(total -> ApiResponse.<GetLatchButtonTestResponse>builder()
+                                        .status("S1000")
+                                        .statusDescription("Request successful")
+                                        .data(GetLatchButtonTestResponse.builder()
+                                                .latchButtonTests(getLatchButtonDtoFromEntity(latchButtonTestData))
+                                                .totalRecords(total)
 //                                        .totalFailed(latchButtonTestRepository.countByCustomQuery(
 //                                                getCustomQueryForLatchButtonFailedTests(request)
 //                                        ))
+                                                .build())
                                         .build())
-                                .build())
                 )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Latch Button Tests")));
@@ -473,17 +509,17 @@ public class TestServiceImpl implements TestService {
                     }
                 })
                 .flatMap(valveTestData -> Mono.just(valveTestRepository.countByCustomQuery(getCustomCountQueryValveTest(request, userDetails)))
-                        .map(total -> ApiResponse.<GetValveTestResponse>builder()
-                                .status("S1000")
-                                .statusDescription("Request successful")
-                                .data(GetValveTestResponse.builder()
-                                        .valveTests(getValveDtoFromEntity(valveTestData))
-                                        .totalRecords(total)
+                                .map(total -> ApiResponse.<GetValveTestResponse>builder()
+                                        .status("S1000")
+                                        .statusDescription("Request successful")
+                                        .data(GetValveTestResponse.builder()
+                                                .valveTests(getValveDtoFromEntity(valveTestData))
+                                                .totalRecords(total)
 //                                        .totalFailed(valveTestRepository.countByCustomQuery(
 //                                                getCustomQueryForValveFailedTests(request)
 //                                        ))
+                                                .build())
                                         .build())
-                                .build())
                 )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Valve Tests")));
@@ -631,17 +667,17 @@ public class TestServiceImpl implements TestService {
                     }
                 })
                 .flatMap(pcbTestData -> Mono.just(pcbTestRepository.countByCustomQuery(getCustomCountQueryPcbTest(request, userDetails)))
-                        .map(total -> ApiResponse.<GetPcbTestResponse>builder()
-                                .status("S1000")
-                                .statusDescription("Request successful")
-                                .data(GetPcbTestResponse.builder()
-                                        .pcbTests(getPcbDtoFromEntity(pcbTestData))
-                                        .totalRecords(total)
+                                .map(total -> ApiResponse.<GetPcbTestResponse>builder()
+                                        .status("S1000")
+                                        .statusDescription("Request successful")
+                                        .data(GetPcbTestResponse.builder()
+                                                .pcbTests(getPcbDtoFromEntity(pcbTestData))
+                                                .totalRecords(total)
 //                                        .totalFailed(pcbTestRepository.countByCustomQuery(
 //                                                getCustomQueryForPcbFailedTests(request)
 //                                        ))
+                                                .build())
                                         .build())
-                                .build())
                 )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Pcb Tests")));
@@ -1006,62 +1042,4 @@ public class TestServiceImpl implements TestService {
         return exchangeDateFilterInQuery(query, request);
     }
 
-    private static void calculateFilterParts(GetByPatternRequest request, List<String> filterParts, UserDetails userDetails) {
-        if (request.getFilterType() != null && !request.getFilterValue().isEmpty()) {
-            switch (request.getFilterType()) {
-                case "DEVICE_MAC" -> filterParts.add("d.deviceMac LIKE '%" + request.getFilterValue() + "%'");
-                case "CREATED_BY" -> filterParts.add("createdBy LIKE '%" + request.getFilterValue() + "%'");
-                case "TEST_ID" -> filterParts.add("serialNumber LIKE '%" + request.getFilterValue() + "%'");
-            }
-        }
-
-        if (request.getFromDate() != null && !request.getFromDate().isEmpty()) {
-            filterParts.add("v.dateTime > :startDate");
-        }
-
-        if (request.getToDate() != null && !request.getToDate().isEmpty()) {
-            filterParts.add("v.dateTime < :endDate");
-        }
-
-        setStatusFilter(request, filterParts);
-    }
-
-    private static void setStatusFilter(GetByPatternRequest request, List<String> filterParts) {
-        List<String> availableStatusList = List.of("PASS", "FAIL");
-        if (request.getStatus() != null && !request.getStatus().isEmpty() && availableStatusList.contains(request.getStatus())) {
-            boolean status = request.getStatus().equals("PASS");
-            switch (request.getRequestType()) {
-                case "AIR_PUMP", "POWER_PCB", "POWER_SUPPLY", "VALVE" -> filterParts.add("v.status = " + status);
-            }
-        }
-    }
-
-    private <T> TypedQuery<T> exchangeDateFilterInQuery(TypedQuery<T> query, GetByPatternRequest request) {
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-
-        if (request.getFromDate() != null && !request.getFromDate().isEmpty()) {
-            LocalDateTime lastDateStart = LocalDateTime.of(LocalDateTime.parse(request.getFromDate(), formatter).toLocalDate(), LocalTime.MIDNIGHT);
-            query.setParameter("startDate", lastDateStart);
-        }
-
-        if (request.getToDate() != null && !request.getToDate().isEmpty()) {
-            LocalDateTime lastDateEnd = LocalDateTime.of(LocalDateTime.parse(request.getToDate(), formatter).toLocalDate(), LocalTime.MAX);
-            query.setParameter("endDate", lastDateEnd);
-        }
-        return query;
-    }
-
-    private StringBuilder getQueryByFilterPartsAndBaseQuery(List<String> filterParts, StringBuilder query) {
-        if (!filterParts.isEmpty()) {
-            query.append(" WHERE ");
-            for (int i = 0; i < filterParts.size(); i++) {
-                query.append(filterParts.get(i));
-                if (i < filterParts.size() - 1) {
-                    query.append(" AND ");
-                }
-            }
-        }
-
-        return query;
-    }
 }
