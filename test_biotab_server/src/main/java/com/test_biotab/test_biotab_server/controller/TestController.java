@@ -89,15 +89,6 @@ public class TestController {
                 });
     }
 
-    @PostMapping("/add/battery-test")
-    public Mono<ResponseEntity<CommonResponse>> addValueTest(@RequestBody BatteryTestAddRequest batteryTestAddRequest) {
-        if (!batteryTestAddRequest.getHashKey().equals(hashKey)) {
-            return sendInvalidResponse(batteryTestAddRequest.getHashKey());
-        }
-        log.info("Request received to add battery test: {}", batteryTestAddRequest);
-        return testService.addBatteryTest(batteryTestAddRequest);
-    }
-
     private static Mono<ResponseEntity<CommonResponse>> sendInvalidResponse(String valueTestAddRequest) {
         log.error("Invalid hash key received: {}", valueTestAddRequest);
         return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -105,84 +96,5 @@ public class TestController {
                         .message("Not permitted")
                         .status("401")
                         .build()));
-    }
-
-    @PostMapping("/get/battery-test/{pageNo}")
-    Mono<ResponseEntity<ApiResponse<GetBatteryTestResponse>>> getBatteryTest(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                             @RequestBody GetByPatternRequest request,
-                                                                             @PathVariable("pageNo") String pageNo) {
-        log.info("Received request to get battery test with pattern: {}", request.getFilterValue());
-        return principal
-                .flatMap(userDetails -> {
-                    log.info("Getting value test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
-                    request.setRequestType("VALVE");
-                    return testService.getBatteryTest(request, userDetails, pageNo);
-                });
-    }
-
-    @PostMapping("/add/over-pressure-test")
-    public Mono<ResponseEntity<CommonResponse>> addOverPressureTest(@RequestBody OverPressureValveTestAddRequest overPressureTestAddRequest) {
-        if (!overPressureTestAddRequest.getHashKey().equals(hashKey)) {
-            return sendInvalidResponse(overPressureTestAddRequest.getHashKey());
-        }
-        log.info("Request received to add over pressure test: {}", overPressureTestAddRequest);
-        return testService.addOverPressureTest(overPressureTestAddRequest);
-    }
-
-    @PostMapping("/get/over-pressure-test/{pageNo}")
-    Mono<ResponseEntity<ApiResponse<GetOverPressureValveTestResponse>>> getOverPressureTest(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                                            @RequestBody GetByPatternRequest request,
-                                                                                            @PathVariable("pageNo") String pageNo) {
-        log.info("Received request to get over pressure test with pattern: {}", request.getFilterValue());
-        return principal
-                .flatMap(userDetails -> {
-                    log.info("Getting over pressure test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
-                    request.setRequestType("OVER_PRESSURE");
-                    return testService.getOverPressureTest(request, userDetails, pageNo);
-                });
-    }
-
-    @PostMapping("/add/latch-button-test")
-    public Mono<ResponseEntity<CommonResponse>> addLatchButtonTest(@RequestBody LatchButtonAddRequest latchButtonAddRequest) {
-        if (!latchButtonAddRequest.getHashKey().equals(hashKey)) {
-            return sendInvalidResponse(latchButtonAddRequest.getHashKey());
-        }
-        log.info("Request received to add latch button test: {}", latchButtonAddRequest);
-        return testService.addLatchButtonTest(latchButtonAddRequest);
-    }
-
-    @PostMapping("/get/latch-button-test/{pageNo}")
-    Mono<ResponseEntity<ApiResponse<GetLatchButtonTestResponse>>> getLatchButtonTest(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                                     @RequestBody GetByPatternRequest request,
-                                                                                     @PathVariable("pageNo") String pageNo) {
-        log.info("Received request to get latch button test with pattern: {}", request.getFilterValue());
-        return principal
-                .flatMap(userDetails -> {
-                    log.info("Getting latch button test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
-                    request.setRequestType("LATCH_BUTTON");
-                    return testService.getLatchButtonTest(request, userDetails, pageNo);
-                });
-    }
-
-    @PostMapping("/add/pcb-test")
-    public Mono<ResponseEntity<CommonResponse>> addPcbTest(@RequestBody PcbTestAddRequest pcbTestAddRequest) {
-        log.info("Request received to add pcb test: {}", pcbTestAddRequest);
-        if (!pcbTestAddRequest.getHashKey().equals(hashKey)) {
-            return sendInvalidResponse(pcbTestAddRequest.getHashKey());
-        }
-        return testService.addPcbTest(pcbTestAddRequest);
-    }
-
-    @PostMapping("/get/pcb-test/{pageNo}")
-    Mono<ResponseEntity<ApiResponse<GetPcbTestResponse>>> getPcbTest(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                     @RequestBody GetByPatternRequest request,
-                                                                     @PathVariable("pageNo") String pageNo) {
-        log.info("Received request to get pcb test with pattern: {}", request.getFilterValue());
-        return principal
-                .flatMap(userDetails -> {
-                    log.info("Getting pcb test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
-                    request.setRequestType("PCB");
-                    return testService.getPcbTest(request, userDetails, pageNo);
-                });
     }
 }

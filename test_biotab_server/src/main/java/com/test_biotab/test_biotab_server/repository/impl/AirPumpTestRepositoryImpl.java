@@ -48,12 +48,6 @@ public class AirPumpTestRepositoryImpl implements AirPumpTestRepository {
     }
 
     @Override
-    public void deleteById(int l) {
-        AirPumpTestData AirPumpTestData = entityManager.find(AirPumpTestData.class, l);
-        entityManager.remove(AirPumpTestData);
-    }
-
-    @Override
     public AirPumpTestData findByCode(String code) {
         log.info("Finding AirPumpTestData by code: {}", code);
         TypedQuery<AirPumpTestData> query = entityManager.createQuery("SELECT v FROM AirPumpTestData v WHERE v.serialNumber = :code AND v.status = :status", AirPumpTestData.class);

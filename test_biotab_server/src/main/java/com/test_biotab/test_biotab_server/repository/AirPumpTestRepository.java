@@ -14,7 +14,5 @@ public interface AirPumpTestRepository {
 
     Long countByCustomQuery(TypedQuery<Long> query);
 
-    void deleteById(int l);
-
     AirPumpTestData findByCode(String code);
 }

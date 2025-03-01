@@ -13,50 +13,26 @@ import java.time.LocalDateTime;
 @Builder
 public class AirPumpTestDto {
     private int testId;
-
     private int deviceId;
-
-    private Double idleVolLowTh;
-
-    private Double idleVolUpTh;
-
-    private Double idleCurUpTh;
-
-    private Double loadVolLowTh;
-
-    private Double loadVolUp;
-
-    private Double loadCurUpTh;
-
+    private Double idleVoltageLowThresh;
+    private Double idleVoltageUpThresh;
+    private Double idleCurrentUpThresh;
+    private Double loadVoltageLowThresh;
+    private Double loadVoltageUpThresh;
+    private Double loadCurrentUpThresh;
     private Double setPressure;
-
     private String serialNumber;
-
-    private Double idleVol;
-
-    private Boolean idleVolStatus;
-
+    private Double idleVoltage;
+    private Boolean idleVoltageStatus;
     private Double idleCurrent;
-
     private Boolean idleCurrentStatus;
-
     private Double loadVoltage;
-
     private Boolean loadVoltageStatus;
-
     private Double loadCurrent;
-
     private Boolean loadCurrentStatus;
-
-    private Double maxPressure;
-
-    private Boolean maxPressureStatus;
-
-    private Boolean noiseLevel;
-
-    private LocalDateTime dateTime;
-
+    private Double flowRate;
+    private Boolean flowRateStatus;
+    private Boolean noiseLevelStatus;
     private Boolean status;
-
-    private String deviceStatus;
+    private LocalDateTime dateTime;
 }

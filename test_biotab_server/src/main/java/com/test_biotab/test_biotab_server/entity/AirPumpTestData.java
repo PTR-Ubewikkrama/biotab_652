@@ -19,53 +19,28 @@ public class AirPumpTestData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer testId;
-
     @ManyToOne
     @JoinColumn(name = "device_id", nullable = false)
     private Device device;
-
-    private Double idleVolLowTh;
-
-    private Double idleVolUpTh;
-
-    private Double idleCurUpTh;
-
-    private Double loadVolLowTh;
-
-    private Double loadVolUp;
-
-    private Double loadCurUpTh;
-
+    private Double idleVoltageLowThresh;
+    private Double idleVoltageUpThresh;
+    private Double idleCurrentUpThresh;
+    private Double loadVoltageLowThresh;
+    private Double loadVoltageUpThresh;
+    private Double loadCurrentUpThresh;
     private Double setPressure;
-
     private String serialNumber;
-
-    private Double idleVol;
-
-    private Boolean idleVolStatus;
-
+    private Double idleVoltage;
+    private Boolean idleVoltageStatus;
     private Double idleCurrent;
-
     private Boolean idleCurrentStatus;
-
     private Double loadVoltage;
-
     private Boolean loadVoltageStatus;
-
     private Double loadCurrent;
-
     private Boolean loadCurrentStatus;
-
-    private Double maxPressure;
-
-    private Boolean maxPressureStatus;
-
-    private Boolean noiseLevel;
-
-    private String deviceStatus;
-
-    private Boolean status;
-
+    private Double flowRate;
+    private Boolean flowRateStatus;
+    private Boolean noiseLevelStatus;
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime dateTime;
 }

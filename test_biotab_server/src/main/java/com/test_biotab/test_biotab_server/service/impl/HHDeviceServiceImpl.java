@@ -318,7 +318,8 @@ public class HHDeviceServiceImpl implements HHDeviceService {
                                                             .hhDeviceCode("UNKNOWN")
                                                             .componentCode(request.getCode())
                                                             .componentType("AIR_PUMP")
-                                                            .componentStatus(airPumpTest.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
+                                                            .componentStatus(airPumpTest.getFlowRateStatus() && airPumpTest.getIdleVoltageStatus() && airPumpTest.getIdleCurrentStatus() && airPumpTest.getLoadVoltageStatus() && airPumpTest.getLoadCurrentStatus()
+                                                                    ? "VERIFIED" : "NOT_VERIFIED")
                                                             .build())
                                                     .build());
                                         }

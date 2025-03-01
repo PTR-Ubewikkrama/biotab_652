@@ -211,6 +211,19 @@ public class TestServiceImpl implements TestService {
                 });
     }
 
+    private TypedQuery<ValveTestData> getCustomQueryValveTest(GetByPatternRequest request, UserDetails userDetails) {
+        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM ValveTestData v JOIN v.device d");
+
+        List<String> filterParts = new ArrayList<>();
+
+        calculateFilterParts(request, filterParts, userDetails);
+
+        TypedQuery<ValveTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
+                .append(" ORDER BY v.dateTime DESC").toString(), ValveTestData.class);
+
+        return exchangeDateFilterInQuery(query, request);
+    }
+
     private List<ValveTestDto> getValveDtoFromEntity(List<ValveTestData> valveTestData) {
         return valveTestData.stream()
                 .map(valveTest -> ValveTestDto.builder()
@@ -240,15 +253,114 @@ public class TestServiceImpl implements TestService {
                 .toList();
     }
 
-    private TypedQuery<ValveTestData> getCustomCountQueryValveTest(GetByPatternRequest request, UserDetails userDetails) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT COUNT(v) FROM ValveTestData v JOIN v.device d");
+    @Override
+    public Mono<ResponseEntity<CommonResponse>> addAirPumpTest(AirPumpTestAddRequest airPumpTestAddRequest) {
+        return Mono.just(airPumpTestAddRequest)
+                .flatMap(request -> deviceService.getDeviceByMac(request.getDeviceMac())
+                        .map(device -> toAirPumpTest(airPumpTestAddRequest, device))
+                        .map(airPumpTestRepository::save))
+                .switchIfEmpty(Mono.error(new RuntimeException("Device not found")))
+                .map(airPumpTest -> ResponseEntity.ok(CommonResponse.builder().message("Air pump test added successfully").status("SUCCESS").build()));
+    }
+
+    private AirPumpTestData toAirPumpTest(AirPumpTestAddRequest airPumpTestAddRequest, Device device) {
+        return AirPumpTestData.builder()
+                .device(device)
+                .idleVoltageLowThresh(airPumpTestAddRequest.getIdleVoltageLowThresh())
+                .idleVoltageUpThresh(airPumpTestAddRequest.getIdleVoltageUpThresh())
+                .idleCurrentUpThresh(airPumpTestAddRequest.getIdleCurrentUpThresh())
+                .loadVoltageLowThresh(airPumpTestAddRequest.getLoadVoltageLowThresh())
+                .loadVoltageUpThresh(airPumpTestAddRequest.getLoadVoltageUpThresh())
+                .loadCurrentUpThresh(airPumpTestAddRequest.getLoadCurrentUpThresh())
+                .setPressure(airPumpTestAddRequest.getSetPressure())
+                .serialNumber(airPumpTestAddRequest.getSerialNumber())
+                .idleVoltage(airPumpTestAddRequest.getIdleVoltage())
+                .idleVoltageStatus(airPumpTestAddRequest.getIdleVoltageStatus())
+                .idleCurrent(airPumpTestAddRequest.getIdleCurrent())
+                .idleCurrentStatus(airPumpTestAddRequest.getIdleCurrentStatus())
+                .loadVoltage(airPumpTestAddRequest.getLoadVoltage())
+                .loadVoltageStatus(airPumpTestAddRequest.getLoadVoltageStatus())
+                .loadCurrent(airPumpTestAddRequest.getLoadCurrent())
+                .loadCurrentStatus(airPumpTestAddRequest.getLoadCurrentStatus())
+                .flowRate(airPumpTestAddRequest.getFlowRate())
+                .flowRateStatus(airPumpTestAddRequest.getFlowRateStatus())
+                .noiseLevelStatus(airPumpTestAddRequest.getNoiseLevelStatus())
+                .dateTime(LocalDateTime.now())
+                .build();
+    }
+
+    @Override
+    public Mono<ResponseEntity<ApiResponse<GetAirPumpTestResponse>>> getAirPumpTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
+        return Mono.just(request)
+                .map(req -> {
+                    log.info("Getting air pump test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
+                    if (pageNo != null && pageNo.equals("all")) {
+                        return airPumpTestRepository.findByCustomQuery(getCustomQueryAirPumpTest(request, userDetails));
+                    } else {
+                        return airPumpTestRepository.findByCustomQuery(getCustomQueryAirPumpTest(request, userDetails), Integer.parseInt(pageNo) - 1);
+                    }
+                })
+                .flatMap(airPumpTestData -> {
+                    long total = airPumpTestData.size();
+                    long totalFailed = airPumpTestData.stream()
+                            .filter(data -> !data.getIdleVoltageStatus() || !data.getIdleCurrentStatus() || !data.getLoadVoltageStatus() || !data.getLoadCurrentStatus() || !data.getNoiseLevelStatus())
+                            .count();
+                    return Mono.just(ApiResponse.<GetAirPumpTestResponse>builder()
+                            .status("S1000")
+                            .statusDescription("Request successful")
+                            .data(GetAirPumpTestResponse.builder()
+                                    .airPumpTests(getAirPumpDtoFromEntity(airPumpTestData))
+                                    .totalRecords(total)
+                                    .totalFailed(totalFailed)
+                                    .build())
+                            .build());
+                })
+                .map(ResponseEntity::ok)
+                .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Air Pump Tests")));
+
+    }
+
+    private TypedQuery<AirPumpTestData> getCustomQueryAirPumpTest(GetByPatternRequest request, UserDetails userDetails) {
+        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM AirPumpTestData v JOIN v.device d");
+
         List<String> filterParts = new ArrayList<>();
 
         calculateFilterParts(request, filterParts, userDetails);
 
-        TypedQuery<ValveTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder).append(" ORDER BY v.dateTime DESC").toString(), ValveTestData.class);
+        TypedQuery<AirPumpTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
+                .append(" ORDER BY v.dateTime DESC").toString(), AirPumpTestData.class);
 
         return exchangeDateFilterInQuery(query, request);
+    }
+
+    private List<AirPumpTestDto> getAirPumpDtoFromEntity(List<AirPumpTestData> airPumpTestData) {
+        return airPumpTestData.stream()
+                .map(airPumpTest -> AirPumpTestDto.builder()
+                        .testId(airPumpTest.getTestId())
+                        .deviceId(airPumpTest.getDevice().getDeviceId())
+                        .idleVoltageLowThresh(airPumpTest.getIdleVoltageLowThresh())
+                        .idleVoltageUpThresh(airPumpTest.getIdleVoltageUpThresh())
+                        .idleCurrentUpThresh(airPumpTest.getIdleCurrentUpThresh())
+                        .loadVoltageLowThresh(airPumpTest.getLoadVoltageLowThresh())
+                        .loadVoltageUpThresh(airPumpTest.getLoadVoltageUpThresh())
+                        .loadCurrentUpThresh(airPumpTest.getLoadCurrentUpThresh())
+                        .setPressure(airPumpTest.getSetPressure())
+                        .serialNumber(airPumpTest.getSerialNumber())
+                        .idleVoltage(airPumpTest.getIdleVoltage())
+                        .idleVoltageStatus(airPumpTest.getIdleVoltageStatus())
+                        .idleCurrent(airPumpTest.getIdleCurrent())
+                        .idleCurrentStatus(airPumpTest.getIdleCurrentStatus())
+                        .loadVoltage(airPumpTest.getLoadVoltage())
+                        .loadVoltageStatus(airPumpTest.getLoadVoltageStatus())
+                        .loadCurrent(airPumpTest.getLoadCurrent())
+                        .loadCurrentStatus(airPumpTest.getLoadCurrentStatus())
+                        .flowRate(airPumpTest.getFlowRate())
+                        .flowRateStatus(airPumpTest.getFlowRateStatus())
+                        .noiseLevelStatus(airPumpTest.getNoiseLevelStatus())
+                        .status(airPumpTest.getIdleVoltageStatus() && airPumpTest.getIdleCurrentStatus() && airPumpTest.getLoadVoltageStatus() && airPumpTest.getLoadCurrentStatus() && airPumpTest.getNoiseLevelStatus())
+                        .dateTime(airPumpTest.getDateTime())
+                        .build())
+                .toList();
     }
 
     private static void calculateFilterParts(GetByPatternRequest request, List<String> filterParts, UserDetails userDetails) {
@@ -311,48 +423,6 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public Mono<ResponseEntity<CommonResponse>> addAirPumpTest(AirPumpTestAddRequest airPumpTestAddRequest) {
-        return Mono.just(airPumpTestAddRequest)
-                .flatMap(request -> deviceService.getDeviceByMac(request.getDeviceMac())
-                        .map(device -> toAirPumpTest(airPumpTestAddRequest, device))
-                        .map(airPumpTestRepository::save))
-                .switchIfEmpty(Mono.error(new RuntimeException("Device not found")))
-                .map(airPumpTest -> ResponseEntity.ok(CommonResponse.builder().message("Air pump test added successfully").status("SUCCESS").build()));
-    }
-
-    private AirPumpTestData toAirPumpTest(AirPumpTestAddRequest airPumpTestAddRequest, Device device) {
-        return AirPumpTestData.builder()
-                .device(device)
-                .idleVolLowTh(airPumpTestAddRequest.getIdleVolLowTh())
-                .idleVolUpTh(airPumpTestAddRequest.getIdleVolUpTh())
-                .idleCurUpTh(airPumpTestAddRequest.getIdleCurUpTh())
-                .loadVolLowTh(airPumpTestAddRequest.getLoadVolLowTh())
-                .loadVolUp(airPumpTestAddRequest.getLoadVolUp())
-                .loadCurUpTh(airPumpTestAddRequest.getLoadCurUpTh())
-                .setPressure(airPumpTestAddRequest.getSetPressure())
-                .serialNumber(airPumpTestAddRequest.getSerialNumber())
-                .idleVol(airPumpTestAddRequest.getIdleVol())
-                .idleVolStatus(airPumpTestAddRequest.getIdleVolStatus())
-                .idleCurrent(airPumpTestAddRequest.getIdleCurrent())
-                .idleCurrentStatus(airPumpTestAddRequest.getIdleCurrentStatus())
-                .loadVoltage(airPumpTestAddRequest.getLoadVoltage())
-                .loadVoltageStatus(airPumpTestAddRequest.getLoadVoltageStatus())
-                .loadCurrent(airPumpTestAddRequest.getLoadCurrent())
-                .loadCurrentStatus(airPumpTestAddRequest.getLoadCurrentStatus())
-                .maxPressure(airPumpTestAddRequest.getFlowRate())
-                .maxPressureStatus(airPumpTestAddRequest.getFlowRateStatus())
-                .noiseLevel(airPumpTestAddRequest.getNoiseLevel())
-                .deviceStatus(airPumpTestAddRequest.getDeviceStatus())
-                .status(airPumpTestAddRequest.getIdleVolStatus() &&
-                        airPumpTestAddRequest.getIdleCurrentStatus() &&
-                        airPumpTestAddRequest.getLoadVoltageStatus() &&
-                        airPumpTestAddRequest.getLoadCurrentStatus() &&
-                        airPumpTestAddRequest.getFlowRateStatus())
-                .dateTime(LocalDateTime.now())
-                .build();
-    }
-
-    @Override
     public Mono<ResponseEntity<CommonResponse>> addBatteryTest(BatteryTestAddRequest batteryTestAddRequest) {
         return Mono.just(batteryTestAddRequest)
                 .flatMap(request -> deviceService.getDeviceByMac(batteryTestAddRequest.getDeviceMac())
@@ -360,47 +430,6 @@ public class TestServiceImpl implements TestService {
                         .map(batteryTestRepository::save))
                 .switchIfEmpty(Mono.error(new RuntimeException("Device not found")))
                 .map(valueTest -> ResponseEntity.ok(CommonResponse.builder().message("Battery test added successfully").status("SUCCESS").build()));
-    }
-
-    @Override
-    public Mono<ResponseEntity<ApiResponse<GetAirPumpTestResponse>>> getAirPumpTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
-        return Mono.just(request)
-                .map(req -> {
-                    log.info("Getting air pump test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
-                    if (pageNo != null && pageNo.equals("all")) {
-                        return airPumpTestRepository.findByCustomQuery(getCustomQueryAirPumpTest(request, userDetails));
-                    } else {
-                        return airPumpTestRepository.findByCustomQuery(getCustomQueryAirPumpTest(request, userDetails), Integer.parseInt(pageNo) - 1);
-                    }
-                })
-                .flatMap(airPumpTestData -> Mono.just(airPumpTestRepository.countByCustomQuery(getCustomCountQueryAirPumpTest(request, userDetails)))
-                                .map(total -> ApiResponse.<GetAirPumpTestResponse>builder()
-                                        .status("S1000")
-                                        .statusDescription("Request successful")
-                                        .data(GetAirPumpTestResponse.builder()
-                                                .airPumpTests(getAirPumpDtoFromEntity(airPumpTestData))
-                                                .totalRecords(total)
-//                                        .totalFailed(airPumpTestRepository.countByCustomQuery(
-//                                                getCustomQueryForAirPumpFailedTests(request)
-//                                        ))
-                                                .build())
-                                        .build())
-                )
-                .map(ResponseEntity::ok)
-                .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Air Pump Tests")));
-
-    }
-
-    private TypedQuery<Long> getCustomQueryForAirPumpFailedTests(GetByPatternRequest request) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT COUNT(v) FROM AirPumpTestData v JOIN v.device d");
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, null);
-
-        TypedQuery<Long> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
-                .append(" AND v.status = false").toString(), Long.class);
-
-        return exchangeDateFilterInQuery(query, request);
     }
 
     @Override
@@ -832,19 +861,6 @@ public class TestServiceImpl implements TestService {
         return exchangeDateFilterInQuery(query, request);
     }
 
-    private TypedQuery<ValveTestData> getCustomQueryValveTest(GetByPatternRequest request, UserDetails userDetails) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM ValveTestData v JOIN v.device d");
-
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, userDetails);
-
-        TypedQuery<ValveTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
-                .append(" ORDER BY v.dateTime DESC").toString(), ValveTestData.class);
-
-        return exchangeDateFilterInQuery(query, request);
-    }
-
     private List<LatchButtonTestDto> getLatchButtonDtoFromEntity(List<LatchButtonTestData> latchButtonTestData) {
         return latchButtonTestData.stream()
                 .map(latchButtonTest -> LatchButtonTestDto.builder()
@@ -969,37 +985,6 @@ public class TestServiceImpl implements TestService {
         return exchangeDateFilterInQuery(query, request);
     }
 
-    private List<AirPumpTestDto> getAirPumpDtoFromEntity(List<AirPumpTestData> airPumpTestData) {
-        return airPumpTestData.stream()
-                .map(airPumpTest -> AirPumpTestDto.builder()
-                        .testId(airPumpTest.getTestId())
-                        .deviceId(airPumpTest.getDevice().getDeviceId())
-                        .idleVolLowTh(airPumpTest.getIdleVolLowTh())
-                        .idleVolUpTh(airPumpTest.getIdleVolUpTh())
-                        .idleCurUpTh(airPumpTest.getIdleCurUpTh())
-                        .loadVolLowTh(airPumpTest.getLoadVolLowTh())
-                        .loadVolUp(airPumpTest.getLoadVolUp())
-                        .loadCurUpTh(airPumpTest.getLoadCurUpTh())
-                        .setPressure(airPumpTest.getSetPressure())
-                        .serialNumber(airPumpTest.getSerialNumber())
-                        .idleVol(airPumpTest.getIdleVol())
-                        .idleVolStatus(airPumpTest.getIdleVolStatus())
-                        .idleCurrent(airPumpTest.getIdleCurrent())
-                        .idleCurrentStatus(airPumpTest.getIdleCurrentStatus())
-                        .loadVoltage(airPumpTest.getLoadVoltage())
-                        .loadVoltageStatus(airPumpTest.getLoadVoltageStatus())
-                        .loadCurrent(airPumpTest.getLoadCurrent())
-                        .loadCurrentStatus(airPumpTest.getLoadCurrentStatus())
-                        .maxPressure(airPumpTest.getMaxPressure())
-                        .maxPressureStatus(airPumpTest.getMaxPressureStatus())
-                        .noiseLevel(airPumpTest.getNoiseLevel())
-                        .deviceStatus(airPumpTest.getDeviceStatus())
-                        .status(airPumpTest.getStatus())
-                        .dateTime(airPumpTest.getDateTime())
-                        .build())
-                .toList();
-    }
-
     private BatteryTestData toValueTest(BatteryTestAddRequest batteryTestAddRequest, Device device) {
         return BatteryTestData.builder()
                 .device(device)
@@ -1013,30 +998,6 @@ public class TestServiceImpl implements TestService {
                 .status(batteryTestAddRequest.getBatteryStatus())
                 .dateTime(LocalDateTime.now())
                 .build();
-    }
-
-    private TypedQuery<AirPumpTestData> getCustomQueryAirPumpTest(GetByPatternRequest request, UserDetails userDetails) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM AirPumpTestData v JOIN v.device d");
-
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, userDetails);
-
-        TypedQuery<AirPumpTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
-                .append(" ORDER BY v.dateTime DESC").toString(), AirPumpTestData.class);
-
-        return exchangeDateFilterInQuery(query, request);
-    }
-
-    private TypedQuery<Long> getCustomCountQueryAirPumpTest(GetByPatternRequest request, UserDetails userDetails) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT COUNT(v) FROM AirPumpTestData v JOIN v.device d");
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, userDetails);
-
-        TypedQuery<Long> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder).toString(), Long.class);
-
-        return exchangeDateFilterInQuery(query, request);
     }
 
 }
