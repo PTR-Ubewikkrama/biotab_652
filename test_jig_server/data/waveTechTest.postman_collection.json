@@ -1,0 +1,154 @@
+{
+	"info": {
+		"_postman_id": "bca94335-76e5-4938-b2ff-77a0e800eca2",
+		"name": "waveTechTest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10845627"
+	},
+	"item": [
+		{
+			"name": "Add Air Pump Test",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"deviceId\": 1,\n    \"idleVolLowTh\": 0.5,\n    \"idleVolUpTh\": 1.0,\n    \"idleCurUpTh\": 2.0,\n    \"loadVolLowTh\": 0.7,\n    \"loadVolUp\": 1.5,\n    \"loadCurUpTh\": 3.0,\n    \"setPressure\": 10.0,\n    \"serialNumber\": \"ABC123\",\n    \"idleVol\": 2.5,\n    \"idleVolStatus\": true,\n    \"idleCurrent\": 1.8,\n    \"idleCurrentStatus\": false,\n    \"loadVoltage\": 12.0,\n    \"loadVoltageStatus\": true,\n    \"loadCurrent\": 3.5,\n    \"loadCurrentStatus\": false,\n    \"flowRate\": 20.0,\n    \"flowRateStatus\": true,\n    \"noiseLevel\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/wave_tech/api/v1/test/add/air-pump-test",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"wave_tech",
+						"api",
+						"v1",
+						"test",
+						"add",
+						"air-pump-test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Power Pcb",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"deviceId\": 1,\n  \"powerGroundResistanceUpLimit\": 10.5,\n  \"serialNumber\": \"ABC123\",\n  \"dcBarrelJackConnectionStatus\": true,\n  \"usbCPowerOutletConnectivity\": false,\n  \"powerGroundResistance\": 8.2,\n  \"powerGroundResistanceStatus\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/wave_tech/api/v1/test/add/power-pcb-test",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"wave_tech",
+						"api",
+						"v1",
+						"test",
+						"add",
+						"power-pcb-test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Power supply test",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"deviceId\": 1,\n  \"idleVolLowTh\": 0.5,\n  \"idleVolUpTh\": 1.0,\n  \"loadVolLowTh\": 0.7,\n  \"loadVolUpTh\": 1.5,\n  \"loadCurUpTh\": 2.0,\n  \"serialNumber\": \"ABC123\",\n  \"idleVol\": 2.5,\n  \"idleVolStatus\": true,\n  \"loadVol\": 12.0,\n  \"loadVolStatus\": false,\n  \"loadCurrent\": 3.5,\n  \"loadCurrentStatus\": true,\n  \"operatingPower\": 50.0,\n  \"noiseLevel\": false\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/wave_tech/api/v1/test/add/power-supply-test",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"wave_tech",
+						"api",
+						"v1",
+						"test",
+						"add",
+						"power-supply-test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Valve test",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"deviceId\": 1,\n  \"idleVolLowTh\": 0.5,\n  \"idleVolUpTh\": 1.0,\n  \"idleCurUpTh\": 2.0,\n  \"loadVolLowTh\": 0.7,\n  \"loadVolLowUp\": 1.5,\n  \"loadCurUpTh\": 3.0,\n  \"setPressure\": 10.0,\n  \"serialNumber\": \"ABC123\",\n  \"idleVol\": 2.5,\n  \"idleVolStatus\": true,\n  \"idleCurrent\": 1.8,\n  \"idleCurrentStatus\": false,\n  \"coilResistance\": 4.2,\n  \"operatingCurrent\": 5.5,\n  \"peakPower\": 30.0,\n  \"averagePower\": 25.0,\n  \"flowRate\": 20.0,\n  \"flowRateStatus\": true\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/wave_tech/api/v1/test/add/valve-test",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"wave_tech",
+						"api",
+						"v1",
+						"test",
+						"add",
+						"valve-test"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

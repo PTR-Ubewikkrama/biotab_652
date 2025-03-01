@@ -1,0 +1,59 @@
+<configuration>
+
+    <property name="LOG_PATH" value="./LOGS/test-jig-server/"/>
+    <property name="LOG_PATTERN" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+
+    <appender name="debug-appender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/test-jig-server-debug.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>${LOG_PATTERN}</Pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/archived/test-jig-server-debug-%d{yyyy-MM-dd-HH}.gz</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>8GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="info-appender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/test-jig-server-info.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>${LOG_PATTERN}</Pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/archived/test-jig-server-info-%d{yyyy-MM-dd-HH}.gz</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>8GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="error-appender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/test-jig-server-error.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>${LOG_PATTERN}</Pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/archived/test-jig-server-error-%d{yyyy-MM-dd-HH}.gz</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>8GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <root level="DEBUG">
+        <appender-ref ref="debug-appender"/>
+    </root>
+
+    <logger name="com.kiu" level="INFO">
+        <appender-ref ref="info-appender"/>
+        <appender-ref ref="error-appender"/>
+    </logger>
+
+    <!-- Set the logging level for specific packages -->
+    <logger name="org.springframework.data.jpa" level="ERROR" />
+    <logger name="org.hibernate" level="ERROR" />
+    <logger name="org.springframework.orm.jpa" level="ERROR" />
+    <logger name="org.springframework.boot.autoconfigure" level="ERROR" />
+    <logger name="com.zaxxer.hikari" level="ERROR" />
+    <logger name="io.netty" level="ERROR" />
+
+</configuration>

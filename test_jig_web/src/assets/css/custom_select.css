@@ -1,0 +1,4 @@
+.react-select__menu {
+    max-height: 120px; /* Set the maximum height to display only three values */
+    overflow-y: auto; /* Enable vertical scrollbar if more values exist */
+  }
