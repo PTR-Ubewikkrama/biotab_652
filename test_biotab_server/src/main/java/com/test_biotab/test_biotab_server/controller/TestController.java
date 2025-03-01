@@ -45,6 +45,27 @@ public class TestController {
                 });
     }
 
+    @PostMapping("/add/valve-test")
+    public Mono<ResponseEntity<CommonResponse>> addValveTest(@RequestBody ValveTestAddRequest valveTestAddRequest) {
+        if (!valveTestAddRequest.getHashKey().equals(hashKey)) {
+            return sendInvalidResponse(valveTestAddRequest.getHashKey());
+        }
+        log.info("Request received to add valve test: {}", valveTestAddRequest);
+        return testService.addValveTest(valveTestAddRequest);
+    }
+
+    @PostMapping("/get/valve-test/{pageNo}")
+    Mono<ResponseEntity<ApiResponse<GetValveTestResponse>>> getValveTest(@AuthenticationPrincipal Mono<UserDetails> principal,
+                                                                         @RequestBody GetByPatternRequest request,
+                                                                         @PathVariable("pageNo") String pageNo) {
+        log.info("Received request to get valve test with pattern: {}", request.getFilterValue());
+        return principal
+                .flatMap(userDetails -> {
+                    log.info("Getting valve test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
+                    request.setRequestType("VALVE");
+                    return testService.getValveTest(request, userDetails, pageNo);
+                });
+    }
 
     @PostMapping("/add/air-pump-test")
     public Mono<ResponseEntity<CommonResponse>> addAirPumpTest(@RequestBody AirPumpTestAddRequest airPumpTestAddRequest) {
@@ -140,28 +161,6 @@ public class TestController {
                     log.info("Getting latch button test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
                     request.setRequestType("LATCH_BUTTON");
                     return testService.getLatchButtonTest(request, userDetails, pageNo);
-                });
-    }
-
-    @PostMapping("/add/valve-test")
-    public Mono<ResponseEntity<CommonResponse>> addValveTest(@RequestBody ValveTestAddRequest valveTestAddRequest) {
-        if (!valveTestAddRequest.getHashKey().equals(hashKey)) {
-            return sendInvalidResponse(valveTestAddRequest.getHashKey());
-        }
-        log.info("Request received to add valve test: {}", valveTestAddRequest);
-        return testService.addValveTest(valveTestAddRequest);
-    }
-
-    @PostMapping("/get/valve-test/{pageNo}")
-    Mono<ResponseEntity<ApiResponse<GetValveTestResponse>>> getValveTest(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                         @RequestBody GetByPatternRequest request,
-                                                                         @PathVariable("pageNo") String pageNo) {
-        log.info("Received request to get valve test with pattern: {}", request.getFilterValue());
-        return principal
-                .flatMap(userDetails -> {
-                    log.info("Getting valve test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
-                    request.setRequestType("VALVE");
-                    return testService.getValveTest(request, userDetails, pageNo);
                 });
     }
 

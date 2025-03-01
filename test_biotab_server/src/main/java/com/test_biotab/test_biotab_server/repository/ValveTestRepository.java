@@ -14,7 +14,5 @@ public interface ValveTestRepository {
 
     Long countByCustomQuery(TypedQuery<Long> query);
 
-    void deleteById(int l);
-
     ValveTestData findByCode(String code);
 }

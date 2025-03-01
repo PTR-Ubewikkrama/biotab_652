@@ -303,7 +303,7 @@ public class HHDeviceServiceImpl implements HHDeviceService {
                                                             .hhDeviceCode("UNKNOWN")
                                                             .componentCode(request.getCode())
                                                             .componentType("VALVE")
-                                                            .componentStatus(valveTest.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
+                                                            .componentStatus(valveTest.getFlowRateStatus() && valveTest.getIdleVoltageStatus() && valveTest.getIdleCurrentStatus() ? "VERIFIED" : "NOT_VERIFIED")
                                                             .build())
                                                     .build());
                                         }

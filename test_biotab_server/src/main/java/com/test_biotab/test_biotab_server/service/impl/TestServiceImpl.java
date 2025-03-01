@@ -79,6 +79,7 @@ public class TestServiceImpl implements TestService {
                     if (pageNo != null && pageNo.equals("all")) {
                         return powerSupplyTestRepository.findByCustomQuery(getCustomQueryPowerSupplyTest(request, userDetails));
                     } else {
+                        assert pageNo != null;
                         return powerSupplyTestRepository.findByCustomQuery(getCustomQueryPowerSupplyTest(request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
@@ -136,8 +137,116 @@ public class TestServiceImpl implements TestService {
 
         calculateFilterParts(request, filterParts, userDetails);
 
-        TypedQuery<PowerSupplyTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
-                .append(" ORDER BY v.dateTime DESC").toString(), PowerSupplyTestData.class);
+        TypedQuery<PowerSupplyTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder).append(" ORDER BY v.dateTime DESC").toString(), PowerSupplyTestData.class);
+
+        return exchangeDateFilterInQuery(query, request);
+    }
+
+    @Override
+    public Mono<ResponseEntity<CommonResponse>> addValveTest(ValveTestAddRequest valveTestAddRequest) {
+        return Mono.just(valveTestAddRequest)
+                .flatMap(request -> deviceService.getDeviceByMac(valveTestAddRequest.getDeviceMac())
+                        .map(device -> toValveTest(valveTestAddRequest, device))
+                        .map(valveTestRepository::save))
+                .switchIfEmpty(Mono.error(new RuntimeException("Device not found")))
+                .map(valveTest -> ResponseEntity.ok(CommonResponse.builder().message("Valve test added successfully").status("SUCCESS").build()));
+    }
+
+    private ValveTestData toValveTest(ValveTestAddRequest valveTestAddRequest, Device device) {
+        return ValveTestData.builder()
+                .device(device)
+                .idleVoltageLowThresh(valveTestAddRequest.getIdleVoltageLowThresh())
+                .idleVoltageUpThresh(valveTestAddRequest.getIdleVoltageUpThresh())
+                .idleCurrentUpThresh(valveTestAddRequest.getIdleCurrentUpThresh())
+                .loadVoltageLowThresh(valveTestAddRequest.getLoadVoltageLowThresh())
+                .loadVoltageUpThresh(valveTestAddRequest.getLoadVoltageUpThresh())
+                .loadCurrentUpThresh(valveTestAddRequest.getLoadCurrentUpThresh())
+                .setPressure(valveTestAddRequest.getSetPressure())
+                .serialNumber(valveTestAddRequest.getSerialNumber())
+                .idleVoltage(valveTestAddRequest.getIdleVoltage())
+                .idleVoltageStatus(valveTestAddRequest.getIdleVoltageStatus())
+                .idleCurrent(valveTestAddRequest.getIdleCurrent())
+                .idleCurrentStatus(valveTestAddRequest.getIdleCurrentStatus())
+                .coilResistance(valveTestAddRequest.getCoilResistance())
+                .operatingCurrent(valveTestAddRequest.getOperatingCurrent())
+                .peakPower(valveTestAddRequest.getPeakPower())
+                .averagePower(valveTestAddRequest.getAveragePower())
+                .flowRate(valveTestAddRequest.getFlowRate())
+                .flowRateStatus(valveTestAddRequest.getFlowRateStatus())
+                .dateTime(LocalDateTime.now())
+                .build();
+    }
+
+    @Override
+    public Mono<ResponseEntity<ApiResponse<GetValveTestResponse>>> getValveTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
+        return Mono.just(request)
+                .map(req -> {
+                    log.info("Getting valve test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
+                    if (pageNo != null && pageNo.equals("all")) {
+                        return valveTestRepository.findByCustomQuery(getCustomQueryValveTest(request, userDetails));
+                    } else {
+                        assert pageNo != null;
+                        return valveTestRepository.findByCustomQuery(getCustomQueryValveTest(request, userDetails), Integer.parseInt(pageNo) - 1);
+                    }
+                })
+                .flatMap(valveTestData -> {
+                    long total = valveTestData.size();
+                    long totalFailed = valveTestData.stream()
+                            .filter(data -> !data.getIdleVoltageStatus() || !data.getIdleCurrentStatus() || !data.getFlowRateStatus())
+                            .count();
+                    return Mono.just(ApiResponse.<GetValveTestResponse>builder()
+                            .status("S1000")
+                            .statusDescription("Request successful")
+                            .data(GetValveTestResponse.builder()
+                                    .valveTests(getValveDtoFromEntity(valveTestData))
+                                    .totalRecords(total)
+                                    .totalFailed(totalFailed)
+                                    .build())
+                            .build());
+                })
+                .map(ResponseEntity::ok)
+                .onErrorResume(e -> {
+                    log.error("Error getting valve tests", e);
+                    return Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get valve Tests"));
+                });
+    }
+
+    private List<ValveTestDto> getValveDtoFromEntity(List<ValveTestData> valveTestData) {
+        return valveTestData.stream()
+                .map(valveTest -> ValveTestDto.builder()
+                        .testId(valveTest.getTestId())
+                        .deviceId(valveTest.getDevice().getDeviceId())
+                        .idleVoltageLowThresh(valveTest.getIdleVoltageLowThresh())
+                        .idleVoltageUpThresh(valveTest.getIdleVoltageUpThresh())
+                        .idleCurrentUpThresh(valveTest.getIdleCurrentUpThresh())
+                        .loadVoltageLowThresh(valveTest.getLoadVoltageLowThresh())
+                        .loadVoltageUpThresh(valveTest.getLoadVoltageUpThresh())
+                        .loadCurrentUpThresh(valveTest.getLoadCurrentUpThresh())
+                        .setPressure(valveTest.getSetPressure())
+                        .serialNumber(valveTest.getSerialNumber())
+                        .idleVoltage(valveTest.getIdleVoltage())
+                        .idleVoltageStatus(valveTest.getIdleVoltageStatus())
+                        .idleCurrent(valveTest.getIdleCurrent())
+                        .idleCurrentStatus(valveTest.getIdleCurrentStatus())
+                        .coilResistance(valveTest.getCoilResistance())
+                        .operatingCurrent(valveTest.getOperatingCurrent())
+                        .peakPower(valveTest.getPeakPower())
+                        .averagePower(valveTest.getAveragePower())
+                        .flowRate(valveTest.getFlowRate())
+                        .flowRateStatus(valveTest.getFlowRateStatus())
+                        .status(valveTest.getIdleVoltageStatus() && valveTest.getIdleCurrentStatus() && valveTest.getFlowRateStatus())
+                        .dateTime(valveTest.getDateTime())
+                        .build())
+                .toList();
+    }
+
+    private TypedQuery<ValveTestData> getCustomCountQueryValveTest(GetByPatternRequest request, UserDetails userDetails) {
+        StringBuilder queryBuilder = new StringBuilder("SELECT COUNT(v) FROM ValveTestData v JOIN v.device d");
+        List<String> filterParts = new ArrayList<>();
+
+        calculateFilterParts(request, filterParts, userDetails);
+
+        TypedQuery<ValveTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder).append(" ORDER BY v.dateTime DESC").toString(), ValveTestData.class);
 
         return exchangeDateFilterInQuery(query, request);
     }
@@ -464,80 +573,6 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public Mono<ResponseEntity<CommonResponse>> addValveTest(ValveTestAddRequest valveTestAddRequest) {
-        return Mono.just(valveTestAddRequest)
-                .flatMap(request -> deviceService.getDeviceByMac(valveTestAddRequest.getDeviceMac())
-                        .map(device -> toValveTest(valveTestAddRequest, device))
-                        .map(valveTestRepository::save))
-                .switchIfEmpty(Mono.error(new RuntimeException("Device not found")))
-                .map(valveTest -> ResponseEntity.ok(CommonResponse.builder().message("Valve test added successfully").status("SUCCESS").build()));
-    }
-
-    private ValveTestData toValveTest(ValveTestAddRequest valveTestAddRequest, Device device) {
-        return ValveTestData.builder()
-                .device(device)
-                .qrCode(valveTestAddRequest.getQrCode())
-                .airChamberLoadingPressure(valveTestAddRequest.getAirChamberLoadingPressure())
-                .airChamberStatus(valveTestAddRequest.isAirChamberStatus())
-                .v1OutletPressureAfter10MsOnTime(valveTestAddRequest.getV1OutletPressureAfter10MsOnTime())
-                .v1OutletOnStatus(valveTestAddRequest.isV1OutletOnStatus())
-                .v1OutletPressureAfter10MsOffTime(valveTestAddRequest.getV1OutletPressureAfter10MsOffTime())
-                .v1OutletOffStatus(valveTestAddRequest.isV1OutletOffStatus())
-                .v2OutletPressureAfter10MsOnTime(valveTestAddRequest.getV2OutletPressureAfter10MsOnTime())
-                .v2OutletOnStatus(valveTestAddRequest.isV2OutletOnStatus())
-                .v2OutletPressureAfter10MsOffTime(valveTestAddRequest.getV2OutletPressureAfter10MsOffTime())
-                .v2OutletOffStatus(valveTestAddRequest.isV2OutletOffStatus())
-                .v3OutletPressureAfter10MsOnTime(valveTestAddRequest.getV3OutletPressureAfter10MsOnTime())
-                .v3OutletOnStatus(valveTestAddRequest.isV3OutletOnStatus())
-                .v3OutletPressureAfter10MsOffTime(valveTestAddRequest.getV3OutletPressureAfter10MsOffTime())
-                .v3OutletOffStatus(valveTestAddRequest.isV3OutletOffStatus())
-                .valveStatus(valveTestAddRequest.isValveStatus())
-                .status(valveTestAddRequest.isValveStatus())
-                .dateTime(LocalDateTime.now())
-                .build();
-    }
-
-    @Override
-    public Mono<ResponseEntity<ApiResponse<GetValveTestResponse>>> getValveTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
-        return Mono.just(request)
-                .map(req -> {
-                    log.info("Getting valve test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
-                    if (pageNo != null && pageNo.equals("all")) {
-                        return valveTestRepository.findByCustomQuery(getCustomQueryValveTest(request, userDetails));
-                    } else {
-                        return valveTestRepository.findByCustomQuery(getCustomQueryValveTest(request, userDetails), Integer.parseInt(pageNo) - 1);
-                    }
-                })
-                .flatMap(valveTestData -> Mono.just(valveTestRepository.countByCustomQuery(getCustomCountQueryValveTest(request, userDetails)))
-                                .map(total -> ApiResponse.<GetValveTestResponse>builder()
-                                        .status("S1000")
-                                        .statusDescription("Request successful")
-                                        .data(GetValveTestResponse.builder()
-                                                .valveTests(getValveDtoFromEntity(valveTestData))
-                                                .totalRecords(total)
-//                                        .totalFailed(valveTestRepository.countByCustomQuery(
-//                                                getCustomQueryForValveFailedTests(request)
-//                                        ))
-                                                .build())
-                                        .build())
-                )
-                .map(ResponseEntity::ok)
-                .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Valve Tests")));
-    }
-
-    private TypedQuery<Long> getCustomQueryForValveFailedTests(GetByPatternRequest request) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT COUNT(v) FROM ValveTestData v JOIN v.device d");
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, null);
-
-        TypedQuery<Long> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
-                .append(" AND v.status = false").toString(), Long.class);
-
-        return exchangeDateFilterInQuery(query, request);
-    }
-
-    @Override
     public Mono<ResponseEntity<CommonResponse>> addPcbTest(PcbTestAddRequest pcbTestAddRequest) {
         return Mono.just(pcbTestAddRequest)
                 .map(device -> toPcbTest(pcbTestAddRequest))
@@ -793,44 +828,6 @@ public class TestServiceImpl implements TestService {
 
         TypedQuery<PcbTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
                 .append(" ORDER BY v.dateTime DESC").toString(), PcbTestData.class);
-
-        return exchangeDateFilterInQuery(query, request);
-    }
-
-    private List<ValveTestDto> getValveDtoFromEntity(List<ValveTestData> valveTestData) {
-        return valveTestData.stream()
-                .map(valveTest -> ValveTestDto.builder()
-                        .testId(valveTest.getTestId())
-                        .deviceId(valveTest.getDevice().getDeviceId())
-                        .qrCode(valveTest.getQrCode())
-                        .airChamberLoadingPressure(valveTest.getAirChamberLoadingPressure())
-                        .airChamberStatus(valveTest.isAirChamberStatus())
-                        .v1OutletPressureAfter10MsOnTime(valveTest.getV1OutletPressureAfter10MsOnTime())
-                        .v1OutletOnStatus(valveTest.isV1OutletOnStatus())
-                        .v1OutletPressureAfter10MsOffTime(valveTest.getV1OutletPressureAfter10MsOffTime())
-                        .v1OutletOffStatus(valveTest.isV1OutletOffStatus())
-                        .v2OutletPressureAfter10MsOnTime(valveTest.getV2OutletPressureAfter10MsOnTime())
-                        .v2OutletOnStatus(valveTest.isV2OutletOnStatus())
-                        .v2OutletPressureAfter10MsOffTime(valveTest.getV2OutletPressureAfter10MsOffTime())
-                        .v2OutletOffStatus(valveTest.isV2OutletOffStatus())
-                        .v3OutletPressureAfter10MsOnTime(valveTest.getV3OutletPressureAfter10MsOnTime())
-                        .v3OutletOnStatus(valveTest.isV3OutletOnStatus())
-                        .v3OutletPressureAfter10MsOffTime(valveTest.getV3OutletPressureAfter10MsOffTime())
-                        .v3OutletOffStatus(valveTest.isV3OutletOffStatus())
-                        .valveStatus(valveTest.isValveStatus())
-                        .status(valveTest.isValveStatus())
-                        .dateTime(valveTest.getDateTime())
-                        .build())
-                .toList();
-    }
-
-    private TypedQuery<Long> getCustomCountQueryValveTest(GetByPatternRequest request, UserDetails userDetails) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT COUNT(v) FROM ValveTestData v JOIN v.device d");
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, userDetails);
-
-        TypedQuery<Long> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder).toString(), Long.class);
 
         return exchangeDateFilterInQuery(query, request);
     }

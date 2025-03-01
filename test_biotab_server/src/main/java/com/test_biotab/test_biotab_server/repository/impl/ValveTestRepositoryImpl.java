@@ -48,12 +48,6 @@ public class ValveTestRepositoryImpl implements ValveTestRepository {
     }
 
     @Override
-    public void deleteById(int l) {
-        ValveTestData ValveTestData = entityManager.find(ValveTestData.class, l);
-        entityManager.remove(ValveTestData);
-    }
-
-    @Override
     public ValveTestData findByCode(String code) {
         log.info("Finding ValveTestData by code: {}", code);
         TypedQuery<ValveTestData> query = entityManager.createQuery("SELECT v FROM ValveTestData v WHERE v.qrCode = :code AND v.status = :status", ValveTestData.class);

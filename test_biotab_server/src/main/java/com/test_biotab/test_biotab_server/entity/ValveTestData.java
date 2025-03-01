@@ -19,45 +19,27 @@ public class ValveTestData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer testId;
-
     @ManyToOne
     @JoinColumn(name = "device_id")
     private Device device;
-
-    private String qrCode;
-
-    private double airChamberLoadingPressure;
-
-    private boolean airChamberStatus;
-
-    private double v1OutletPressureAfter10MsOnTime;
-
-    private boolean v1OutletOnStatus;
-
-    private double v1OutletPressureAfter10MsOffTime;
-
-    private boolean v1OutletOffStatus;
-
-    private double v2OutletPressureAfter10MsOnTime;
-
-    private boolean v2OutletOnStatus;
-
-    private double v2OutletPressureAfter10MsOffTime;
-
-    private boolean v2OutletOffStatus;
-
-    private double v3OutletPressureAfter10MsOnTime;
-
-    private boolean v3OutletOnStatus;
-
-    private double v3OutletPressureAfter10MsOffTime;
-
-    private boolean v3OutletOffStatus;
-
-    private boolean valveStatus;
-
-    private Boolean status;
-
+    private Double idleVoltageLowThresh;
+    private Double idleVoltageUpThresh;
+    private Double idleCurrentUpThresh;
+    private Double loadVoltageLowThresh;
+    private Double loadVoltageUpThresh;
+    private Double loadCurrentUpThresh;
+    private Double setPressure;
+    private String serialNumber;
+    private Double idleVoltage;
+    private Boolean idleVoltageStatus;
+    private Double idleCurrent;
+    private Boolean idleCurrentStatus;
+    private Double coilResistance;
+    private Double operatingCurrent;
+    private Double peakPower;
+    private Double averagePower;
+    private Double flowRate;
+    private Boolean flowRateStatus;
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime dateTime;
 }
