@@ -45,8 +45,8 @@ public class SecurityConfig {
                 .authenticationManager(reactiveAuthenticationManager)
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
                 .authorizeExchange(it -> it
-                        .pathMatchers(HttpMethod.POST, "/wave_tech/api/v1/login").permitAll()
-                        .pathMatchers(HttpMethod.POST, "/wave_tech/api/v1/test/**").permitAll()
+                        .pathMatchers(HttpMethod.POST, "/biotab_e652/api/v1/login").permitAll()
+                        .pathMatchers(HttpMethod.POST, "/biotab_e652/api/v1/test/**").permitAll()
                         .pathMatchers("/users/{user}/**").access(this::currentUserMatchesPath)
                         .anyExchange().authenticated()
                 )

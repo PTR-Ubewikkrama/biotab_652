@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/wave_tech/api/v1/dashboard")
+@RequestMapping("/biotab_e652/api/v1/dashboard")
 public class DashboardController {
     private final DashboardService dashboardService;
 

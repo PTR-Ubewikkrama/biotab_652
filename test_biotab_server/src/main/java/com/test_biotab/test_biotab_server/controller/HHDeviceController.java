@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/wave_tech/api/v1/hh_device")
+@RequestMapping("/biotab_e652/api/v1/hh_device")
 public class HHDeviceController {
 
     private final HHDeviceService service;

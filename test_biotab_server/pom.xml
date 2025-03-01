@@ -8,7 +8,7 @@
 		<version>3.3.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.wave_tech</groupId>
+	<groupId>com.biotab_e652</groupId>
 	<artifactId>test_biotab_server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>test_biotab_server</name>
