@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
+import java.util.Arrays;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -26,6 +28,7 @@ public class DashboardServiceImpl implements DashboardService {
     private final AirPumpV2TestRepository airPumpV2TestRepository;
     private final PowerPCBV2TestRepository powerPCBV2TestRepository;
     private final PowerSupplyV2TestRepository powerSupplyV2TestRepository;
+    private final OpValveTestRepository opValveTestRepository;
     private final HHDeviceRepository hhDeviceRepository;
     private final FinalAssemblyRepository finalAssemblyRepository;
 
@@ -35,6 +38,7 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public Mono<ResponseEntity<ApiResponse<DashBoardSummaryResponse>>> getSummary(UserDetails userDetails) {
         return Mono.zip(
+                Arrays.asList(
                         Mono.zip(
                                 Mono.fromSupplier(() -> valveTestRepository.countByCustomQuery(entityManager.createQuery(
                                         "SELECT COUNT(v) FROM ValveTestData v WHERE v.status = true",
@@ -55,7 +59,6 @@ public class DashboardServiceImpl implements DashboardService {
                                         Long.class
                                 )))
                         ),
-
                         Mono.zip(
                                 Mono.fromSupplier(() -> airPumpTestRepository.countByCustomQuery(entityManager.createQuery(
                                         "SELECT COUNT(a) FROM AirPumpTestData a WHERE a.status = true",
@@ -115,16 +118,28 @@ public class DashboardServiceImpl implements DashboardService {
                                         "SELECT COUNT(p) FROM PowerSupplyV2TestData p WHERE p.status = false",
                                         Long.class
                                 )))
+                        ),
+                        Mono.zip(
+                                Mono.fromSupplier(() -> opValveTestRepository.countByCustomQuery(entityManager.createQuery(
+                                        "SELECT COUNT(p) FROM OpValveTestData p WHERE p.status = true",
+                                        Long.class
+                                ))),
+                                Mono.fromSupplier(() -> opValveTestRepository.countByCustomQuery(entityManager.createQuery(
+                                        "SELECT COUNT(p) FROM OpValveTestData p WHERE p.status = false",
+                                        Long.class
+                                )))
                         )
-                ).map(results -> {
-                    Tuple2<Long, Long> valueTestCounts = results.getT1();
-                    Tuple2<Long, Long> powerSupplyTestCounts = results.getT2();
-                    Tuple2<Long, Long> airPumpTestCounts = results.getT3();
-                    Tuple2<Long, Long> t8Counts = results.getT4();
-                    Tuple2<Long, Long> powerPCBTestCounts = results.getT5();
-                    Tuple2<Long, Long> airPumpV2TestCounts = results.getT6();
-                    Tuple2<Long, Long> powerPCBV2TestCounts = results.getT7();
-                    Tuple2<Long, Long> powerSupplyV2TestCounts = results.getT8();
+                ),
+                objects -> {
+                    Tuple2<Long, Long> valueTestCounts = (Tuple2<Long, Long>) objects[0];
+                    Tuple2<Long, Long> powerSupplyTestCounts = (Tuple2<Long, Long>) objects[1];
+                    Tuple2<Long, Long> airPumpTestCounts = (Tuple2<Long, Long>) objects[2];
+                    Tuple2<Long, Long> t8Counts = (Tuple2<Long, Long>) objects[3];
+                    Tuple2<Long, Long> powerPCBTestCounts = (Tuple2<Long, Long>) objects[4];
+                    Tuple2<Long, Long> airPumpV2TestCounts = (Tuple2<Long, Long>) objects[5];
+                    Tuple2<Long, Long> powerPCBV2TestCounts = (Tuple2<Long, Long>) objects[6];
+                    Tuple2<Long, Long> powerSupplyV2TestCounts = (Tuple2<Long, Long>) objects[7];
+                    Tuple2<Long, Long> opValveTestCounts = (Tuple2<Long, Long>) objects[8];
 
                     Long totalSuccessValueTest = valueTestCounts.getT1();
                     Long totalFailedValueTest = valueTestCounts.getT2();
@@ -150,6 +165,9 @@ public class DashboardServiceImpl implements DashboardService {
                     Long totalSuccessPowerSupplyV2Test = powerSupplyV2TestCounts.getT1();
                     Long totalFailedPowerSupplyV2Test = powerSupplyV2TestCounts.getT2();
 
+                    Long totalSuccessOpValveTest = opValveTestCounts.getT1();
+                    Long totalFailedOpValveTest = opValveTestCounts.getT2();
+
                     return ResponseEntity.ok(
                             ApiResponse.<DashBoardSummaryResponse>builder()
                                     .status("S1000")
@@ -169,22 +187,24 @@ public class DashboardServiceImpl implements DashboardService {
                                             .totalSuccessPowerPcbV2Test(totalSuccessPowerPCBV2Test)
                                             .totalSuccessPowerSupplyV2Test(totalSuccessPowerSupplyV2Test)
                                             .totalFailedPowerSupplyV2Test(totalFailedPowerSupplyV2Test)
+                                            .totalFailedOpValveTest(totalFailedOpValveTest)
+                                            .totalSuccessOpValveTest(totalSuccessOpValveTest)
                                             .totalFinalAssembly(totalFinalAssembly)
                                             .totalHHDevice(totalHHDevice)
                                             .build()
                                     )
                                     .build()
                     );
-                })
-                .onErrorResume(
-                        throwable -> {
-                            log.error("Error occurred while fetching dashboard summary", throwable);
-                            return Mono.just(ResponseEntity.status(500).body(ApiResponse.<DashBoardSummaryResponse>builder()
-                                    .status("E2005")
-                                    .statusDescription("Error occurred while fetching dashboard summary")
-                                    .build()));
-                        }
-                );
+                }
+        ).onErrorResume(
+                throwable -> {
+                    log.error("Error occurred while fetching dashboard summary", throwable);
+                    return Mono.just(ResponseEntity.status(500).body(ApiResponse.<DashBoardSummaryResponse>builder()
+                            .status("E2005")
+                            .statusDescription("Error occurred while fetching dashboard summary")
+                            .build()));
+                }
+        );
     }
 
 

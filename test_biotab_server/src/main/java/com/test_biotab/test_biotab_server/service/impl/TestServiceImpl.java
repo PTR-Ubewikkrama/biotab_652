@@ -35,6 +35,7 @@ public class TestServiceImpl implements TestService {
     private final AirPumpV2TestRepository airPumpV2TestRepository;
     private final PowerPCBV2TestRepository powerPCBV2TestRepository;
     private final PowerSupplyV2TestRepository powerSupplyV2TestRepository;
+    private final OpValveTestRepository opValveTestRepository;
     private final DeviceService deviceService;
 
     @PersistenceContext
@@ -745,6 +746,102 @@ public class TestServiceImpl implements TestService {
                         .noiseLevel(powerSupplyV2Test.getNoiseLevel())
                         .status(powerSupplyV2Test.getStatus())
                         .dateTime(powerSupplyV2Test.getDateTime())
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public Mono<ResponseEntity<CommonResponse>> addOpValveTest(OpValveTestAddRequest opValveTestAddRequest) {
+        return Mono.just(opValveTestAddRequest)
+                .flatMap(request -> deviceService.getDeviceByMac(opValveTestAddRequest.getDeviceMac())
+                        .map(device -> toOpValveTest(opValveTestAddRequest, device))
+                        .map(opValveTestRepository::save))
+                .switchIfEmpty(Mono.error(new RuntimeException("Device not found")))
+                .map(opValveTest -> ResponseEntity.ok(CommonResponse.builder().message("Op valve test added successfully").status("SUCCESS").build()));
+    }
+
+    private OpValveTestData toOpValveTest(OpValveTestAddRequest opValveTestAddRequest, Device device) {
+        return OpValveTestData.builder()
+                .device(device)
+                .qrCode(opValveTestAddRequest.getQrCode())
+                .physicalInspectionState(opValveTestAddRequest.getPhysicalInspectionState())
+                .startOpeningPressure(opValveTestAddRequest.getStartOpeningPressure())
+                .startOpeningFlowrate(opValveTestAddRequest.getStartOpeningFlowrate())
+                .valveStartOpeningState(opValveTestAddRequest.getValveStartOpeningState())
+                .fullyOpeningFlowrate(opValveTestAddRequest.getFullyOpeningFlowrate())
+                .fullyOpeningPressure(opValveTestAddRequest.getFullyOpeningPressure())
+                .valveFullyOpeningState(opValveTestAddRequest.getValveFullyOpeningState())
+                .closingFlowrate(opValveTestAddRequest.getClosingFlowrate())
+                .closingPressure(opValveTestAddRequest.getClosingPressure())
+                .valveClosingState(opValveTestAddRequest.getValveClosingState())
+                .overallOpValveState(opValveTestAddRequest.getOverallOpValveState())
+                .status(opValveTestAddRequest.getPhysicalInspectionState() && opValveTestAddRequest.getValveStartOpeningState() && opValveTestAddRequest.getValveFullyOpeningState() && opValveTestAddRequest.getValveClosingState())
+                .dateTime(LocalDateTime.now())
+                .build();
+    }
+
+    @Override
+    public Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<OpValveTestDto>>>> getOpValveTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
+        return Mono.just(request)
+                .map(req -> {
+                    log.info("Getting op valve test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
+                    if (pageNo != null && pageNo.equals("all")) {
+                        return opValveTestRepository.findByCustomQuery(getCustomQueryOpValveTest(request, userDetails));
+                    } else {
+                        return opValveTestRepository.findByCustomQuery(getCustomQueryOpValveTest(request, userDetails), Integer.parseInt(pageNo) - 1);
+                    }
+                })
+                .flatMap(opValveTestData -> {
+                    long total = opValveTestData.size();
+                    long totalFailed = opValveTestData.stream()
+                            .filter(data -> !data.getPhysicalInspectionState() || !data.getValveStartOpeningState() || !data.getValveFullyOpeningState() || !data.getValveClosingState())
+                            .count();
+                    return Mono.just(ApiResponse.<GetTestResponse<OpValveTestDto>>builder()
+                            .status("S1000")
+                            .statusDescription("Request successful")
+                            .data(GetTestResponse.<OpValveTestDto>builder()
+                                    .tests(getOpValveDtoFromEntity(opValveTestData))
+                                    .totalRecords(total)
+                                    .totalFailed(totalFailed)
+                                    .build())
+                            .build());
+                })
+                .map(ResponseEntity::ok)
+                .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Op Valve Tests")));
+    }
+
+    private TypedQuery<OpValveTestData> getCustomQueryOpValveTest(GetByPatternRequest request, UserDetails userDetails) {
+        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM OpValveTestData v JOIN v.device d");
+
+        List<String> filterParts = new ArrayList<>();
+
+        calculateFilterParts(request, filterParts, userDetails);
+
+        TypedQuery<OpValveTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
+                .append(" ORDER BY v.dateTime DESC").toString(), OpValveTestData.class);
+
+        return exchangeDateFilterInQuery(query, request);
+    }
+
+    private List<OpValveTestDto> getOpValveDtoFromEntity(List<OpValveTestData> opValveTestData) {
+        return opValveTestData.stream()
+                .map(opValveTest -> OpValveTestDto.builder()
+                        .testId(opValveTest.getTestId())
+                        .deviceId(opValveTest.getDevice().getDeviceId())
+                        .qrCode(opValveTest.getQrCode())
+                        .physicalInspectionState(opValveTest.getPhysicalInspectionState())
+                        .startOpeningPressure(opValveTest.getStartOpeningPressure())
+                        .startOpeningFlowrate(opValveTest.getStartOpeningFlowrate())
+                        .valveStartOpeningState(opValveTest.getValveStartOpeningState())
+                        .fullyOpeningFlowrate(opValveTest.getFullyOpeningFlowrate())
+                        .fullyOpeningPressure(opValveTest.getFullyOpeningPressure())
+                        .valveFullyOpeningState(opValveTest.getValveFullyOpeningState())
+                        .closingFlowrate(opValveTest.getClosingFlowrate())
+                        .closingPressure(opValveTest.getClosingPressure())
+                        .valveClosingState(opValveTest.getValveClosingState())
+                        .overallOpValveState(opValveTest.getOverallOpValveState())
+                        .status(opValveTest.getStatus())
+                        .dateTime(opValveTest.getDateTime())
                         .build())
                 .toList();
     }

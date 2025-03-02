@@ -1,0 +1,39 @@
+package com.test_biotab.test_biotab_server.entity;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Data
+@Entity
+@Table(name = "op_valve_test_data")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class OpValveTestData {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer testId;
+    @ManyToOne
+    @JoinColumn(name = "device_id")
+    private Device device;
+    private String qrCode;
+    private Boolean physicalInspectionState;
+    private Double startOpeningPressure;
+    private Double startOpeningFlowrate;
+    private Boolean valveStartOpeningState;
+    private Double fullyOpeningPressure;
+    private Double fullyOpeningFlowrate;
+    private Boolean valveFullyOpeningState;
+    private Double closingPressure;
+    private Double closingFlowrate;
+    private Boolean valveClosingState;
+    private Boolean overallOpValveState;
+    private Boolean status;
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime dateTime;
+}

@@ -1,10 +1,7 @@
 package com.test_biotab.test_biotab_server.controller;
 
 import com.test_biotab.test_biotab_server.domain.*;
-import com.test_biotab.test_biotab_server.dto.AirPumpV2TestDto;
-import com.test_biotab.test_biotab_server.dto.PowerPCBTestDto;
-import com.test_biotab.test_biotab_server.dto.PowerPCBV2TestDto;
-import com.test_biotab.test_biotab_server.dto.PowerSupplyV2TestDto;
+import com.test_biotab.test_biotab_server.dto.*;
 import com.test_biotab.test_biotab_server.service.TestService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -178,6 +175,28 @@ public class TestController {
                     log.info("Getting power supply v2 test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
                     request.setRequestType("POWER_SUPPLY_V2");
                     return testService.getPowerSupplyV2Test(request, userDetails, pageNo);
+                });
+    }
+
+    @PostMapping("/add/op-valve-test")
+    public Mono<ResponseEntity<CommonResponse>> addOpValveTest(@RequestBody OpValveTestAddRequest opValveTestAddRequest) {
+        if (!opValveTestAddRequest.getHashKey().equals(hashKey)) {
+            return sendInvalidResponse(opValveTestAddRequest.getHashKey());
+        }
+        log.info("Request received to add op valve : {}", opValveTestAddRequest);
+        return testService.addOpValveTest(opValveTestAddRequest);
+    }
+
+    @PostMapping("/get/op-valve-test/{pageNo}")
+    Mono<ResponseEntity<ApiResponse<GetTestResponse<OpValveTestDto>>>> getOpValveTest(@AuthenticationPrincipal Mono<UserDetails> principal,
+                                                                                            @RequestBody GetByPatternRequest request,
+                                                                                            @PathVariable("pageNo") String pageNo) {
+        log.info("Received request to get op valve test with pattern: {}", request.getFilterValue());
+        return principal
+                .flatMap(userDetails -> {
+                    log.info("Getting op valve test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
+                    request.setRequestType("OP_VALVE");
+                    return testService.getOpValveTest(request, userDetails, pageNo);
                 });
     }
 

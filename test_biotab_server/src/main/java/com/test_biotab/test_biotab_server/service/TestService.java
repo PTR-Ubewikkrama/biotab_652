@@ -1,10 +1,7 @@
 package com.test_biotab.test_biotab_server.service;
 
 import com.test_biotab.test_biotab_server.domain.*;
-import com.test_biotab.test_biotab_server.dto.AirPumpV2TestDto;
-import com.test_biotab.test_biotab_server.dto.PowerPCBTestDto;
-import com.test_biotab.test_biotab_server.dto.PowerPCBV2TestDto;
-import com.test_biotab.test_biotab_server.dto.PowerSupplyV2TestDto;
+import com.test_biotab.test_biotab_server.dto.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import reactor.core.publisher.Mono;
@@ -37,4 +34,8 @@ public interface TestService {
     Mono<ResponseEntity<CommonResponse>> addPowerSupplyV2Test(PowerSupplyV2TestAddRequest powerSupplyV2TestAddRequest);
 
     Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<PowerSupplyV2TestDto>>>> getPowerSupplyV2Test(GetByPatternRequest request, UserDetails userDetails, String pageNo);
+
+    Mono<ResponseEntity<CommonResponse>> addOpValveTest(OpValveTestAddRequest opValveTestAddRequest);
+
+    Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<OpValveTestDto>>>> getOpValveTest(GetByPatternRequest request, UserDetails userDetails, String pageNo);
 }
