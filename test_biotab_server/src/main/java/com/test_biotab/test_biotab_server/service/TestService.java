@@ -50,4 +50,8 @@ public interface TestService {
     Mono<ResponseEntity<CommonResponse>> addManiFoldLeakTest(ManiFoldLeakTestAddRequest maniFoldLeakTestAddRequest);
 
     Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<ManiFoldLeakTestDto>>>> getManiFoldLeakTest(GetByPatternRequest request, UserDetails userDetails, String pageNo);
+
+    Mono<ResponseEntity<CommonResponse>> addUiPcbTest(UiPcbTestAddRequest uiPcbTestAddRequest);
+
+    Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<UiPcbTestDto>>>> getUiPcbTest(GetByPatternRequest request, UserDetails userDetails, String pageNo);
 }

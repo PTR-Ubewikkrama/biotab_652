@@ -39,6 +39,7 @@ public class TestServiceImpl implements TestService {
     private final ValveSequenceTestRepository valveSequenceTestRepository;
     private final ValveCardTestRepository valveCardTestRepository;
     private final ManiFoldLeakTestRepository maniFoldLeakTestRepository;
+    private final UiPcbTestRepository uiPcbTestRepository;
     private final DeviceService deviceService;
 
     @PersistenceContext
@@ -1369,6 +1370,92 @@ public class TestServiceImpl implements TestService {
                         .overallManifoldLeakState(maniFoldLeakTest.getOverallManifoldLeakState())
                         .status(maniFoldLeakTest.getStatus())
                         .dateTime(maniFoldLeakTest.getDateTime())
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public Mono<ResponseEntity<CommonResponse>> addUiPcbTest(UiPcbTestAddRequest uiPcbTestAddRequest) {
+        return Mono.just(uiPcbTestAddRequest)
+                .flatMap(request -> deviceService.getDeviceByMac(uiPcbTestAddRequest.getDeviceMac())
+                        .map(device -> toUiPcbTest(uiPcbTestAddRequest, device))
+                        .map(uiPcbTestRepository::save))
+                .switchIfEmpty(Mono.error(new RuntimeException("Device not found")))
+                .map(opUiPcbTest -> ResponseEntity.ok(CommonResponse.builder().message("UI PCB test added successfully").status("SUCCESS").build()));
+    }
+
+    private UiPcbTestData toUiPcbTest(UiPcbTestAddRequest uiPcbTestAddRequest, Device device) {
+        return UiPcbTestData.builder()
+                .device(device)
+                .qrCode(uiPcbTestAddRequest.getQrCode())
+                .physicalInspectionState(uiPcbTestAddRequest.getPhysicalInspectionState())
+                .redLedState(uiPcbTestAddRequest.getRedLedState())
+                .whiteLedState(uiPcbTestAddRequest.getWhiteLedState())
+                .ledRingFadeState(uiPcbTestAddRequest.getLedRingFadeState())
+                .ledRingOnState(uiPcbTestAddRequest.getLedRingOnState())
+                .overallUiPcbState(uiPcbTestAddRequest.getOverallUiPcbState())
+                .status(uiPcbTestAddRequest.getPhysicalInspectionState())
+                .dateTime(LocalDateTime.now())
+                .build();
+    }
+
+    @Override
+    public Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<UiPcbTestDto>>>> getUiPcbTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
+        return Mono.just(request)
+                .map(req -> {
+                    log.info("Getting UI PCB test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
+                    if (pageNo != null && pageNo.equals("all")) {
+                        return uiPcbTestRepository.findByCustomQuery(getCustomQueryUiPcbTest(request, userDetails));
+                    } else {
+                        return uiPcbTestRepository.findByCustomQuery(getCustomQueryUiPcbTest(request, userDetails), Integer.parseInt(pageNo) - 1);
+                    }
+                })
+                .flatMap(uiPcbTestData -> {
+                    long total = uiPcbTestData.size();
+                    long totalFailed = uiPcbTestData.stream()
+                            .filter(data -> !data.getStatus())
+                            .count();
+                    return Mono.just(ApiResponse.<GetTestResponse<UiPcbTestDto>>builder()
+                            .status("S1000")
+                            .statusDescription("Request successful")
+                            .data(GetTestResponse.<UiPcbTestDto>builder()
+                                    .tests(getUiPcbDtoFromEntity(uiPcbTestData))
+                                    .totalRecords(total)
+                                    .totalFailed(totalFailed)
+                                    .build())
+                            .build());
+                })
+                .map(ResponseEntity::ok)
+                .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get UI PCB Tests")));
+    }
+
+    private TypedQuery<UiPcbTestData> getCustomQueryUiPcbTest(GetByPatternRequest request, UserDetails userDetails) {
+        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM UiPcbTestData v JOIN v.device d");
+
+        List<String> filterParts = new ArrayList<>();
+
+        calculateFilterParts(request, filterParts, userDetails);
+
+        TypedQuery<UiPcbTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
+                .append(" ORDER BY v.dateTime DESC").toString(), UiPcbTestData.class);
+
+        return exchangeDateFilterInQuery(query, request);
+    }
+
+    private List<UiPcbTestDto> getUiPcbDtoFromEntity(List<UiPcbTestData> uiPcbTestData) {
+        return uiPcbTestData.stream()
+                .map(uiPcbTest -> UiPcbTestDto.builder()
+                        .testId(uiPcbTest.getTestId())
+                        .deviceId(uiPcbTest.getDevice().getDeviceId())
+                        .qrCode(uiPcbTest.getQrCode())
+                        .physicalInspectionState(uiPcbTest.getPhysicalInspectionState())
+                        .redLedState(uiPcbTest.getRedLedState())
+                        .whiteLedState(uiPcbTest.getWhiteLedState())
+                        .ledRingFadeState(uiPcbTest.getLedRingFadeState())
+                        .ledRingOnState(uiPcbTest.getLedRingOnState())
+                        .overallUiPcbState(uiPcbTest.getOverallUiPcbState())
+                        .status(uiPcbTest.getStatus())
+                        .dateTime(uiPcbTest.getDateTime())
                         .build())
                 .toList();
     }

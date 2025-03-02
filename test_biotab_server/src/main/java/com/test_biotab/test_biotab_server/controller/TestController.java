@@ -266,6 +266,28 @@ public class TestController {
                 });
     }
 
+    @PostMapping("/add/ui-pcb-test")
+    public Mono<ResponseEntity<CommonResponse>> addUiPcbTest(@RequestBody UiPcbTestAddRequest uiPcbTestAddRequest) {
+        if (!uiPcbTestAddRequest.getHashKey().equals(hashKey)) {
+            return sendInvalidResponse(uiPcbTestAddRequest.getHashKey());
+        }
+        log.info("Request received to add ui pcb : {}", uiPcbTestAddRequest);
+        return testService.addUiPcbTest(uiPcbTestAddRequest);
+    }
+
+    @PostMapping("/get/ui-pcb-test/{pageNo}")
+    Mono<ResponseEntity<ApiResponse<GetTestResponse<UiPcbTestDto>>>> getUiPcbTest(@AuthenticationPrincipal Mono<UserDetails> principal,
+                                                                                                @RequestBody GetByPatternRequest request,
+                                                                                                @PathVariable("pageNo") String pageNo) {
+        log.info("Received request to get ui pcb test with pattern: {}", request.getFilterValue());
+        return principal
+                .flatMap(userDetails -> {
+                    log.info("Getting valve card test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
+                    request.setRequestType("UI_PCB");
+                    return testService.getUiPcbTest(request, userDetails, pageNo);
+                });
+    }
+
     private static Mono<ResponseEntity<CommonResponse>> sendInvalidResponse(String valueTestAddRequest) {
         log.error("Invalid hash key received: {}", valueTestAddRequest);
         return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED)
