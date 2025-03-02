@@ -33,6 +33,7 @@ public class TestServiceImpl implements TestService {
     private final AirPumpTestRepository airPumpTestRepository;
     private final PowerPCBTestRepository powerPCBTestRepository;
     private final AirPumpV2TestRepository airPumpV2TestRepository;
+    private final PowerPCBV2TestRepository powerPCBV2TestRepository;
     private final DeviceService deviceService;
 
     @PersistenceContext
@@ -365,7 +366,7 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public Mono<ResponseEntity<CommonResponse>> addPowerPCPTest(PowerPCBTestAddRequest powerPCBTestAddRequest) {
+    public Mono<ResponseEntity<CommonResponse>> addPowerPCBTest(PowerPCBTestAddRequest powerPCBTestAddRequest) {
         return Mono.just(powerPCBTestAddRequest)
                 .flatMap(request -> deviceService.getDeviceByMac(powerPCBTestAddRequest.getDeviceMac())
                         .map(device -> toPowerPCPTest(powerPCBTestAddRequest, device))
@@ -389,7 +390,7 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public Mono<ResponseEntity<ApiResponse<GetTestResponse<PowerPCBTestDto>>>> getPowerPCPTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
+    public Mono<ResponseEntity<ApiResponse<GetTestResponse<PowerPCBTestDto>>>> getPowerPCBTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
         return Mono.just(request)
                 .map(req -> {
                     log.info("Getting power pcb test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
@@ -551,6 +552,98 @@ public class TestServiceImpl implements TestService {
                         .noiseLevelStatus(airPumpV2Test.getNoiseLevelStatus())
                         .status(airPumpV2Test.getStatus())
                         .dateTime(airPumpV2Test.getDateTime())
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public Mono<ResponseEntity<CommonResponse>> addPowerPCBV2Test(PowerPCBV2TestAddRequest powerPCBV2TestAddRequest) {
+        return Mono.just(powerPCBV2TestAddRequest)
+                .flatMap(request -> deviceService.getDeviceByMac(powerPCBV2TestAddRequest.getDeviceMac())
+                        .map(device -> toPowerPCBV2Test(powerPCBV2TestAddRequest, device))
+                        .map(powerPCBV2TestRepository::save))
+                .switchIfEmpty(Mono.error(new RuntimeException("Device not found")))
+                .map(powerPCPTest -> ResponseEntity.ok(CommonResponse.builder().message("Power PCB v2 test added successfully").status("SUCCESS").build()));
+    }
+
+    private PowerPCBV2TestData toPowerPCBV2Test(PowerPCBV2TestAddRequest powerPCBV2TestAddRequest, Device device) {
+        return PowerPCBV2TestData.builder()
+                .device(device)
+                .loadVoltageLowThresh(powerPCBV2TestAddRequest.getLoadVoltageLowThresh())
+                .serialNumber(powerPCBV2TestAddRequest.getSerialNumber())
+                .usbCPowerOutletConnectivity(powerPCBV2TestAddRequest.getUsbCPowerOutletConnectivity())
+                .loadVoltage(powerPCBV2TestAddRequest.getLoadVoltage())
+                .loadVoltageStatus(powerPCBV2TestAddRequest.getLoadVoltageStatus())
+                .loadCurrentStatus(powerPCBV2TestAddRequest.getLoadCurrentStatus())
+                .loadCurrentLowThresh(powerPCBV2TestAddRequest.getLoadCurrentLowThresh())
+                .loadCurrent(powerPCBV2TestAddRequest.getLoadCurrent())
+                .deviceStatus(powerPCBV2TestAddRequest.getDeviceStatus())
+                .noiseLevelStatus(powerPCBV2TestAddRequest.getNoiseLevelStatus())
+                .status(powerPCBV2TestAddRequest.getLoadVoltageStatus() && powerPCBV2TestAddRequest.getLoadCurrentStatus() && powerPCBV2TestAddRequest.getNoiseLevelStatus() && powerPCBV2TestAddRequest.getDeviceStatus())
+                .dateTime(LocalDateTime.now())
+                .build();
+    }
+
+    @Override
+    public Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<PowerPCBV2TestDto>>>> getPowerPCBV2Test(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
+        return Mono.just(request)
+                .map(req -> {
+                    log.info("Getting power pcb v2 test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
+                    if (pageNo != null && pageNo.equals("all")) {
+                        return powerPCBV2TestRepository.findByCustomQuery(getCustomQueryPowerPCBV2Test(request, userDetails));
+                    } else {
+                        return powerPCBV2TestRepository.findByCustomQuery(getCustomQueryPowerPCBV2Test(request, userDetails), Integer.parseInt(pageNo) - 1);
+                    }
+                })
+                .flatMap(powerPCBV2TestData -> {
+                    long total = powerPCBV2TestData.size();
+                    long totalFailed = powerPCBV2TestData.stream()
+                            .filter(data -> !data.getLoadVoltageStatus() || !data.getLoadCurrentStatus() || !data.getNoiseLevelStatus())
+                            .count();
+                    return Mono.just(ApiResponse.<GetTestResponse<PowerPCBV2TestDto>>builder()
+                            .status("S1000")
+                            .statusDescription("Request successful")
+                            .data(GetTestResponse.<PowerPCBV2TestDto>builder()
+                                    .tests(getPowerPCBV2DtoFromEntity(powerPCBV2TestData))
+                                    .totalRecords(total)
+                                    .totalFailed(totalFailed)
+                                    .build())
+                            .build());
+                })
+                .map(ResponseEntity::ok)
+                .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Power PCB V2 Tests")));
+    }
+
+    private TypedQuery<PowerPCBV2TestData> getCustomQueryPowerPCBV2Test(GetByPatternRequest request, UserDetails userDetails) {
+        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM PowerPCBV2TestData v JOIN v.device d");
+
+        List<String> filterParts = new ArrayList<>();
+
+        calculateFilterParts(request, filterParts, userDetails);
+
+        TypedQuery<PowerPCBV2TestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
+                .append(" ORDER BY v.dateTime DESC").toString(), PowerPCBV2TestData.class);
+
+        return exchangeDateFilterInQuery(query, request);
+    }
+
+    private List<PowerPCBV2TestDto> getPowerPCBV2DtoFromEntity(List<PowerPCBV2TestData> powerPCBV2TestData) {
+        return powerPCBV2TestData.stream()
+                .map(powerPCBV2Test -> PowerPCBV2TestDto.builder()
+                        .testId(powerPCBV2Test.getTestId())
+                        .deviceId(powerPCBV2Test.getDevice().getDeviceId())
+                        .loadVoltageLowThresh(powerPCBV2Test.getLoadVoltageLowThresh())
+                        .serialNumber(powerPCBV2Test.getSerialNumber())
+                        .usbCPowerOutletConnectivity(powerPCBV2Test.getUsbCPowerOutletConnectivity())
+                        .loadVoltage(powerPCBV2Test.getLoadVoltage())
+                        .loadVoltageStatus(powerPCBV2Test.getLoadVoltageStatus())
+                        .loadCurrentStatus(powerPCBV2Test.getLoadCurrentStatus())
+                        .loadCurrentLowThresh(powerPCBV2Test.getLoadCurrentLowThresh())
+                        .loadCurrent(powerPCBV2Test.getLoadCurrent())
+                        .deviceStatus(powerPCBV2Test.getDeviceStatus())
+                        .noiseLevelStatus(powerPCBV2Test.getNoiseLevelStatus())
+                        .status(powerPCBV2Test.getStatus())
+                        .dateTime(powerPCBV2Test.getDateTime())
                         .build())
                 .toList();
     }

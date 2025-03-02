@@ -24,6 +24,7 @@ public class DashboardServiceImpl implements DashboardService {
     private final AirPumpTestRepository airPumpTestRepository;
     private final PowerPCBTestRepository powerPCBTestRepository;
     private final AirPumpV2TestRepository airPumpV2TestRepository;
+    private final PowerPCBV2TestRepository powerPCBV2TestRepository;
     private final HHDeviceRepository hhDeviceRepository;
     private final FinalAssemblyRepository finalAssemblyRepository;
 
@@ -93,6 +94,16 @@ public class DashboardServiceImpl implements DashboardService {
                                         "SELECT COUNT(a) FROM AirPumpV2TestData a WHERE a.status = false",
                                         Long.class
                                 )))
+                        ),
+                        Mono.zip(
+                                Mono.fromSupplier(() -> powerPCBV2TestRepository.countByCustomQuery(entityManager.createQuery(
+                                        "SELECT COUNT(p) FROM PowerPCBV2TestData p WHERE p.status = true",
+                                        Long.class
+                                ))),
+                                Mono.fromSupplier(() -> powerPCBV2TestRepository.countByCustomQuery(entityManager.createQuery(
+                                        "SELECT COUNT(p) FROM PowerPCBV2TestData p WHERE p.status = false",
+                                        Long.class
+                                )))
                         )
                 ).map(results -> {
                     Tuple2<Long, Long> valueTestCounts = results.getT1();
@@ -101,6 +112,7 @@ public class DashboardServiceImpl implements DashboardService {
                     Tuple2<Long, Long> t8Counts = results.getT4();
                     Tuple2<Long, Long> powerPCBTestCounts = results.getT5();
                     Tuple2<Long, Long> airPumpV2TestCounts = results.getT6();
+                    Tuple2<Long, Long> powerPCBV2TestCounts = results.getT7();
 
                     Long totalSuccessValueTest = valueTestCounts.getT1();
                     Long totalFailedValueTest = valueTestCounts.getT2();
@@ -120,6 +132,9 @@ public class DashboardServiceImpl implements DashboardService {
                     Long totalSuccessAirPumpV2Test = airPumpV2TestCounts.getT1();
                     Long totalFailedAirPumpV2Test = airPumpV2TestCounts.getT2();
 
+                    Long totalSuccessPowerPCBV2Test = powerPCBV2TestCounts.getT1();
+                    Long totalFailedPowerPCBV2Test = powerPCBV2TestCounts.getT2();
+
                     return ResponseEntity.ok(
                             ApiResponse.<DashBoardSummaryResponse>builder()
                                     .status("S1000")
@@ -135,6 +150,8 @@ public class DashboardServiceImpl implements DashboardService {
                                             .totalFailedPcbTest(totalFailedPowerPCBTest)
                                             .totalSuccessAirPumpV2Test(totalSuccessAirPumpV2Test)
                                             .totalFailedAirPumpV2Test(totalFailedAirPumpV2Test)
+                                            .totalSuccessPowerSupplyV2Test(totalSuccessPowerPCBV2Test)
+                                            .totalFailedPowerSupplyV2Test(totalFailedPowerPCBV2Test)
                                             .totalFinalAssembly(totalFinalAssembly)
                                             .totalHHDevice(totalHHDevice)
                                             .build()

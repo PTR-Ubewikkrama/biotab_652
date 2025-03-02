@@ -3,6 +3,7 @@ package com.test_biotab.test_biotab_server.controller;
 import com.test_biotab.test_biotab_server.domain.*;
 import com.test_biotab.test_biotab_server.dto.AirPumpV2TestDto;
 import com.test_biotab.test_biotab_server.dto.PowerPCBTestDto;
+import com.test_biotab.test_biotab_server.dto.PowerPCBV2TestDto;
 import com.test_biotab.test_biotab_server.service.TestService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -97,7 +98,7 @@ public class TestController {
             return sendInvalidResponse(powerPCBTestAddRequest.getHashKey());
         }
         log.info("Request received to add power pcb test: {}", powerPCBTestAddRequest);
-        return testService.addPowerPCPTest(powerPCBTestAddRequest);
+        return testService.addPowerPCBTest(powerPCBTestAddRequest);
     }
 
     @PostMapping("/get/power-pcb-test/{pageNo}")
@@ -109,7 +110,7 @@ public class TestController {
                 .flatMap(userDetails -> {
                     log.info("Getting power pcb test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
                     request.setRequestType("POWER_PCB");
-                    return testService.getPowerPCPTest(request, userDetails, pageNo);
+                    return testService.getPowerPCBTest(request, userDetails, pageNo);
                 });
     }
 
@@ -132,6 +133,28 @@ public class TestController {
                     log.info("Getting air pump v2 test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
                     request.setRequestType("AIR_PUMP_V2");
                     return testService.getAirPumpV2Test(request, userDetails, pageNo);
+                });
+    }
+
+    @PostMapping("/add/power-pcb-v2-test")
+    public Mono<ResponseEntity<CommonResponse>> addPowerPCBV2Test(@RequestBody PowerPCBV2TestAddRequest powerPCBV2TestAddRequest) {
+        if (!powerPCBV2TestAddRequest.getHashKey().equals(hashKey)) {
+            return sendInvalidResponse(powerPCBV2TestAddRequest.getHashKey());
+        }
+        log.info("Request received to add power pcb v2 : {}", powerPCBV2TestAddRequest);
+        return testService.addPowerPCBV2Test(powerPCBV2TestAddRequest);
+    }
+
+    @PostMapping("/get/power-pcb-v2-test/{pageNo}")
+    Mono<ResponseEntity<ApiResponse<GetTestResponse<PowerPCBV2TestDto>>>> getPowerPCBV2Test(@AuthenticationPrincipal Mono<UserDetails> principal,
+                                                                                           @RequestBody GetByPatternRequest request,
+                                                                                           @PathVariable("pageNo") String pageNo) {
+        log.info("Received request to get power pcb v2 test with pattern: {}", request.getFilterValue());
+        return principal
+                .flatMap(userDetails -> {
+                    log.info("Getting power pcb v2 test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
+                    request.setRequestType("POWER_PCB_V2");
+                    return testService.getPowerPCBV2Test(request, userDetails, pageNo);
                 });
     }
 
