@@ -1,6 +1,7 @@
 package com.test_biotab.test_biotab_server.controller;
 
 import com.test_biotab.test_biotab_server.domain.*;
+import com.test_biotab.test_biotab_server.dto.PowerPCBTestDto;
 import com.test_biotab.test_biotab_server.service.TestService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -77,7 +78,7 @@ public class TestController {
     }
 
     @PostMapping("/get/air-pump-test/{pageNo}")
-    Mono<ResponseEntity<ApiResponse<GetAirPumpTestResponse>>> getCustomer(@AuthenticationPrincipal Mono<UserDetails> principal,
+    Mono<ResponseEntity<ApiResponse<GetAirPumpTestResponse>>> getAirPumpTest(@AuthenticationPrincipal Mono<UserDetails> principal,
                                                                           @RequestBody GetByPatternRequest request,
                                                                           @PathVariable("pageNo") String pageNo) {
         log.info("Received request to get air pump test with pattern: {}", request.getFilterValue());
@@ -86,6 +87,28 @@ public class TestController {
                     log.info("Getting air pump test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
                     request.setRequestType("AIR_PUMP");
                     return testService.getAirPumpTest(request, userDetails, pageNo);
+                });
+    }
+
+    @PostMapping("/add/power-pcb-test")
+    public Mono<ResponseEntity<CommonResponse>> addPowerPCBTest(@RequestBody PowerPCBTestAddRequest powerPCBTestAddRequest) {
+        if (!powerPCBTestAddRequest.getHashKey().equals(hashKey)) {
+            return sendInvalidResponse(powerPCBTestAddRequest.getHashKey());
+        }
+        log.info("Request received to add power pcb test: {}", powerPCBTestAddRequest);
+        return testService.addPowerPCPTest(powerPCBTestAddRequest);
+    }
+
+    @PostMapping("/get/power-pcb-test/{pageNo}")
+    Mono<ResponseEntity<ApiResponse<GetTestResponse<PowerPCBTestDto>>>> getPowerPCBTest(@AuthenticationPrincipal Mono<UserDetails> principal,
+                                                                                        @RequestBody GetByPatternRequest request,
+                                                                                        @PathVariable("pageNo") String pageNo) {
+        log.info("Received request to get power pcb test with pattern: {}", request.getFilterValue());
+        return principal
+                .flatMap(userDetails -> {
+                    log.info("Getting power pcb test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
+                    request.setRequestType("POWER_PCB");
+                    return testService.getPowerPCPTest(request, userDetails, pageNo);
                 });
     }
 

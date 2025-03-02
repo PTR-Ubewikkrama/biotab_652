@@ -2,13 +2,12 @@ package com.test_biotab.test_biotab_server.service.impl;
 
 import com.test_biotab.test_biotab_server.domain.*;
 import com.test_biotab.test_biotab_server.dto.AirPumpTestDto;
+import com.test_biotab.test_biotab_server.dto.PowerPCBTestDto;
 import com.test_biotab.test_biotab_server.dto.PowerSupplyTestDto;
 import com.test_biotab.test_biotab_server.dto.ValveTestDto;
-import com.test_biotab.test_biotab_server.entity.AirPumpTestData;
-import com.test_biotab.test_biotab_server.entity.Device;
-import com.test_biotab.test_biotab_server.entity.PowerSupplyTestData;
-import com.test_biotab.test_biotab_server.entity.ValveTestData;
+import com.test_biotab.test_biotab_server.entity.*;
 import com.test_biotab.test_biotab_server.repository.AirPumpTestRepository;
+import com.test_biotab.test_biotab_server.repository.PowerPCBTestRepository;
 import com.test_biotab.test_biotab_server.repository.PowerSupplyTestRepository;
 import com.test_biotab.test_biotab_server.repository.ValveTestRepository;
 import com.test_biotab.test_biotab_server.service.DeviceService;
@@ -38,6 +37,7 @@ public class TestServiceImpl implements TestService {
     private final PowerSupplyTestRepository powerSupplyTestRepository;
     private final ValveTestRepository valveTestRepository;
     private final AirPumpTestRepository airPumpTestRepository;
+    private final PowerPCBTestRepository powerPCBTestRepository;
     private final DeviceService deviceService;
 
     @PersistenceContext
@@ -365,6 +365,90 @@ public class TestServiceImpl implements TestService {
                         .noiseLevelStatus(airPumpTest.getNoiseLevelStatus())
                         .status(airPumpTest.getStatus())
                         .dateTime(airPumpTest.getDateTime())
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public Mono<ResponseEntity<CommonResponse>> addPowerPCPTest(PowerPCBTestAddRequest powerPCBTestAddRequest) {
+        return Mono.just(powerPCBTestAddRequest)
+                .flatMap(request -> deviceService.getDeviceByMac(powerPCBTestAddRequest.getDeviceMac())
+                        .map(device -> toPowerPCPTest(powerPCBTestAddRequest, device))
+                        .map(powerPCBTestRepository::save))
+                .switchIfEmpty(Mono.error(new RuntimeException("Device not found")))
+                .map(powerPCPTest -> ResponseEntity.ok(CommonResponse.builder().message("Power PCB test added successfully").status("SUCCESS").build()));
+    }
+
+    private PowerPCBTestData toPowerPCPTest(PowerPCBTestAddRequest powerPCBTestAddRequest, Device device) {
+        return PowerPCBTestData.builder()
+                .device(device)
+                .powerGroundResistanceUpperLimit(powerPCBTestAddRequest.getPowerGroundResistanceUpperLimit())
+                .serialNumber(powerPCBTestAddRequest.getSerialNumber())
+                .dcBarrelJackConnectivityStatus(powerPCBTestAddRequest.getDcBarrelJackConnectivityStatus())
+                .usbCPowerOutletConnectivity(powerPCBTestAddRequest.getUsbCPowerOutletConnectivity())
+                .powerGroundResistance(powerPCBTestAddRequest.getPowerGroundResistance())
+                .powerGroundResistanceStatus(powerPCBTestAddRequest.getPowerGroundResistanceStatus())
+                .status(powerPCBTestAddRequest.getDcBarrelJackConnectivityStatus() && powerPCBTestAddRequest.getPowerGroundResistanceStatus())
+                .dateTime(LocalDateTime.now())
+                .build();
+    }
+
+    @Override
+    public Mono<ResponseEntity<ApiResponse<GetTestResponse<PowerPCBTestDto>>>> getPowerPCPTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
+        return Mono.just(request)
+                .map(req -> {
+                    log.info("Getting power pcb test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
+                    if (pageNo != null && pageNo.equals("all")) {
+                        return powerPCBTestRepository.findByCustomQuery(getCustomQueryPowerPCPTest(request, userDetails));
+                    } else {
+                        return powerPCBTestRepository.findByCustomQuery(getCustomQueryPowerPCPTest(request, userDetails), Integer.parseInt(pageNo) - 1);
+                    }
+                })
+                .flatMap(powerPCBTestData -> {
+                    long total = powerPCBTestData.size();
+                    long totalFailed = powerPCBTestData.stream()
+                            .filter(data -> !data.getDcBarrelJackConnectivityStatus() || !data.getPowerGroundResistanceStatus())
+                            .count();
+                    return Mono.just(ApiResponse.<GetTestResponse<PowerPCBTestDto>>builder()
+                            .status("S1000")
+                            .statusDescription("Request successful")
+                            .data(GetTestResponse.<PowerPCBTestDto>builder()
+                                    .tests(getPowerPCPDtoFromEntity(powerPCBTestData))
+                                    .totalRecords(total)
+                                    .totalFailed(totalFailed)
+                                    .build())
+                            .build());
+                })
+                .map(ResponseEntity::ok)
+                .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Power PCB Tests")));
+    }
+
+    private TypedQuery<PowerPCBTestData> getCustomQueryPowerPCPTest(GetByPatternRequest request, UserDetails userDetails) {
+        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM PowerPCBTestData v JOIN v.device d");
+
+        List<String> filterParts = new ArrayList<>();
+
+        calculateFilterParts(request, filterParts, userDetails);
+
+        TypedQuery<PowerPCBTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
+                .append(" ORDER BY v.dateTime DESC").toString(), PowerPCBTestData.class);
+
+        return exchangeDateFilterInQuery(query, request);
+    }
+
+    private List<PowerPCBTestDto> getPowerPCPDtoFromEntity(List<PowerPCBTestData> powerPCBTestData) {
+        return powerPCBTestData.stream()
+                .map(powerPCPTest -> PowerPCBTestDto.builder()
+                        .testId(powerPCPTest.getTestId())
+                        .deviceId(powerPCPTest.getDevice().getDeviceId())
+                        .powerGroundResistanceUpperLimit(powerPCPTest.getPowerGroundResistanceUpperLimit())
+                        .serialNumber(powerPCPTest.getSerialNumber())
+                        .dcBarrelJackConnectivityStatus(powerPCPTest.getDcBarrelJackConnectivityStatus())
+                        .usbCPowerOutletConnectivity(powerPCPTest.getUsbCPowerOutletConnectivity())
+                        .powerGroundResistance(powerPCPTest.getPowerGroundResistance())
+                        .powerGroundResistanceStatus(powerPCPTest.getPowerGroundResistanceStatus())
+                        .status(powerPCPTest.getStatus())
+                        .dateTime(powerPCPTest.getDateTime())
                         .build())
                 .toList();
     }
