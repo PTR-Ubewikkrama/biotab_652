@@ -18,12 +18,8 @@ public class DashBoardSummaryResponse {
     long totalFailedValueTest;
     long totalSuccessPcbTest;
     long totalFailedPcbTest;
-    long totalSuccessOverPressureTest;
-    long totalFailedOverPressureTest;
-    long totalSuccessLatchButtonTest;
-    long totalFailedLatchButtonTest;
-    long totalSuccessBatteryTest;
-    long totalFailedBatteryTest;
+    long totalSuccessPowerPcbTest;
+    long totalFailedPowerPcbTest;
     long totalFinalAssembly;
     long totalHHDevice;
 }
