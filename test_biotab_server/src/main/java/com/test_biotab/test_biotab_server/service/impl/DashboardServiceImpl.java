@@ -33,32 +33,32 @@ public class DashboardServiceImpl implements DashboardService {
         return Mono.zip(
                         Mono.zip(
                                 Mono.fromSupplier(() -> valveTestRepository.countByCustomQuery(entityManager.createQuery(
-                                        "SELECT COUNT(v) FROM ValveTestData v WHERE v.flowRateStatus = true AND v.idleCurrentStatus = true AND v.idleVoltageStatus = true",
+                                        "SELECT COUNT(v) FROM ValveTestData v WHERE v.status = true",
                                         Long.class
                                 ))),
                                 Mono.fromSupplier(() -> valveTestRepository.countByCustomQuery(entityManager.createQuery(
-                                        "SELECT COUNT(v) FROM ValveTestData v WHERE v.flowRateStatus = false OR v.idleCurrentStatus = false OR v.idleVoltageStatus = false",
+                                        "SELECT COUNT(v) FROM ValveTestData v WHERE v.status = false",
                                         Long.class
                                 )))
                         ),
                         Mono.zip(
                                 Mono.fromSupplier(() -> powerSupplyTestRepository.countByCustomQuery(entityManager.createQuery(
-                                        "SELECT COUNT(p) FROM PowerSupplyTestData p WHERE p.idleVolStatus = true AND p.loadCurrentStatus = true AND p.loadVolStatus = true",
+                                        "SELECT COUNT(p) FROM PowerSupplyTestData p WHERE p.status = true",
                                         Long.class
                                 ))),
                                 Mono.fromSupplier(() -> powerSupplyTestRepository.countByCustomQuery(entityManager.createQuery(
-                                        "SELECT COUNT(p) FROM PowerSupplyTestData p WHERE p.idleVolStatus = false OR p.loadCurrentStatus = false OR p.loadVolStatus = false",
+                                        "SELECT COUNT(p) FROM PowerSupplyTestData p WHERE p.status = false",
                                         Long.class
                                 )))
                         ),
 
                         Mono.zip(
                                 Mono.fromSupplier(() -> airPumpTestRepository.countByCustomQuery(entityManager.createQuery(
-                                        "SELECT COUNT(a) FROM AirPumpTestData a WHERE a.loadCurrentStatus = true AND a.loadVoltageStatus = true AND a.flowRateStatus = true AND a.idleCurrentStatus = true AND a.idleVoltageStatus = true AND a.flowRateStatus = true AND a.noiseLevelStatus = true",
+                                        "SELECT COUNT(a) FROM AirPumpTestData a WHERE a.status = true",
                                         Long.class
                                 ))),
                                 Mono.fromSupplier(() -> airPumpTestRepository.countByCustomQuery(entityManager.createQuery(
-                                        "SELECT COUNT(a) FROM AirPumpTestData a WHERE a.loadCurrentStatus = false OR a.loadVoltageStatus = false OR a.flowRateStatus = false OR a.idleCurrentStatus = false OR a.idleVoltageStatus = false OR a.flowRateStatus = false OR a.noiseLevelStatus = false",
+                                        "SELECT COUNT(a) FROM AirPumpTestData a WHERE a.status = false",
                                         Long.class
                                 )))
                         ),

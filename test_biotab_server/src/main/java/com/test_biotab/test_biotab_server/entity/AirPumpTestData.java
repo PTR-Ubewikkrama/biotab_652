@@ -41,6 +41,7 @@ public class AirPumpTestData {
     private Double flowRate;
     private Boolean flowRateStatus;
     private Boolean noiseLevelStatus;
+    private Boolean status;
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime dateTime;
 }

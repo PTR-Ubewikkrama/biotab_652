@@ -70,6 +70,7 @@ public class TestServiceImpl implements TestService {
                 .loadCurrentStatus(powerSupplyTestAddRequest.getLoadCurrentStatus())
                 .operatingPower(powerSupplyTestAddRequest.getOperatingPower())
                 .noiseLevel(powerSupplyTestAddRequest.getNoiseLevel())
+                .status(powerSupplyTestAddRequest.getIdleVolStatus() && powerSupplyTestAddRequest.getLoadVolStatus() && powerSupplyTestAddRequest.getLoadCurrentStatus())
                 .dateTime(LocalDateTime.now())
                 .build();
     }
@@ -127,7 +128,7 @@ public class TestServiceImpl implements TestService {
                         .loadCurrentStatus(powerSupplyTest.getLoadCurrentStatus())
                         .operatingPower(powerSupplyTest.getOperatingPower())
                         .noiseLevel(powerSupplyTest.getNoiseLevel())
-                        .status(powerSupplyTest.getIdleVolStatus() && powerSupplyTest.getLoadVolStatus() && powerSupplyTest.getLoadCurrentStatus())
+                        .status(powerSupplyTest.getStatus())
                         .dateTime(powerSupplyTest.getDateTime())
                         .build())
                 .toList();
@@ -176,6 +177,7 @@ public class TestServiceImpl implements TestService {
                 .averagePower(valveTestAddRequest.getAveragePower())
                 .flowRate(valveTestAddRequest.getFlowRate())
                 .flowRateStatus(valveTestAddRequest.getFlowRateStatus())
+                .status(valveTestAddRequest.getIdleVoltageStatus() && valveTestAddRequest.getIdleCurrentStatus() && valveTestAddRequest.getFlowRateStatus())
                 .dateTime(LocalDateTime.now())
                 .build();
     }
@@ -250,7 +252,7 @@ public class TestServiceImpl implements TestService {
                         .averagePower(valveTest.getAveragePower())
                         .flowRate(valveTest.getFlowRate())
                         .flowRateStatus(valveTest.getFlowRateStatus())
-                        .status(valveTest.getIdleVoltageStatus() && valveTest.getIdleCurrentStatus() && valveTest.getFlowRateStatus())
+                        .status(valveTest.getStatus())
                         .dateTime(valveTest.getDateTime())
                         .build())
                 .toList();
@@ -288,6 +290,7 @@ public class TestServiceImpl implements TestService {
                 .flowRate(airPumpTestAddRequest.getFlowRate())
                 .flowRateStatus(airPumpTestAddRequest.getFlowRateStatus())
                 .noiseLevelStatus(airPumpTestAddRequest.getNoiseLevelStatus())
+                .status(airPumpTestAddRequest.getIdleVoltageStatus() && airPumpTestAddRequest.getIdleCurrentStatus() && airPumpTestAddRequest.getLoadVoltageStatus() && airPumpTestAddRequest.getLoadCurrentStatus() && airPumpTestAddRequest.getNoiseLevelStatus())
                 .dateTime(LocalDateTime.now())
                 .build();
     }
@@ -360,7 +363,7 @@ public class TestServiceImpl implements TestService {
                         .flowRate(airPumpTest.getFlowRate())
                         .flowRateStatus(airPumpTest.getFlowRateStatus())
                         .noiseLevelStatus(airPumpTest.getNoiseLevelStatus())
-                        .status(airPumpTest.getIdleVoltageStatus() && airPumpTest.getIdleCurrentStatus() && airPumpTest.getLoadVoltageStatus() && airPumpTest.getLoadCurrentStatus() && airPumpTest.getNoiseLevelStatus())
+                        .status(airPumpTest.getStatus())
                         .dateTime(airPumpTest.getDateTime())
                         .build())
                 .toList();

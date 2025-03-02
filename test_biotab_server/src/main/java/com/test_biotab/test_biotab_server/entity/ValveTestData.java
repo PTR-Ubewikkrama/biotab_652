@@ -40,6 +40,7 @@ public class ValveTestData {
     private Double averagePower;
     private Double flowRate;
     private Boolean flowRateStatus;
+    private Boolean status;
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime dateTime;
 }

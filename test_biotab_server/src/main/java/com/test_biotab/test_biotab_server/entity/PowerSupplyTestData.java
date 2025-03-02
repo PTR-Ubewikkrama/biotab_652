@@ -35,6 +35,7 @@ public class PowerSupplyTestData {
     private Boolean loadCurrentStatus;
     private double operatingPower;
     private Boolean noiseLevel;
+    private Boolean status;
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime dateTime;
 }

@@ -284,7 +284,7 @@ public class HHDeviceServiceImpl implements HHDeviceService {
                                                             .hhDeviceCode("UNKNOWN")
                                                             .componentCode(request.getCode())
                                                             .componentType("VALVE")
-                                                            .componentStatus(valveTest.getFlowRateStatus() && valveTest.getIdleVoltageStatus() && valveTest.getIdleCurrentStatus() ? "VERIFIED" : "NOT_VERIFIED")
+                                                            .componentStatus(valveTest.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
                                                             .build())
                                                     .build());
                                         }
@@ -299,8 +299,7 @@ public class HHDeviceServiceImpl implements HHDeviceService {
                                                             .hhDeviceCode("UNKNOWN")
                                                             .componentCode(request.getCode())
                                                             .componentType("AIR_PUMP")
-                                                            .componentStatus(airPumpTest.getFlowRateStatus() && airPumpTest.getIdleVoltageStatus() && airPumpTest.getIdleCurrentStatus() && airPumpTest.getLoadVoltageStatus() && airPumpTest.getLoadCurrentStatus()
-                                                                    ? "VERIFIED" : "NOT_VERIFIED")
+                                                            .componentStatus(airPumpTest.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
                                                             .build())
                                                     .build());
                                         }
@@ -315,7 +314,7 @@ public class HHDeviceServiceImpl implements HHDeviceService {
                                                             .hhDeviceCode("UNKNOWN")
                                                             .componentCode(request.getCode())
                                                             .componentType("POWER_SUPPLY")
-                                                            .componentStatus(powerSupplyTest.getIdleVolStatus() && powerSupplyTest.getLoadVolStatus() && powerSupplyTest.getLoadCurrentStatus() ? "VERIFIED" : "NOT_VERIFIED")
+                                                            .componentStatus(powerSupplyTest.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
                                                             .build())
                                                     .build());
                                         }
