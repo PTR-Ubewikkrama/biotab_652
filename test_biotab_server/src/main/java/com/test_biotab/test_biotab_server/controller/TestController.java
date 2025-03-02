@@ -200,6 +200,28 @@ public class TestController {
                 });
     }
 
+    @PostMapping("/add/valve-sequence-test")
+    public Mono<ResponseEntity<CommonResponse>> addValveSequenceTest(@RequestBody ValveSequenceTestAddRequest valveSequenceTestAddRequest) {
+        if (!valveSequenceTestAddRequest.getHashKey().equals(hashKey)) {
+            return sendInvalidResponse(valveSequenceTestAddRequest.getHashKey());
+        }
+        log.info("Request received to add valve sequence : {}", valveSequenceTestAddRequest);
+        return testService.addValveSequenceTest(valveSequenceTestAddRequest);
+    }
+
+    @PostMapping("/get/valve-sequence-test/{pageNo}")
+    Mono<ResponseEntity<ApiResponse<GetTestResponse<ValveSequenceTestDto>>>> getValveSequenceTest(@AuthenticationPrincipal Mono<UserDetails> principal,
+                                                                                      @RequestBody GetByPatternRequest request,
+                                                                                      @PathVariable("pageNo") String pageNo) {
+        log.info("Received request to get valve sequence test with pattern: {}", request.getFilterValue());
+        return principal
+                .flatMap(userDetails -> {
+                    log.info("Getting valve sequence test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
+                    request.setRequestType("VALVE_SEQUENCE");
+                    return testService.getValveSequenceTest(request, userDetails, pageNo);
+                });
+    }
+
     private static Mono<ResponseEntity<CommonResponse>> sendInvalidResponse(String valueTestAddRequest) {
         log.error("Invalid hash key received: {}", valueTestAddRequest);
         return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED)

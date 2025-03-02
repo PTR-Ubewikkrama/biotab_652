@@ -1,0 +1,162 @@
+package com.test_biotab.test_biotab_server.entity;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Data
+@Entity
+@Table(name = "valve_sequence_test_data")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class ValveSequenceTestData {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer testId;
+    @ManyToOne
+    @JoinColumn(name = "device_id")
+    private Device device;
+    private String qrCode;
+    private String testJigId;
+    private Boolean physicalInspectionState;
+    private Double manifoldSealPressure;
+    private Double manifoldPressureAfter1Sec;
+    private Boolean manifoldPressureState;
+    private Double valve1InflationPressure;
+    private Boolean valve1State;
+    private Double valve3InflationPressure;
+    private Boolean valve3State;
+    private Double valve5InflationPressure;
+    private Boolean valve5State;
+    private Double valve7InflationPressure;
+    private Boolean valve7State;
+    private Double valve9InflationPressure;
+    private Boolean valve9State;
+    private Double valve11InflationPressure;
+    private Boolean valve11State;
+    private Double valve13InflationPressure;
+    private Boolean valve13State;
+    private Double valve15InflationPressure;
+    private Boolean valve15State;
+    private Double valve17InflationPressure;
+    private Boolean valve17State;
+    private Double valve19InflationPressure;
+    private Boolean valve19State;
+    private Double valve21InflationPressure;
+    private Boolean valve21State;
+    private Double valve23InflationPressure;
+    private Boolean valve23State;
+    private Double valve25InflationPressure;
+    private Boolean valve25State;
+    private Double valve27InflationPressure;
+    private Boolean valve27State;
+    private Double valve29InflationPressure;
+    private Boolean valve29State;
+    private Double valve31InflationPressure;
+    private Boolean valve31State;
+    private Double valve33InflationPressure;
+    private Boolean valve33State;
+    private Double valve35InflationPressure;
+    private Boolean valve35State;
+    private Double valve37InflationPressure;
+    private Boolean valve37State;
+    private Double valve39InflationPressure;
+    private Boolean valve39State;
+    private Double valve41InflationPressure;
+    private Boolean valve41State;
+    private Double valve43InflationPressure;
+    private Boolean valve43State;
+    private Double valve45InflationPressure;
+    private Boolean valve45State;
+    private Double valve47InflationPressure;
+    private Boolean valve47State;
+    private Double valve49InflationPressure;
+    private Boolean valve49State;
+    private Double valve51InflationPressure;
+    private Boolean valve51State;
+    private Double valve53InflationPressure;
+    private Boolean valve53State;
+    private Double valve55InflationPressure;
+    private Boolean valve55State;
+    private Double valve57InflationPressure;
+    private Boolean valve57State;
+    private Double valve59InflationPressure;
+    private Boolean valve59State;
+    private Double valve61InflationPressure;
+    private Boolean valve61State;
+    private Double valve63InflationPressure;
+    private Boolean valve63State;
+    private Double valve2DeflationPressure;
+    private Boolean valve2State;
+    private Double valve4DeflationPressure;
+    private Boolean valve4State;
+    private Double valve6DeflationPressure;
+    private Boolean valve6State;
+    private Double valve8DeflationPressure;
+    private Boolean valve8State;
+    private Double valve10DeflationPressure;
+    private Boolean valve10State;
+    private Double valve12DeflationPressure;
+    private Boolean valve12State;
+    private Double valve14DeflationPressure;
+    private Boolean valve14State;
+    private Double valve16DeflationPressure;
+    private Boolean valve16State;
+    private Double valve18DeflationPressure;
+    private Boolean valve18State;
+    private Double valve20DeflationPressure;
+    private Boolean valve20State;
+    private Double valve22DeflationPressure;
+    private Boolean valve22State;
+    private Double valve24DeflationPressure;
+    private Boolean valve24State;
+    private Double valve26DeflationPressure;
+    private Boolean valve26State;
+    private Double valve28DeflationPressure;
+    private Boolean valve28State;
+    private Double valve30DeflationPressure;
+    private Boolean valve30State;
+    private Double valve32DeflationPressure;
+    private Boolean valve32State;
+    private Double valve34DeflationPressure;
+    private Boolean valve34State;
+    private Double valve36DeflationPressure;
+    private Boolean valve36State;
+    private Double valve38DeflationPressure;
+    private Boolean valve38State;
+    private Double valve40DeflationPressure;
+    private Boolean valve40State;
+    private Double valve42DeflationPressure;
+    private Boolean valve42State;
+    private Double valve44DeflationPressure;
+    private Boolean valve44State;
+    private Double valve46DeflationPressure;
+    private Boolean valve46State;
+    private Double valve48DeflationPressure;
+    private Boolean valve48State;
+    private Double valve50DeflationPressure;
+    private Boolean valve50State;
+    private Double valve52DeflationPressure;
+    private Boolean valve52State;
+    private Double valve54DeflationPressure;
+    private Boolean valve54State;
+    private Double valve56DeflationPressure;
+    private Boolean valve56State;
+    private Double valve58DeflationPressure;
+    private Boolean valve58State;
+    private Double valve60DeflationPressure;
+    private Boolean valve60State;
+    private Double valve62DeflationPressure;
+    private Boolean valve62State;
+    private Double valve64DeflationPressure;
+    private Boolean valve64State;
+    private Boolean overallValveSequenceState;
+    private Boolean status;
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime dateTime;
+}

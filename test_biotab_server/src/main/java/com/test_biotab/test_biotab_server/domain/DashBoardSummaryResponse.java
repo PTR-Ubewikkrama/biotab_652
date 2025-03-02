@@ -28,6 +28,8 @@ public class DashBoardSummaryResponse {
     long totalFailedPowerPcbV2Test;
     long totalSuccessOpValveTest;
     long totalFailedOpValveTest;
+    long totalSuccessValveSequenceTest;
+    long totalFailedValveSequenceTest;
     long totalFinalAssembly;
     long totalHHDevice;
 }

@@ -38,4 +38,8 @@ public interface TestService {
     Mono<ResponseEntity<CommonResponse>> addOpValveTest(OpValveTestAddRequest opValveTestAddRequest);
 
     Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<OpValveTestDto>>>> getOpValveTest(GetByPatternRequest request, UserDetails userDetails, String pageNo);
+
+    Mono<ResponseEntity<CommonResponse>> addValveSequenceTest(ValveSequenceTestAddRequest valveSequenceTestAddRequest);
+
+    Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<ValveSequenceTestDto>>>> getValveSequenceTest(GetByPatternRequest request, UserDetails userDetails, String pageNo);
 }
