@@ -40,6 +40,7 @@ public class TestServiceImpl implements TestService {
     private final ValveCardTestRepository valveCardTestRepository;
     private final ManiFoldLeakTestRepository maniFoldLeakTestRepository;
     private final UiPcbTestRepository uiPcbTestRepository;
+    private final CableTestRepository cableTestRepository;
     private final DeviceService deviceService;
 
     @PersistenceContext
@@ -1456,6 +1457,106 @@ public class TestServiceImpl implements TestService {
                         .overallUiPcbState(uiPcbTest.getOverallUiPcbState())
                         .status(uiPcbTest.getStatus())
                         .dateTime(uiPcbTest.getDateTime())
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public Mono<ResponseEntity<CommonResponse>> addCableTest(CableTestAddRequest cableTestAddRequest) {
+        return Mono.just(cableTestAddRequest)
+                .flatMap(request -> deviceService.getDeviceByMac(cableTestAddRequest.getDeviceMac())
+                        .map(device -> toCableTest(cableTestAddRequest, device))
+                        .map(cableTestRepository::save))
+                .switchIfEmpty(Mono.error(new RuntimeException("Device not found")))
+                .map(opCableTest -> ResponseEntity.ok(CommonResponse.builder().message("Cable test added successfully").status("SUCCESS").build()));
+    }
+
+    private CableTestData toCableTest(CableTestAddRequest cableTestAddRequest, Device device) {
+        return CableTestData.builder()
+                .device(device)
+                .qrCode(cableTestAddRequest.getQrCode())
+                .cableSelection(cableTestAddRequest.getCableSelection())
+                .visualInspection(cableTestAddRequest.getVisualInspection())
+                .cable1(cableTestAddRequest.getCable1())
+                .cable2(cableTestAddRequest.getCable2())
+                .cable3(cableTestAddRequest.getCable3())
+                .cable4(cableTestAddRequest.getCable4())
+                .cable5(cableTestAddRequest.getCable5())
+                .cable6(cableTestAddRequest.getCable6())
+                .cable7(cableTestAddRequest.getCable7())
+                .cable8(cableTestAddRequest.getCable8())
+                .cable9(cableTestAddRequest.getCable9())
+                .cable10(cableTestAddRequest.getCable10())
+                .overallCableState(cableTestAddRequest.getOverallCableState())
+                .status(cableTestAddRequest.getVisualInspection().equals("pass") && cableTestAddRequest.getOverallCableState().equals("pass"))
+                .dateTime(LocalDateTime.now())
+                .build();
+    }
+
+    @Override
+    public Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<CableTestDto>>>> getCableTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
+        return Mono.just(request)
+                .map(req -> {
+                    log.info("Getting cable test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
+                    if (pageNo != null && pageNo.equals("all")) {
+                        return cableTestRepository.findByCustomQuery(getCustomQueryCableTest(request, userDetails));
+                    } else {
+                        return cableTestRepository.findByCustomQuery(getCustomQueryCableTest(request, userDetails), Integer.parseInt(pageNo) - 1);
+                    }
+                })
+                .flatMap(cableTestData -> {
+                    long total = cableTestData.size();
+                    long totalFailed = cableTestData.stream()
+                            .filter(data -> !data.getStatus())
+                            .count();
+                    return Mono.just(ApiResponse.<GetTestResponse<CableTestDto>>builder()
+                            .status("S1000")
+                            .statusDescription("Request successful")
+                            .data(GetTestResponse.<CableTestDto>builder()
+                                    .tests(getCableDtoFromEntity(cableTestData))
+                                    .totalRecords(total)
+                                    .totalFailed(totalFailed)
+                                    .build())
+                            .build());
+                })
+                .map(ResponseEntity::ok)
+                .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Cable Tests")));
+    }
+
+    private TypedQuery<CableTestData> getCustomQueryCableTest(GetByPatternRequest request, UserDetails userDetails) {
+        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM CableTestData v JOIN v.device d");
+
+        List<String> filterParts = new ArrayList<>();
+
+        calculateFilterParts(request, filterParts, userDetails);
+
+        TypedQuery<CableTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
+                .append(" ORDER BY v.dateTime DESC").toString(), CableTestData.class);
+
+        return exchangeDateFilterInQuery(query, request);
+    }
+
+    private List<CableTestDto> getCableDtoFromEntity(List<CableTestData> cableTestData) {
+        return cableTestData.stream()
+                .map(cableTest -> CableTestDto.builder()
+                        .testId(cableTest.getTestId())
+                        .deviceId(cableTest.getDevice().getDeviceId())
+                        .qrCode(cableTest.getQrCode())
+                        .cableSelection(cableTest.getCableSelection())
+                        .visualInspection(cableTest.getVisualInspection())
+                        .cable1(cableTest.getCable1())
+                        .cable2(cableTest.getCable2())
+                        .cable3(cableTest.getCable3())
+                        .cable4(cableTest.getCable4())
+                        .cable5(cableTest.getCable5())
+                        .cable6(cableTest.getCable6())
+                        .cable7(cableTest.getCable7())
+                        .cable8(cableTest.getCable8())
+                        .cable9(cableTest.getCable9())
+                        .cable10(cableTest.getCable10())
+                        .overallCableState(cableTest.getOverallCableState())
+                        .status(cableTest.getStatus())
+                        .dateTime(cableTest.getDateTime())
                         .build())
                 .toList();
     }

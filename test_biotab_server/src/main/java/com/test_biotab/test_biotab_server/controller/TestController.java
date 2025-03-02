@@ -260,7 +260,7 @@ public class TestController {
         log.info("Received request to get manifold leak test with pattern: {}", request.getFilterValue());
         return principal
                 .flatMap(userDetails -> {
-                    log.info("Getting valve card test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
+                    log.info("Getting manifold leak test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
                     request.setRequestType("MANI_FOLD_LEAK");
                     return testService.getManiFoldLeakTest(request, userDetails, pageNo);
                 });
@@ -282,9 +282,31 @@ public class TestController {
         log.info("Received request to get ui pcb test with pattern: {}", request.getFilterValue());
         return principal
                 .flatMap(userDetails -> {
-                    log.info("Getting valve card test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
+                    log.info("Getting ui pcb test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
                     request.setRequestType("UI_PCB");
                     return testService.getUiPcbTest(request, userDetails, pageNo);
+                });
+    }
+
+    @PostMapping("/add/cable-test")
+    public Mono<ResponseEntity<CommonResponse>> addCableTest(@RequestBody CableTestAddRequest cableTestAddRequest) {
+        if (!cableTestAddRequest.getHashKey().equals(hashKey)) {
+            return sendInvalidResponse(cableTestAddRequest.getHashKey());
+        }
+        log.info("Request received to add cable : {}", cableTestAddRequest);
+        return testService.addCableTest(cableTestAddRequest);
+    }
+
+    @PostMapping("/get/cable-test/{pageNo}")
+    Mono<ResponseEntity<ApiResponse<GetTestResponse<CableTestDto>>>> getCableTest(@AuthenticationPrincipal Mono<UserDetails> principal,
+                                                                                  @RequestBody GetByPatternRequest request,
+                                                                                  @PathVariable("pageNo") String pageNo) {
+        log.info("Received request to get cable test with pattern: {}", request.getFilterValue());
+        return principal
+                .flatMap(userDetails -> {
+                    log.info("Getting cable test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
+                    request.setRequestType("CABLE");
+                    return testService.getCableTest(request, userDetails, pageNo);
                 });
     }
 
