@@ -24,6 +24,8 @@ public class DashBoardSummaryResponse {
     long totalFailedAirPumpV2Test;
     long totalSuccessPowerSupplyV2Test;
     long totalFailedPowerSupplyV2Test;
+    long totalSuccessPowerPcbV2Test;
+    long totalFailedPowerPcbV2Test;
     long totalFinalAssembly;
     long totalHHDevice;
 }

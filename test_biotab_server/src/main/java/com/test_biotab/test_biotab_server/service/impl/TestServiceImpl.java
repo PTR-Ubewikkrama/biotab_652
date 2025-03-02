@@ -34,6 +34,7 @@ public class TestServiceImpl implements TestService {
     private final PowerPCBTestRepository powerPCBTestRepository;
     private final AirPumpV2TestRepository airPumpV2TestRepository;
     private final PowerPCBV2TestRepository powerPCBV2TestRepository;
+    private final PowerSupplyV2TestRepository powerSupplyV2TestRepository;
     private final DeviceService deviceService;
 
     @PersistenceContext
@@ -648,6 +649,106 @@ public class TestServiceImpl implements TestService {
                 .toList();
     }
 
+    @Override
+    public Mono<ResponseEntity<CommonResponse>> addPowerSupplyV2Test(PowerSupplyV2TestAddRequest powerSupplyV2TestAddRequest) {
+        return Mono.just(powerSupplyV2TestAddRequest)
+                .flatMap(request -> deviceService.getDeviceByMac(powerSupplyV2TestAddRequest.getDeviceMac())
+                        .map(device -> toPowerSupplyV2Test(powerSupplyV2TestAddRequest, device))
+                        .map(powerSupplyV2TestRepository::save))
+                .switchIfEmpty(Mono.error(new RuntimeException("Device not found")))
+                .map(powerSupplyV2Test -> ResponseEntity.ok(CommonResponse.builder().message("Power supply v2 test added successfully").status("SUCCESS").build()));
+    }
+
+    private PowerSupplyV2TestData toPowerSupplyV2Test(PowerSupplyV2TestAddRequest powerSupplyV2TestAddRequest, Device device) {
+        return PowerSupplyV2TestData.builder()
+                .device(device)
+                .idleVoltageLowTh(powerSupplyV2TestAddRequest.getIdleVoltageLowTh())
+                .idleVoltageUpTh(powerSupplyV2TestAddRequest.getIdleVoltageUpTh())
+                .loadVoltageLowTh(powerSupplyV2TestAddRequest.getLoadVoltageLowTh())
+                .loadVoltageUpTh(powerSupplyV2TestAddRequest.getLoadVoltageUpTh())
+                .loadCurrentUpTh(powerSupplyV2TestAddRequest.getLoadCurrentUpTh())
+                .serialNumber(powerSupplyV2TestAddRequest.getSerialNumber())
+                .idleVol(powerSupplyV2TestAddRequest.getIdleVol())
+                .idleVolStatus(powerSupplyV2TestAddRequest.getIdleVolStatus())
+                .loadVol(powerSupplyV2TestAddRequest.getLoadVol())
+                .loadVolStatus(powerSupplyV2TestAddRequest.getLoadVolStatus())
+                .loadCurrent(powerSupplyV2TestAddRequest.getLoadCurrent())
+                .loadCurrentStatus(powerSupplyV2TestAddRequest.getLoadCurrentStatus())
+                .operatingPower(powerSupplyV2TestAddRequest.getOperatingPower())
+                .noiseLevel(powerSupplyV2TestAddRequest.getNoiseLevel())
+                .status(powerSupplyV2TestAddRequest.getIdleVolStatus() && powerSupplyV2TestAddRequest.getLoadVolStatus() && powerSupplyV2TestAddRequest.getLoadCurrentStatus())
+                .dateTime(LocalDateTime.now())
+                .build();
+    }
+
+    @Override
+    public Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<PowerSupplyV2TestDto>>>> getPowerSupplyV2Test(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
+        return Mono.just(request)
+                .map(req -> {
+                    log.info("Getting power supply v2 test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
+                    if (pageNo != null && pageNo.equals("all")) {
+                        return powerSupplyV2TestRepository.findByCustomQuery(getCustomQueryPowerSupplyV2Test(request, userDetails));
+                    } else {
+                        return powerSupplyV2TestRepository.findByCustomQuery(getCustomQueryPowerSupplyV2Test(request, userDetails), Integer.parseInt(pageNo) - 1);
+                    }
+                })
+                .flatMap(powerSupplyV2TestData -> {
+                    long total = powerSupplyV2TestData.size();
+                    long totalFailed = powerSupplyV2TestData.stream()
+                            .filter(data -> !data.getIdleVolStatus() || !data.getLoadVolStatus() || !data.getLoadCurrentStatus())
+                            .count();
+                    return Mono.just(ApiResponse.<GetTestResponse<PowerSupplyV2TestDto>>builder()
+                            .status("S1000")
+                            .statusDescription("Request successful")
+                            .data(GetTestResponse.<PowerSupplyV2TestDto>builder()
+                                    .tests(getPowerSupplyV2DtoFromEntity(powerSupplyV2TestData))
+                                    .totalRecords(total)
+                                    .totalFailed(totalFailed)
+                                    .build())
+                            .build());
+                })
+                .map(ResponseEntity::ok)
+                .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Power Supply V2 Tests")));
+    }
+
+    private TypedQuery<PowerSupplyV2TestData> getCustomQueryPowerSupplyV2Test(GetByPatternRequest request, UserDetails userDetails) {
+        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM PowerSupplyV2TestData v JOIN v.device d");
+
+        List<String> filterParts = new ArrayList<>();
+
+        calculateFilterParts(request, filterParts, userDetails);
+
+        TypedQuery<PowerSupplyV2TestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
+                .append(" ORDER BY v.dateTime DESC").toString(), PowerSupplyV2TestData.class);
+
+        return exchangeDateFilterInQuery(query, request);
+    }
+
+    private List<PowerSupplyV2TestDto> getPowerSupplyV2DtoFromEntity(List<PowerSupplyV2TestData> powerSupplyV2TestData) {
+        return powerSupplyV2TestData.stream()
+                .map(powerSupplyV2Test -> PowerSupplyV2TestDto.builder()
+                        .testId(powerSupplyV2Test.getTestId())
+                        .deviceId(powerSupplyV2Test.getDevice().getDeviceId())
+                        .idleVoltageLowTh(powerSupplyV2Test.getIdleVoltageLowTh())
+                        .idleVoltageUpTh(powerSupplyV2Test.getIdleVoltageUpTh())
+                        .loadVoltageLowTh(powerSupplyV2Test.getLoadVoltageLowTh())
+                        .loadVoltageUpTh(powerSupplyV2Test.getLoadVoltageUpTh())
+                        .loadCurrentUpTh(powerSupplyV2Test.getLoadCurrentUpTh())
+                        .serialNumber(powerSupplyV2Test.getSerialNumber())
+                        .idleVol(powerSupplyV2Test.getIdleVol())
+                        .idleVolStatus(powerSupplyV2Test.getIdleVolStatus())
+                        .loadVol(powerSupplyV2Test.getLoadVol())
+                        .loadVolStatus(powerSupplyV2Test.getLoadVolStatus())
+                        .loadCurrent(powerSupplyV2Test.getLoadCurrent())
+                        .loadCurrentStatus(powerSupplyV2Test.getLoadCurrentStatus())
+                        .operatingPower(powerSupplyV2Test.getOperatingPower())
+                        .noiseLevel(powerSupplyV2Test.getNoiseLevel())
+                        .status(powerSupplyV2Test.getStatus())
+                        .dateTime(powerSupplyV2Test.getDateTime())
+                        .build())
+                .toList();
+    }
+
     private static void calculateFilterParts(GetByPatternRequest request, List<String> filterParts, UserDetails userDetails) {
         if (request.getFilterType() != null && !request.getFilterValue().isEmpty()) {
             switch (request.getFilterType()) {
@@ -673,8 +774,8 @@ public class TestServiceImpl implements TestService {
         if (request.getStatus() != null && !request.getStatus().isEmpty() && availableStatusList.contains(request.getStatus())) {
             boolean status = request.getStatus().equals("PASS");
             switch (request.getRequestType()) {
-                case "AIR_PUMP", "POWER_PCB", "POWER_SUPPLY", "VALVE", "AIR_PUMP_V2" ->
-                        filterParts.add("v.status = " + status);
+                case "AIR_PUMP", "POWER_PCB", "POWER_SUPPLY", "VALVE", "AIR_PUMP_V2", "POWER_PCB_V2",
+                     "POWER_SUPPLY_V2" -> filterParts.add("v.status = " + status);
             }
         }
     }

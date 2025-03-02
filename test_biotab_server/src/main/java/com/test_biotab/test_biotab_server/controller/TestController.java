@@ -4,6 +4,7 @@ import com.test_biotab.test_biotab_server.domain.*;
 import com.test_biotab.test_biotab_server.dto.AirPumpV2TestDto;
 import com.test_biotab.test_biotab_server.dto.PowerPCBTestDto;
 import com.test_biotab.test_biotab_server.dto.PowerPCBV2TestDto;
+import com.test_biotab.test_biotab_server.dto.PowerSupplyV2TestDto;
 import com.test_biotab.test_biotab_server.service.TestService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -155,6 +156,28 @@ public class TestController {
                     log.info("Getting power pcb v2 test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
                     request.setRequestType("POWER_PCB_V2");
                     return testService.getPowerPCBV2Test(request, userDetails, pageNo);
+                });
+    }
+
+    @PostMapping("/add/power-supply-v2-test")
+    public Mono<ResponseEntity<CommonResponse>> addPowerSupplyV2Test(@RequestBody PowerSupplyV2TestAddRequest powerSupplyV2TestAddRequest) {
+        if (!powerSupplyV2TestAddRequest.getHashKey().equals(hashKey)) {
+            return sendInvalidResponse(powerSupplyV2TestAddRequest.getHashKey());
+        }
+        log.info("Request received to add power supply v2 : {}", powerSupplyV2TestAddRequest);
+        return testService.addPowerSupplyV2Test(powerSupplyV2TestAddRequest);
+    }
+
+    @PostMapping("/get/power-supply-v2-test/{pageNo}")
+    Mono<ResponseEntity<ApiResponse<GetTestResponse<PowerSupplyV2TestDto>>>> getPowerSupplyV2Test(@AuthenticationPrincipal Mono<UserDetails> principal,
+                                                                                                  @RequestBody GetByPatternRequest request,
+                                                                                                  @PathVariable("pageNo") String pageNo) {
+        log.info("Received request to get power supply v2 test with pattern: {}", request.getFilterValue());
+        return principal
+                .flatMap(userDetails -> {
+                    log.info("Getting power supply v2 test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
+                    request.setRequestType("POWER_SUPPLY_V2");
+                    return testService.getPowerSupplyV2Test(request, userDetails, pageNo);
                 });
     }
 
