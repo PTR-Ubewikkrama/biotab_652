@@ -1,0 +1,1375 @@
+{
+	"info": {
+		"_postman_id": "c87ed1e6-8d21-49c6-af54-9593b7ab0556",
+		"name": "biotap_e652_test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6080157"
+	},
+	"item": [
+		{
+			"name": "Add Power supply test",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hashKey\": \"asdfghjkljhgfdlsmsfdfsmfsdfsdfj\",\n    \"deviceMac\": \"AA:BB:CC:DD:EE:01\",\n    \"idleVoltageLowTh\": 0.5,\n    \"idleVoltageUpTh\": 1.0,\n    \"loadVoltageLowTh\": 0.7,\n    \"loadVoltageUpTh\": 1.5,\n    \"loadCurrentUpTh\": 2.0,\n    \"serialNumber\": \"ABC123\",\n    \"idleVol\": 2.5,\n    \"idleVolStatus\": true,\n    \"loadVol\": 12.0,\n    \"loadVolStatus\": true,\n    \"loadCurrent\": 3.5,\n    \"loadCurrentStatus\": true,\n    \"operatingPower\": 50.0,\n    \"noiseLevel\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/add/power-supply-test",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"add",
+						"power-supply-test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Power Suppory Test",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0MDg0ODY3MywiZXhwIjoxNzQ5NDg4NjczfQ.sRdIge3Bi6WrKFmXVLakJmfRyLL5JZ0tUpf_MfxZIaM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"filterType\": \"serialNumber\",\n    \"filterValue\": \"ABC1234\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/get/power-supply-test/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"get",
+						"power-supply-test",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Air pump Test",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0MDg0ODY3MywiZXhwIjoxNzQ5NDg4NjczfQ.sRdIge3Bi6WrKFmXVLakJmfRyLL5JZ0tUpf_MfxZIaM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"filterType\": \"serialNumber\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/get/air-pump-test/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"get",
+						"air-pump-test",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get valve test",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0MDg0ODY3MywiZXhwIjoxNzQ5NDg4NjczfQ.sRdIge3Bi6WrKFmXVLakJmfRyLL5JZ0tUpf_MfxZIaM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"filterType\": \"serialNumber\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/get/valve-test/all",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"get",
+						"valve-test",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get Token",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"admin@example.com\",\n    \"password\": \"admin123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/login",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add valve test",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hashKey\": \"asdfghjkljhgfdlsmsfdfsmfsdfsdfj\",\n    \"deviceMac\": \"AA:BB:CC:DD:EE:01\",\n    \"idleVoltageLowThresh\": 3.2,\n    \"idleVoltageUpThresh\": 4.5,\n    \"idleCurrentUpThresh\": 2.0,\n    \"loadVoltageLowThresh\": 3.0,\n    \"loadVoltageUpThresh\": 4.2,\n    \"loadCurrentUpThresh\": 1.8,\n    \"setPressure\": 5.0,\n    \"serialNumber\": \"SN123456\",\n    \"idleVoltage\": 3.8,\n    \"idleVoltageStatus\": true,\n    \"idleCurrent\": 1.5,\n    \"idleCurrentStatus\": true,\n    \"coilResistance\": 12.5,\n    \"operatingCurrent\": 2.3,\n    \"peakPower\": 10.2,\n    \"averagePower\": 5.5,\n    \"flowRate\": 3.5,\n    \"flowRateStatus\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/add/valve-test",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"add",
+						"valve-test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add air pump test",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hashKey\": \"asdfghjkljhgfdlsmsfdfsmfsdfsdfj\",\n    \"deviceMac\": \"AA:BB:CC:DD:EE:01\",\n    \"idleVoltageLowThresh\": 3.2,\n    \"idleVoltageUpThresh\": 4.5,\n    \"idleCurrentUpThresh\": 2.0,\n    \"loadVoltageLowThresh\": 3.0,\n    \"loadVoltageUpThresh\": 4.2,\n    \"loadCurrentUpThresh\": 1.8,\n    \"setPressure\": 5.0,\n    \"serialNumber\": \"SN123456\",\n    \"idleVoltage\": 3.8,\n    \"idleVoltageStatus\": true,\n    \"idleCurrent\": 1.5,\n    \"idleCurrentStatus\": true,\n    \"loadVoltage\": 3.9,\n    \"loadVoltageStatus\": true,\n    \"loadCurrent\": 1.7,\n    \"loadCurrentStatus\": true,\n    \"flowRate\": 3.5,\n    \"flowRateStatus\": true,\n    \"noiseLevelStatus\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/add/air-pump-test",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"add",
+						"air-pump-test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Power PCB test",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hashKey\": \"asdfghjkljhgfdlsmsfdfsmfsdfsdfj\",\n    \"deviceMac\": \"AA:BB:CC:DD:EE:01\",\n    \"powerGroundResistanceUpperLimit\": 1.5,\n    \"serialNumber\": \"SN123456\",\n    \"dcBarrelJackConnectivityStatus\": true,\n    \"usbCPowerOutletConnectivity\": false,\n    \"powerGroundResistance\": 1.2,\n    \"powerGroundResistanceStatus\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/add/power-pcb-test",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"add",
+						"power-pcb-test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Power PCB test",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0MDg0ODY3MywiZXhwIjoxNzQ5NDg4NjczfQ.sRdIge3Bi6WrKFmXVLakJmfRyLL5JZ0tUpf_MfxZIaM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer your_access_token"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"filterType\": \"serialNumber\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"POWER_PCB\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/get/power-pcb-test/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"get",
+						"power-pcb-test",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Air Pump V2 Test",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hashKey\": \"asdfghjkljhgfdlsmsfdfsmfsdfsdfj\",\n    \"deviceMac\": \"AA:BB:CC:DD:EE:01\",\n    \"flowRateLowThresh\": 1.0,\n    \"flowRateUpThresh\": 5.0,\n    \"loadVoltageLowThresh\": 3.3,\n    \"loadVoltageUpThresh\": 5.0,\n    \"loadCurrentUpThresh\": 2.0,\n    \"pressureLowThresh\": 10.0,\n    \"pressureUpThresh\": 20.0,\n    \"serialNumber\": \"SN123456\",\n    \"pressure\": 15.5,\n    \"pressureStatus\": true,\n    \"loadVoltage\": 4.2,\n    \"loadVoltageStatus\": true,\n    \"loadCurrent\": 1.8,\n    \"loadCurrentStatus\": true,\n    \"flowRate\": 4.0,\n    \"flowRateStatus\": true,\n    \"noiseLevelStatus\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/add/air-pump-v2-test",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"add",
+						"air-pump-v2-test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Air Pump V2 Test",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0MDg0ODY3MywiZXhwIjoxNzQ5NDg4NjczfQ.sRdIge3Bi6WrKFmXVLakJmfRyLL5JZ0tUpf_MfxZIaM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer your_access_token"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"filterType\": \"serialNumber\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"AIR_PUMP_V2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/get/air-pump-v2-test/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"get",
+						"air-pump-v2-test",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Power pcb v2 test",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hashKey\": \"asdfghjkljhgfdlsmsfdfsmfsdfsdfj\",\n    \"deviceMac\": \"AA:BB:CC:DD:EE:01\",\n    \"loadVoltageLowThresh\": 3.3,\n    \"serialNumber\": \"SN123456\",\n    \"loadCurrentLowThresh\": 1.5,\n    \"usbCPowerOutletConnectivity\": \"CONNECTED\",\n    \"loadVoltage\": 4.2,\n    \"loadVoltageStatus\": true,\n    \"loadCurrentStatus\": true,\n    \"loadCurrent\": 1.8,\n    \"deviceStatus\": true,\n    \"noiseLevelStatus\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/add/power-pcb-v2-test",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"add",
+						"power-pcb-v2-test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Power pcb v2 Test",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0MDg0ODY3MywiZXhwIjoxNzQ5NDg4NjczfQ.sRdIge3Bi6WrKFmXVLakJmfRyLL5JZ0tUpf_MfxZIaM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer your_access_token"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"filterType\": \"serialNumber\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"POWER_PCB_V2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/get/power-pcb-v2-test/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"get",
+						"power-pcb-v2-test",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Power Supply V2 Test",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hashKey\": \"asdfghjkljhgfdlsmsfdfsmfsdfsdfj\",\n    \"deviceMac\": \"AA:BB:CC:DD:EE:01\",\n    \"idleVoltageLowTh\": 3.0,\n    \"idleVoltageUpTh\": 3.5,\n    \"loadVoltageLowTh\": 4.5,\n    \"loadVoltageUpTh\": 5.0,\n    \"loadCurrentUpTh\": 2.0,\n    \"serialNumber\": \"SN123456\",\n    \"idleVol\": 3.3,\n    \"idleVolStatus\": true,\n    \"loadVol\": 4.8,\n    \"loadVolStatus\": true,\n    \"loadCurrent\": 1.8,\n    \"loadCurrentStatus\": false,\n    \"operatingPower\": 9.0,\n    \"noiseLevel\": false\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/add/power-supply-v2-test",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"add",
+						"power-supply-v2-test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Power Supply V2 Test",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0MDg0ODY3MywiZXhwIjoxNzQ5NDg4NjczfQ.sRdIge3Bi6WrKFmXVLakJmfRyLL5JZ0tUpf_MfxZIaM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer your_access_token"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"filterType\": \"serialNumber\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"POWER_SUPPLY_V2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/get/power-supply-v2-test/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"get",
+						"power-supply-v2-test",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Op Valve Test",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hashKey\": \"asdfghjkljhgfdlsmsfdfsmfsdfsdfj\",\n    \"deviceMac\": \"AA:BB:CC:DD:EE:01\",\n    \"qrCode\": \"QR123456\",\n    \"physicalInspectionState\": true,\n    \"startOpeningPressure\": 12,\n    \"startOpeningFlowrate\": 8,\n    \"valveStartOpeningState\": true,\n    \"fullyOpeningPressure\": 25,\n    \"fullyOpeningFlowrate\": 15,\n    \"valveFullyOpeningState\": true,\n    \"closingPressure\": 10,\n    \"closingFlowrate\": 6,\n    \"valveClosingState\": true,\n    \"overallOpValveState\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/add/op-valve-test",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"add",
+						"op-valve-test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Op Valve Test",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0MDg0ODY3MywiZXhwIjoxNzQ5NDg4NjczfQ.sRdIge3Bi6WrKFmXVLakJmfRyLL5JZ0tUpf_MfxZIaM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer your_access_token"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"filterType\": \"qrCode\",\n    \"filterValue\": \"QR123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"OP_VALVE\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/get/op-valve-test/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"get",
+						"op-valve-test",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Valve Sequence Test",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hashKey\": \"asdfghjkljhgfdlsmsfdfsmfsdfsdfj\",\n    \"deviceMac\": \"AA:BB:CC:DD:EE:01\",\n    \"qrCode\": \"QR123456\",\n    \"physicalInspectionState\": true,\n    \"manifoldSealPressure\": 1.2,\n    \"manifoldPressureAfter1Sec\": 1.1,\n    \"manifoldPressureState\": true,\n    \"valve1InflationPressure\": 2.3,\n    \"valve1State\": true,\n    \"valve3InflationPressure\": 2.4,\n    \"valve3State\": true,\n    \"valve5InflationPressure\": 2.5,\n    \"valve5State\": true,\n    \"valve7InflationPressure\": 2.6,\n    \"valve7State\": true,\n    \"valve9InflationPressure\": 2.7,\n    \"valve9State\": true,\n    \"valve11InflationPressure\": 2.8,\n    \"valve11State\": true,\n    \"valve13InflationPressure\": 2.9,\n    \"valve13State\": true,\n    \"valve15InflationPressure\": 3.0,\n    \"valve15State\": true,\n    \"valve17InflationPressure\": 3.1,\n    \"valve17State\": true,\n    \"valve19InflationPressure\": 3.2,\n    \"valve19State\": true,\n    \"valve21InflationPressure\": 3.3,\n    \"valve21State\": true,\n    \"valve23InflationPressure\": 3.4,\n    \"valve23State\": true,\n    \"valve25InflationPressure\": 3.5,\n    \"valve25State\": true,\n    \"valve27InflationPressure\": 3.6,\n    \"valve27State\": true,\n    \"valve29InflationPressure\": 3.7,\n    \"valve29State\": true,\n    \"valve31InflationPressure\": 3.8,\n    \"valve31State\": true,\n    \"valve33InflationPressure\": 3.9,\n    \"valve33State\": true,\n    \"valve35InflationPressure\": 4.0,\n    \"valve35State\": true,\n    \"valve37InflationPressure\": 4.1,\n    \"valve37State\": true,\n    \"valve39InflationPressure\": 4.2,\n    \"valve39State\": true,\n    \"valve41InflationPressure\": 4.3,\n    \"valve41State\": true,\n    \"valve43InflationPressure\": 4.4,\n    \"valve43State\": true,\n    \"valve45InflationPressure\": 4.5,\n    \"valve45State\": true,\n    \"valve47InflationPressure\": 4.6,\n    \"valve47State\": true,\n    \"valve49InflationPressure\": 4.7,\n    \"valve49State\": true,\n    \"valve51InflationPressure\": 4.8,\n    \"valve51State\": true,\n    \"valve53InflationPressure\": 4.9,\n    \"valve53State\": true,\n    \"valve55InflationPressure\": 5.0,\n    \"valve55State\": true,\n    \"valve57InflationPressure\": 5.1,\n    \"valve57State\": true,\n    \"valve59InflationPressure\": 5.2,\n    \"valve59State\": true,\n    \"valve61InflationPressure\": 5.3,\n    \"valve61State\": true,\n    \"valve63InflationPressure\": 5.4,\n    \"valve63State\": true,\n    \"valve2DeflationPressure\": 1.0,\n    \"valve2State\": true,\n    \"valve4DeflationPressure\": 1.1,\n    \"valve4State\": true,\n    \"valve6DeflationPressure\": 1.2,\n    \"valve6State\": true,\n    \"valve8DeflationPressure\": 1.3,\n    \"valve8State\": true,\n    \"valve10DeflationPressure\": 1.4,\n    \"valve10State\": true,\n    \"valve12DeflationPressure\": 1.5,\n    \"valve12State\": true,\n    \"valve14DeflationPressure\": 1.6,\n    \"valve14State\": true,\n    \"valve16DeflationPressure\": 1.7,\n    \"valve16State\": true,\n    \"valve18DeflationPressure\": 1.8,\n    \"valve18State\": true,\n    \"valve20DeflationPressure\": 1.9,\n    \"valve20State\": true,\n    \"valve22DeflationPressure\": 2.0,\n    \"valve22State\": true,\n    \"valve24DeflationPressure\": 2.1,\n    \"valve24State\": true,\n    \"valve26DeflationPressure\": 2.2,\n    \"valve26State\": true,\n    \"valve28DeflationPressure\": 2.3,\n    \"valve28State\": true,\n    \"valve30DeflationPressure\": 2.4,\n    \"valve30State\": true,\n    \"valve32DeflationPressure\": 2.5,\n    \"valve32State\": true,\n    \"valve34DeflationPressure\": 2.6,\n    \"valve34State\": true,\n    \"valve36DeflationPressure\": 2.7,\n    \"valve36State\": true,\n    \"valve38DeflationPressure\": 2.8,\n    \"valve38State\": true,\n    \"valve40DeflationPressure\": 2.9,\n    \"valve40State\": true,\n    \"valve42DeflationPressure\": 3.0,\n    \"valve42State\": true,\n    \"valve44DeflationPressure\": 3.1,\n    \"valve44State\": true,\n    \"valve46DeflationPressure\": 3.2,\n    \"valve46State\": true,\n    \"valve48DeflationPressure\": 3.3,\n    \"valve48State\": true,\n    \"valve50DeflationPressure\": 3.4,\n    \"valve50State\": true,\n    \"valve52DeflationPressure\": 3.5,\n    \"valve52State\": true,\n    \"valve54DeflationPressure\": 3.6,\n    \"valve54State\": true,\n    \"valve56DeflationPressure\": 3.7,\n    \"valve56State\": true,\n    \"valve58DeflationPressure\": 3.8,\n    \"valve58State\": true,\n    \"valve60DeflationPressure\": 3.9,\n    \"valve60State\": true,\n    \"valve62DeflationPressure\": 4.0,\n    \"valve62State\": true,\n    \"valve64DeflationPressure\": 4.1,\n    \"valve64State\": true,\n    \"overallValveSequenceState\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/add/valve-sequence-test",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"add",
+						"valve-sequence-test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Valve Sequence Test",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0MDg0ODY3MywiZXhwIjoxNzQ5NDg4NjczfQ.sRdIge3Bi6WrKFmXVLakJmfRyLL5JZ0tUpf_MfxZIaM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer your_access_token"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"filterType\": \"qrCode\",\n    \"filterValue\": \"QR123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"VALVE_SEQUENCE\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/get/valve-sequence-test/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"get",
+						"valve-sequence-test",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Valve Card Test",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hashKey\": \"asdfghjkljhgfdlsmsfdfsmfsdfsdfj\",\n    \"deviceMac\": \"AA:BB:CC:DD:EE:01\",\n    \"qrCode\": \"QR123456\",\n    \"physicalInspectionState\": true,\n    \"rail\": \"Rail_XYZ\",\n    \"valve1\": \"PASS\",\n    \"valve3\": \"PASS\",\n    \"valve5\": \"FAIL\",\n    \"valve7\": \"PASS\",\n    \"valve2\": \"PASS\",\n    \"valve4\": \"FAIL\",\n    \"valve6\": \"PASS\",\n    \"valve8\": \"PASS\",\n    \"amperageTest\": \"PASS\",\n    \"shiftRegisterTest\": \"PASS\",\n    \"overallValveCardState\": \"PASS\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/add/valve-card-test",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"add",
+						"valve-card-test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Valve Card Test",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0MDg0ODY3MywiZXhwIjoxNzQ5NDg4NjczfQ.sRdIge3Bi6WrKFmXVLakJmfRyLL5JZ0tUpf_MfxZIaM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer your_jwt_token"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"filterValue\": \"qrCode\",\n    \"filterValue\": \"QR123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"VALVE_CARD\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/get/valve-card-test/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"get",
+						"valve-card-test",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add ManiFold Leak Test",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hashKey\": \"asdfghjkljhgfdlsmsfdfsmfsdfsdfj\",\n    \"deviceMac\": \"AA:BB:CC:DD:EE:01\",\n    \"qrCode\": \"QR123456\",\n    \"physicalInspectionState\": true,\n    \"leakageFlowrate\": 2,\n    \"manifoldLeakState\": true,\n    \"overallManifoldLeakState\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/add/mani-fold-leak-test",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"add",
+						"mani-fold-leak-test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get ManiFold Leak Test",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0MDg0ODY3MywiZXhwIjoxNzQ5NDg4NjczfQ.sRdIge3Bi6WrKFmXVLakJmfRyLL5JZ0tUpf_MfxZIaM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer your_jwt_token"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"filterValue\": \"qrCode\",\n    \"filterValue\": \"QR123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"MANI_FOLD_LEAK\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/get/mani-fold-leak-test/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"get",
+						"mani-fold-leak-test",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Ui Pcb Test",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hashKey\": \"asdfghjkljhgfdlsmsfdfsmfsdfsdfj\",\n    \"deviceMac\": \"AA:BB:CC:DD:EE:01\",\n    \"qrCode\": \"QR123456\",\n    \"physicalInspectionState\": true,\n    \"redLedState\": true,\n    \"whiteLedState\": true,\n    \"ledRingOnState\": true,\n    \"ledRingFadeState\": true,\n    \"overallUiPcbState\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/add/ui-pcb-test",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"add",
+						"ui-pcb-test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Ui Pcb Test",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0MDg0ODY3MywiZXhwIjoxNzQ5NDg4NjczfQ.sRdIge3Bi6WrKFmXVLakJmfRyLL5JZ0tUpf_MfxZIaM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer your_jwt_token"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"filterValue\": \"qrCode\",\n    \"filterValue\": \"QR123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"UI_PCB\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/get/ui-pcb-test/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"get",
+						"ui-pcb-test",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Cable Test",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hashKey\": \"asdfghjkljhgfdlsmsfdfsmfsdfsdfj\",\n    \"deviceMac\": \"AA:BB:CC:DD:EE:01\",\n    \"qrCode\": \"QR123456\",\n    \"cableSelection\": 1,\n    \"visualInspection\": true,\n    \"cable1\": true,\n    \"cable2\": true,\n    \"cable3\": true,\n    \"cable4\": true,\n    \"cable5\": true,\n    \"cable6\": true,\n    \"cable7\": true,\n    \"cable8\": true,\n    \"cable9\": true,\n    \"cable10\": true,\n    \"overallCableState\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/add/cable-test",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"add",
+						"cable-test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Cable Test",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0MDg0ODY3MywiZXhwIjoxNzQ5NDg4NjczfQ.sRdIge3Bi6WrKFmXVLakJmfRyLL5JZ0tUpf_MfxZIaM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer your_jwt_token"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"filterValue\": \"qrCode\",\n    \"filterValue\": \"QR123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"CABLE\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/get/cable-test/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"get",
+						"cable-test",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Fan Test",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hashKey\": \"asdfghjkljhgfdlsmsfdfsmfsdfsdfj\",\n    \"deviceMac\": \"AA:BB:CC:DD:EE:01\",\n    \"qrCode\": \"QR123456\",\n    \"visualInspection\": true,\n    \"drawCurrent\": 1.2,\n    \"drawCurrentState\": true,\n    \"fanSpeed\": 1500.0,\n    \"fanSpeedState\": true,\n    \"overallFanState\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/add/fan-test",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"add",
+						"fan-test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Fan Test",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0MDg0ODY3MywiZXhwIjoxNzQ5NDg4NjczfQ.sRdIge3Bi6WrKFmXVLakJmfRyLL5JZ0tUpf_MfxZIaM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer your_jwt_token"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"filterValue\": \"qrCode\",\n    \"filterValue\": \"QR123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"FAN\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/get/fan-test/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6500",
+					"path": [
+						"biotab_e652",
+						"api",
+						"v1",
+						"test",
+						"get",
+						"fan-test",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
