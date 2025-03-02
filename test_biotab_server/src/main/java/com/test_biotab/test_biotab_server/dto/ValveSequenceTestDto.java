@@ -15,7 +15,6 @@ public class ValveSequenceTestDto {
     private int testId;
     private int deviceId;
     private String qrCode;
-    private String testJigId;
     private Boolean physicalInspectionState;
     private Double manifoldSealPressure;
     private Double manifoldPressureAfter1Sec;

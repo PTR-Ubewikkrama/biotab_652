@@ -15,7 +15,7 @@ public class FanTestDto {
     private int testId;
     private int deviceId;
     private String qrCode;
-    private String visualInspection;
+    private Boolean visualInspection;
     private Double drawCurrent;
     private Boolean drawCurrentState;
     private Double fanSpeed;

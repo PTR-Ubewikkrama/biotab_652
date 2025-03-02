@@ -22,7 +22,7 @@ public class FanTestData {
     @JoinColumn(name = "device_id", nullable = false)
     private Device device;
     private String qrCode;
-    private String visualInspection;
+    private Boolean visualInspection;
     private Double drawCurrent;
     private Boolean drawCurrentState;
     private Double fanSpeed;

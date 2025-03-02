@@ -7,7 +7,7 @@ public class FanTestAddRequest {
     private String hashKey;
     private String deviceMac;
     private String qrCode;
-    private String visualInspection;
+    private Boolean visualInspection;
     private Double drawCurrent;
     private Boolean drawCurrentState;
     private Double fanSpeed;

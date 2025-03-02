@@ -1489,7 +1489,7 @@ public class TestServiceImpl implements TestService {
                 .cable9(cableTestAddRequest.getCable9())
                 .cable10(cableTestAddRequest.getCable10())
                 .overallCableState(cableTestAddRequest.getOverallCableState())
-                .status(cableTestAddRequest.getVisualInspection().equals("pass") && cableTestAddRequest.getOverallCableState().equals("pass"))
+                .status(cableTestAddRequest.getVisualInspection() && cableTestAddRequest.getOverallCableState())
                 .dateTime(LocalDateTime.now())
                 .build();
     }
@@ -1582,7 +1582,7 @@ public class TestServiceImpl implements TestService {
                 .fanSpeed(fanTestAddRequest.getFanSpeed())
                 .fanSpeedState(fanTestAddRequest.getFanSpeedState())
                 .overallFanState(fanTestAddRequest.getOverallFanState())
-                .status(fanTestAddRequest.getVisualInspection().equals("pass") && fanTestAddRequest.getOverallFanState().equals("pass"))
+                .status(fanTestAddRequest.getVisualInspection() && fanTestAddRequest.getOverallFanState())
                 .dateTime(LocalDateTime.now())
                 .build();
     }
