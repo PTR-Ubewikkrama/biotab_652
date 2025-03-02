@@ -46,4 +46,8 @@ public interface TestService {
     Mono<ResponseEntity<CommonResponse>> addValveCardTest(ValveCardTestAddRequest valveCardTestAddRequest);
 
     Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<ValveCardTestDto>>>> getValveCardTest(GetByPatternRequest request, UserDetails userDetails, String pageNo);
+
+    Mono<ResponseEntity<CommonResponse>> addManiFoldLeakTest(ManiFoldLeakTestAddRequest maniFoldLeakTestAddRequest);
+
+    Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<ManiFoldLeakTestDto>>>> getManiFoldLeakTest(GetByPatternRequest request, UserDetails userDetails, String pageNo);
 }

@@ -38,6 +38,7 @@ public class TestServiceImpl implements TestService {
     private final OpValveTestRepository opValveTestRepository;
     private final ValveSequenceTestRepository valveSequenceTestRepository;
     private final ValveCardTestRepository valveCardTestRepository;
+    private final ManiFoldLeakTestRepository maniFoldLeakTestRepository;
     private final DeviceService deviceService;
 
     @PersistenceContext
@@ -1286,6 +1287,88 @@ public class TestServiceImpl implements TestService {
                         .overallValveCardState(valveCardTest.getOverallValveCardState())
                         .status(valveCardTest.getStatus())
                         .dateTime(valveCardTest.getDateTime())
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public Mono<ResponseEntity<CommonResponse>> addManiFoldLeakTest(ManiFoldLeakTestAddRequest maniFoldLeakTestAddRequest) {
+        return Mono.just(maniFoldLeakTestAddRequest)
+                .flatMap(request -> deviceService.getDeviceByMac(maniFoldLeakTestAddRequest.getDeviceMac())
+                        .map(device -> toManiFoldLeakTest(maniFoldLeakTestAddRequest, device))
+                        .map(maniFoldLeakTestRepository::save))
+                .switchIfEmpty(Mono.error(new RuntimeException("Device not found")))
+                .map(opManiFoldLeakTest -> ResponseEntity.ok(CommonResponse.builder().message("Manifold Leak test added successfully").status("SUCCESS").build()));
+    }
+
+    private ManiFoldLeakTestData toManiFoldLeakTest(ManiFoldLeakTestAddRequest maniFoldLeakTestAddRequest, Device device) {
+        return ManiFoldLeakTestData.builder()
+                .device(device)
+                .qrCode(maniFoldLeakTestAddRequest.getQrCode())
+                .physicalInspectionState(maniFoldLeakTestAddRequest.getPhysicalInspectionState())
+                .leakageFlowrate(maniFoldLeakTestAddRequest.getLeakageFlowrate())
+                .manifoldLeakState(maniFoldLeakTestAddRequest.getManifoldLeakState())
+                .overallManifoldLeakState(maniFoldLeakTestAddRequest.getOverallManifoldLeakState())
+                .status(maniFoldLeakTestAddRequest.getPhysicalInspectionState())
+                .dateTime(LocalDateTime.now())
+                .build();
+    }
+
+    @Override
+    public Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<ManiFoldLeakTestDto>>>> getManiFoldLeakTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
+        return Mono.just(request)
+                .map(req -> {
+                    log.info("Getting manifold leak test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
+                    if (pageNo != null && pageNo.equals("all")) {
+                        return maniFoldLeakTestRepository.findByCustomQuery(getCustomQueryManiFoldLeakTest(request, userDetails));
+                    } else {
+                        return maniFoldLeakTestRepository.findByCustomQuery(getCustomQueryManiFoldLeakTest(request, userDetails), Integer.parseInt(pageNo) - 1);
+                    }
+                })
+                .flatMap(maniFoldLeakTestData -> {
+                    long total = maniFoldLeakTestData.size();
+                    long totalFailed = maniFoldLeakTestData.stream()
+                            .filter(data -> !data.getStatus())
+                            .count();
+                    return Mono.just(ApiResponse.<GetTestResponse<ManiFoldLeakTestDto>>builder()
+                            .status("S1000")
+                            .statusDescription("Request successful")
+                            .data(GetTestResponse.<ManiFoldLeakTestDto>builder()
+                                    .tests(getManiFoldLeakDtoFromEntity(maniFoldLeakTestData))
+                                    .totalRecords(total)
+                                    .totalFailed(totalFailed)
+                                    .build())
+                            .build());
+                })
+                .map(ResponseEntity::ok)
+                .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Manifold Leak Tests")));
+    }
+
+    private TypedQuery<ManiFoldLeakTestData> getCustomQueryManiFoldLeakTest(GetByPatternRequest request, UserDetails userDetails) {
+        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM ManiFoldLeakTestData v JOIN v.device d");
+
+        List<String> filterParts = new ArrayList<>();
+
+        calculateFilterParts(request, filterParts, userDetails);
+
+        TypedQuery<ManiFoldLeakTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
+                .append(" ORDER BY v.dateTime DESC").toString(), ManiFoldLeakTestData.class);
+
+        return exchangeDateFilterInQuery(query, request);
+    }
+
+    private List<ManiFoldLeakTestDto> getManiFoldLeakDtoFromEntity(List<ManiFoldLeakTestData> maniFoldLeakTestData) {
+        return maniFoldLeakTestData.stream()
+                .map(maniFoldLeakTest -> ManiFoldLeakTestDto.builder()
+                        .testId(maniFoldLeakTest.getTestId())
+                        .deviceId(maniFoldLeakTest.getDevice().getDeviceId())
+                        .qrCode(maniFoldLeakTest.getQrCode())
+                        .physicalInspectionState(maniFoldLeakTest.getPhysicalInspectionState())
+                        .leakageFlowrate(maniFoldLeakTest.getLeakageFlowrate())
+                        .manifoldLeakState(maniFoldLeakTest.getManifoldLeakState())
+                        .overallManifoldLeakState(maniFoldLeakTest.getOverallManifoldLeakState())
+                        .status(maniFoldLeakTest.getStatus())
+                        .dateTime(maniFoldLeakTest.getDateTime())
                         .build())
                 .toList();
     }

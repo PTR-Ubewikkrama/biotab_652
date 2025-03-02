@@ -31,6 +31,7 @@ public class DashboardServiceImpl implements DashboardService {
     private final OpValveTestRepository opValveTestRepository;
     private final ValveSequenceTestRepository valveSequenceTestRepository;
     private final ValveCardTestRepository valveCardTestRepository;
+    private final ManiFoldLeakTestRepository maniFoldLeakTestRepository;
     private final HHDeviceRepository hhDeviceRepository;
     private final FinalAssemblyRepository finalAssemblyRepository;
 
@@ -150,6 +151,16 @@ public class DashboardServiceImpl implements DashboardService {
                                         "SELECT COUNT(v) FROM ValveCardTestData v WHERE v.status = false",
                                         Long.class
                                 )))
+                        ),
+                        Mono.zip(
+                                Mono.fromSupplier(() -> maniFoldLeakTestRepository.countByCustomQuery(entityManager.createQuery(
+                                        "SELECT COUNT(m) FROM ManiFoldLeakTestData m WHERE m.status = true",
+                                        Long.class
+                                ))),
+                                Mono.fromSupplier(() -> maniFoldLeakTestRepository.countByCustomQuery(entityManager.createQuery(
+                                        "SELECT COUNT(m) FROM ManiFoldLeakTestData m WHERE m.status = false",
+                                        Long.class
+                                )))
                         )
                 ),
                 objects -> {
@@ -164,6 +175,7 @@ public class DashboardServiceImpl implements DashboardService {
                     Tuple2<Long, Long> opValveTestCounts = (Tuple2<Long, Long>) objects[8];
                     Tuple2<Long, Long> valveSequenceTestCounts = (Tuple2<Long, Long>) objects[9];
                     Tuple2<Long, Long> valveCardTestCounts = (Tuple2<Long, Long>) objects[10];
+                    Tuple2<Long, Long> maniFoldLeakTestCounts = (Tuple2<Long, Long>) objects[11];
 
                     Long totalSuccessValueTest = valueTestCounts.getT1();
                     Long totalFailedValueTest = valueTestCounts.getT2();
@@ -198,6 +210,9 @@ public class DashboardServiceImpl implements DashboardService {
                     Long totalSuccessValveCardTest = valveCardTestCounts.getT1();
                     Long totalFailedValveCardTest = valveCardTestCounts.getT2();
 
+                    Long totalSuccessManiFoldLeakTest = maniFoldLeakTestCounts.getT1();
+                    Long totalFailedManiFoldLeakTest = maniFoldLeakTestCounts.getT2();
+
                     return ResponseEntity.ok(
                             ApiResponse.<DashBoardSummaryResponse>builder()
                                     .status("S1000")
@@ -223,6 +238,8 @@ public class DashboardServiceImpl implements DashboardService {
                                             .totalSuccessValveSequenceTest(totalSuccessValveSequenceTest)
                                             .totalFailedValveCardTest(totalFailedValveCardTest)
                                             .totalSuccessValveCardTest(totalSuccessValveCardTest)
+                                            .totalFailedManiFoldLeakTest(totalFailedManiFoldLeakTest)
+                                            .totalSuccessManiFoldLeakTest(totalSuccessManiFoldLeakTest)
                                             .totalFinalAssembly(totalFinalAssembly)
                                             .totalHHDevice(totalHHDevice)
                                             .build()

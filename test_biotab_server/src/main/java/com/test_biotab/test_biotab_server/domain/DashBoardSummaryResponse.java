@@ -32,6 +32,8 @@ public class DashBoardSummaryResponse {
     long totalFailedValveSequenceTest;
     long totalSuccessValveCardTest;
     long totalFailedValveCardTest;
+    long totalSuccessManiFoldLeakTest;
+    long totalFailedManiFoldLeakTest;
     long totalFinalAssembly;
     long totalHHDevice;
 }

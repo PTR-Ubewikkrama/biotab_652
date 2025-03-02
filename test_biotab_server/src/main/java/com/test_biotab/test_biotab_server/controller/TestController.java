@@ -244,6 +244,28 @@ public class TestController {
                 });
     }
 
+    @PostMapping("/add/mani-fold-leak-test")
+    public Mono<ResponseEntity<CommonResponse>> addManiFoldLeakTest(@RequestBody ManiFoldLeakTestAddRequest maniFoldLeakTestAddRequest) {
+        if (!maniFoldLeakTestAddRequest.getHashKey().equals(hashKey)) {
+            return sendInvalidResponse(maniFoldLeakTestAddRequest.getHashKey());
+        }
+        log.info("Request received to add manifold leak : {}", maniFoldLeakTestAddRequest);
+        return testService.addManiFoldLeakTest(maniFoldLeakTestAddRequest);
+    }
+
+    @PostMapping("/get/mani-fold-leak-test/{pageNo}")
+    Mono<ResponseEntity<ApiResponse<GetTestResponse<ManiFoldLeakTestDto>>>> getManiFoldLeakTest(@AuthenticationPrincipal Mono<UserDetails> principal,
+                                                                                          @RequestBody GetByPatternRequest request,
+                                                                                          @PathVariable("pageNo") String pageNo) {
+        log.info("Received request to get manifold leak test with pattern: {}", request.getFilterValue());
+        return principal
+                .flatMap(userDetails -> {
+                    log.info("Getting valve card test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
+                    request.setRequestType("MANI_FOLD_LEAK");
+                    return testService.getManiFoldLeakTest(request, userDetails, pageNo);
+                });
+    }
+
     private static Mono<ResponseEntity<CommonResponse>> sendInvalidResponse(String valueTestAddRequest) {
         log.error("Invalid hash key received: {}", valueTestAddRequest);
         return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED)
