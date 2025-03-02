@@ -222,6 +222,28 @@ public class TestController {
                 });
     }
 
+    @PostMapping("/add/valve-card-test")
+    public Mono<ResponseEntity<CommonResponse>> addValveCardTest(@RequestBody ValveCardTestAddRequest valveCardTestAddRequest) {
+        if (!valveCardTestAddRequest.getHashKey().equals(hashKey)) {
+            return sendInvalidResponse(valveCardTestAddRequest.getHashKey());
+        }
+        log.info("Request received to add valve card : {}", valveCardTestAddRequest);
+        return testService.addValveCardTest(valveCardTestAddRequest);
+    }
+
+    @PostMapping("/get/valve-card-test/{pageNo}")
+    Mono<ResponseEntity<ApiResponse<GetTestResponse<ValveCardTestDto>>>> getValveCardTest(@AuthenticationPrincipal Mono<UserDetails> principal,
+                                                                                                  @RequestBody GetByPatternRequest request,
+                                                                                                  @PathVariable("pageNo") String pageNo) {
+        log.info("Received request to get valve card test with pattern: {}", request.getFilterValue());
+        return principal
+                .flatMap(userDetails -> {
+                    log.info("Getting valve card test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
+                    request.setRequestType("VALVE_CARD");
+                    return testService.getValveCardTest(request, userDetails, pageNo);
+                });
+    }
+
     private static Mono<ResponseEntity<CommonResponse>> sendInvalidResponse(String valueTestAddRequest) {
         log.error("Invalid hash key received: {}", valueTestAddRequest);
         return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED)

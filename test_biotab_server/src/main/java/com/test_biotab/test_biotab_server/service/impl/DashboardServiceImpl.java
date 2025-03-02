@@ -30,6 +30,7 @@ public class DashboardServiceImpl implements DashboardService {
     private final PowerSupplyV2TestRepository powerSupplyV2TestRepository;
     private final OpValveTestRepository opValveTestRepository;
     private final ValveSequenceTestRepository valveSequenceTestRepository;
+    private final ValveCardTestRepository valveCardTestRepository;
     private final HHDeviceRepository hhDeviceRepository;
     private final FinalAssemblyRepository finalAssemblyRepository;
 
@@ -139,6 +140,16 @@ public class DashboardServiceImpl implements DashboardService {
                                         "SELECT COUNT(v) FROM ValveSequenceTestData v WHERE v.status = false",
                                         Long.class
                                 )))
+                        ),
+                        Mono.zip(
+                                Mono.fromSupplier(() -> valveCardTestRepository.countByCustomQuery(entityManager.createQuery(
+                                        "SELECT COUNT(v) FROM ValveCardTestData v WHERE v.status = true",
+                                        Long.class
+                                ))),
+                                Mono.fromSupplier(() -> valveCardTestRepository.countByCustomQuery(entityManager.createQuery(
+                                        "SELECT COUNT(v) FROM ValveCardTestData v WHERE v.status = false",
+                                        Long.class
+                                )))
                         )
                 ),
                 objects -> {
@@ -152,6 +163,7 @@ public class DashboardServiceImpl implements DashboardService {
                     Tuple2<Long, Long> powerSupplyV2TestCounts = (Tuple2<Long, Long>) objects[7];
                     Tuple2<Long, Long> opValveTestCounts = (Tuple2<Long, Long>) objects[8];
                     Tuple2<Long, Long> valveSequenceTestCounts = (Tuple2<Long, Long>) objects[9];
+                    Tuple2<Long, Long> valveCardTestCounts = (Tuple2<Long, Long>) objects[10];
 
                     Long totalSuccessValueTest = valueTestCounts.getT1();
                     Long totalFailedValueTest = valueTestCounts.getT2();
@@ -183,6 +195,9 @@ public class DashboardServiceImpl implements DashboardService {
                     Long totalSuccessValveSequenceTest = valveSequenceTestCounts.getT1();
                     Long totalFailedValveSequenceTest = valveSequenceTestCounts.getT2();
 
+                    Long totalSuccessValveCardTest = valveCardTestCounts.getT1();
+                    Long totalFailedValveCardTest = valveCardTestCounts.getT2();
+
                     return ResponseEntity.ok(
                             ApiResponse.<DashBoardSummaryResponse>builder()
                                     .status("S1000")
@@ -206,6 +221,8 @@ public class DashboardServiceImpl implements DashboardService {
                                             .totalSuccessOpValveTest(totalSuccessOpValveTest)
                                             .totalFailedValveSequenceTest(totalFailedValveSequenceTest)
                                             .totalSuccessValveSequenceTest(totalSuccessValveSequenceTest)
+                                            .totalFailedValveCardTest(totalFailedValveCardTest)
+                                            .totalSuccessValveCardTest(totalSuccessValveCardTest)
                                             .totalFinalAssembly(totalFinalAssembly)
                                             .totalHHDevice(totalHHDevice)
                                             .build()

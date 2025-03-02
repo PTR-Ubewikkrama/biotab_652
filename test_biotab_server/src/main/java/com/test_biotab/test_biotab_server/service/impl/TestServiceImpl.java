@@ -37,6 +37,7 @@ public class TestServiceImpl implements TestService {
     private final PowerSupplyV2TestRepository powerSupplyV2TestRepository;
     private final OpValveTestRepository opValveTestRepository;
     private final ValveSequenceTestRepository valveSequenceTestRepository;
+    private final ValveCardTestRepository valveCardTestRepository;
     private final DeviceService deviceService;
 
     @PersistenceContext
@@ -1187,6 +1188,106 @@ public class TestServiceImpl implements TestService {
                         .build())
                 .toList();
 
+    }
+
+    @Override
+    public Mono<ResponseEntity<CommonResponse>> addValveCardTest(ValveCardTestAddRequest valveCardTestAddRequest) {
+        return Mono.just(valveCardTestAddRequest)
+                .flatMap(request -> deviceService.getDeviceByMac(valveCardTestAddRequest.getDeviceMac())
+                        .map(device -> toValveCardTest(valveCardTestAddRequest, device))
+                        .map(valveCardTestRepository::save))
+                .switchIfEmpty(Mono.error(new RuntimeException("Device not found")))
+                .map(opValveTest -> ResponseEntity.ok(CommonResponse.builder().message("Valve Card test added successfully").status("SUCCESS").build()));
+    }
+
+    private ValveCardTestData toValveCardTest(ValveCardTestAddRequest valveCardTestAddRequest, Device device) {
+        return ValveCardTestData.builder()
+                .device(device)
+                .qrCode(valveCardTestAddRequest.getQrCode())
+                .physicalInspectionState(valveCardTestAddRequest.getPhysicalInspectionState())
+                .rail(valveCardTestAddRequest.getRail())
+                .valve1(valveCardTestAddRequest.getValve1())
+                .valve2(valveCardTestAddRequest.getValve2())
+                .valve3(valveCardTestAddRequest.getValve3())
+                .valve4(valveCardTestAddRequest.getValve4())
+                .valve5(valveCardTestAddRequest.getValve5())
+                .valve6(valveCardTestAddRequest.getValve6())
+                .valve7(valveCardTestAddRequest.getValve7())
+                .valve8(valveCardTestAddRequest.getValve8())
+                .amperageTest(valveCardTestAddRequest.getAmperageTest())
+                .shiftRegisterTest(valveCardTestAddRequest.getShiftRegisterTest())
+                .overallValveCardState(valveCardTestAddRequest.getOverallValveCardState())
+                .status(valveCardTestAddRequest.getPhysicalInspectionState())
+                .dateTime(LocalDateTime.now())
+                .build();
+    }
+
+    @Override
+    public Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<ValveCardTestDto>>>> getValveCardTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
+        return Mono.just(request)
+                .map(req -> {
+                    log.info("Getting valve card test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
+                    if (pageNo != null && pageNo.equals("all")) {
+                        return valveCardTestRepository.findByCustomQuery(getCustomQueryValveCardTest(request, userDetails));
+                    } else {
+                        return valveCardTestRepository.findByCustomQuery(getCustomQueryValveCardTest(request, userDetails), Integer.parseInt(pageNo) - 1);
+                    }
+                })
+                .flatMap(valveCardTestData -> {
+                    long total = valveCardTestData.size();
+                    long totalFailed = valveCardTestData.stream()
+                            .filter(data -> !data.getStatus())
+                            .count();
+                    return Mono.just(ApiResponse.<GetTestResponse<ValveCardTestDto>>builder()
+                            .status("S1000")
+                            .statusDescription("Request successful")
+                            .data(GetTestResponse.<ValveCardTestDto>builder()
+                                    .tests(getValveCardDtoFromEntity(valveCardTestData))
+                                    .totalRecords(total)
+                                    .totalFailed(totalFailed)
+                                    .build())
+                            .build());
+                })
+                .map(ResponseEntity::ok)
+                .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Valve Card Tests")));
+    }
+
+    private TypedQuery<ValveCardTestData> getCustomQueryValveCardTest(GetByPatternRequest request, UserDetails userDetails) {
+        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM ValveCardTestData v JOIN v.device d");
+
+        List<String> filterParts = new ArrayList<>();
+
+        calculateFilterParts(request, filterParts, userDetails);
+
+        TypedQuery<ValveCardTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
+                .append(" ORDER BY v.dateTime DESC").toString(), ValveCardTestData.class);
+
+        return exchangeDateFilterInQuery(query, request);
+    }
+
+    private List<ValveCardTestDto> getValveCardDtoFromEntity(List<ValveCardTestData> valveCardTestData) {
+        return valveCardTestData.stream()
+                .map(valveCardTest -> ValveCardTestDto.builder()
+                        .testId(valveCardTest.getTestId())
+                        .deviceId(valveCardTest.getDevice().getDeviceId())
+                        .qrCode(valveCardTest.getQrCode())
+                        .physicalInspectionState(valveCardTest.getPhysicalInspectionState())
+                        .rail(valveCardTest.getRail())
+                        .valve1(valveCardTest.getValve1())
+                        .valve2(valveCardTest.getValve2())
+                        .valve3(valveCardTest.getValve3())
+                        .valve4(valveCardTest.getValve4())
+                        .valve5(valveCardTest.getValve5())
+                        .valve6(valveCardTest.getValve6())
+                        .valve7(valveCardTest.getValve7())
+                        .valve8(valveCardTest.getValve8())
+                        .amperageTest(valveCardTest.getAmperageTest())
+                        .shiftRegisterTest(valveCardTest.getShiftRegisterTest())
+                        .overallValveCardState(valveCardTest.getOverallValveCardState())
+                        .status(valveCardTest.getStatus())
+                        .dateTime(valveCardTest.getDateTime())
+                        .build())
+                .toList();
     }
 
     private static void calculateFilterParts(GetByPatternRequest request, List<String> filterParts, UserDetails userDetails) {
