@@ -1,6 +1,7 @@
 package com.test_biotab.test_biotab_server.controller;
 
 import com.test_biotab.test_biotab_server.domain.*;
+import com.test_biotab.test_biotab_server.dto.AirPumpV2TestDto;
 import com.test_biotab.test_biotab_server.dto.PowerPCBTestDto;
 import com.test_biotab.test_biotab_server.service.TestService;
 import lombok.RequiredArgsConstructor;
@@ -109,6 +110,28 @@ public class TestController {
                     log.info("Getting power pcb test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
                     request.setRequestType("POWER_PCB");
                     return testService.getPowerPCPTest(request, userDetails, pageNo);
+                });
+    }
+
+    @PostMapping("/add/air-pump-v2-test")
+    public Mono<ResponseEntity<CommonResponse>> addAirPumpV2Test(@RequestBody AirPumpV2TestAddRequest airPumpV2TestAddRequest) {
+        if (!airPumpV2TestAddRequest.getHashKey().equals(hashKey)) {
+            return sendInvalidResponse(airPumpV2TestAddRequest.getHashKey());
+        }
+        log.info("Request received to add air pump v2 : {}", airPumpV2TestAddRequest);
+        return testService.addAirPumpV2Test(airPumpV2TestAddRequest);
+    }
+
+    @PostMapping("/get/air-pump-v2-test/{pageNo}")
+    Mono<ResponseEntity<ApiResponse<GetTestResponse<AirPumpV2TestDto>>>> getAirPumpV2Test(@AuthenticationPrincipal Mono<UserDetails> principal,
+                                                                                          @RequestBody GetByPatternRequest request,
+                                                                                          @PathVariable("pageNo") String pageNo) {
+        log.info("Received request to get air pump v2 test with pattern: {}", request.getFilterValue());
+        return principal
+                .flatMap(userDetails -> {
+                    log.info("Getting air pump v2 test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
+                    request.setRequestType("AIR_PUMP_V2");
+                    return testService.getAirPumpV2Test(request, userDetails, pageNo);
                 });
     }
 

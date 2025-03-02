@@ -1,15 +1,9 @@
 package com.test_biotab.test_biotab_server.service.impl;
 
 import com.test_biotab.test_biotab_server.domain.*;
-import com.test_biotab.test_biotab_server.dto.AirPumpTestDto;
-import com.test_biotab.test_biotab_server.dto.PowerPCBTestDto;
-import com.test_biotab.test_biotab_server.dto.PowerSupplyTestDto;
-import com.test_biotab.test_biotab_server.dto.ValveTestDto;
+import com.test_biotab.test_biotab_server.dto.*;
 import com.test_biotab.test_biotab_server.entity.*;
-import com.test_biotab.test_biotab_server.repository.AirPumpTestRepository;
-import com.test_biotab.test_biotab_server.repository.PowerPCBTestRepository;
-import com.test_biotab.test_biotab_server.repository.PowerSupplyTestRepository;
-import com.test_biotab.test_biotab_server.repository.ValveTestRepository;
+import com.test_biotab.test_biotab_server.repository.*;
 import com.test_biotab.test_biotab_server.service.DeviceService;
 import com.test_biotab.test_biotab_server.service.TestService;
 import jakarta.persistence.EntityManager;
@@ -38,6 +32,7 @@ public class TestServiceImpl implements TestService {
     private final ValveTestRepository valveTestRepository;
     private final AirPumpTestRepository airPumpTestRepository;
     private final PowerPCBTestRepository powerPCBTestRepository;
+    private final AirPumpV2TestRepository airPumpV2TestRepository;
     private final DeviceService deviceService;
 
     @PersistenceContext
@@ -453,6 +448,113 @@ public class TestServiceImpl implements TestService {
                 .toList();
     }
 
+    @Override
+    public Mono<ResponseEntity<CommonResponse>> addAirPumpV2Test(AirPumpV2TestAddRequest airPumpV2TestAddRequest) {
+        return Mono.just(airPumpV2TestAddRequest)
+                .flatMap(request -> deviceService.getDeviceByMac(airPumpV2TestAddRequest.getDeviceMac())
+                        .map(device -> toAirPumpV2Test(airPumpV2TestAddRequest, device))
+                        .map(airPumpV2TestRepository::save))
+                .switchIfEmpty(Mono.error(new RuntimeException("Device not found")))
+                .map(airPumpV2Test -> ResponseEntity.ok(CommonResponse.builder().message("Air pump v2 test added successfully").status("SUCCESS").build()));
+    }
+
+    private AirPumpV2TestData toAirPumpV2Test(AirPumpV2TestAddRequest airPumpV2TestAddRequest, Device device) {
+        return AirPumpV2TestData.builder()
+                .device(device)
+                .flowRateLowThresh(airPumpV2TestAddRequest.getFlowRateLowThresh())
+                .flowRateUpThresh(airPumpV2TestAddRequest.getFlowRateUpThresh())
+                .loadVoltageLowThresh(airPumpV2TestAddRequest.getLoadVoltageLowThresh())
+                .loadVoltageUpThresh(airPumpV2TestAddRequest.getLoadVoltageUpThresh())
+                .loadCurrentUpThresh(airPumpV2TestAddRequest.getLoadCurrentUpThresh())
+                .pressureLowThresh(airPumpV2TestAddRequest.getPressureLowThresh())
+                .pressureUpThresh(airPumpV2TestAddRequest.getPressureUpThresh())
+                .pressure(airPumpV2TestAddRequest.getPressure())
+                .pressureStatus(airPumpV2TestAddRequest.getPressureStatus())
+                .serialNumber(airPumpV2TestAddRequest.getSerialNumber())
+                .flowRate(airPumpV2TestAddRequest.getFlowRate())
+                .flowRateStatus(airPumpV2TestAddRequest.getFlowRateStatus())
+                .loadVoltage(airPumpV2TestAddRequest.getLoadVoltage())
+                .loadVoltageStatus(airPumpV2TestAddRequest.getLoadVoltageStatus())
+                .loadCurrent(airPumpV2TestAddRequest.getLoadCurrent())
+                .loadCurrentStatus(airPumpV2TestAddRequest.getLoadCurrentStatus())
+                .noiseLevelStatus(airPumpV2TestAddRequest.getNoiseLevelStatus())
+                .status(airPumpV2TestAddRequest.getFlowRateStatus() && airPumpV2TestAddRequest.getLoadVoltageStatus() && airPumpV2TestAddRequest.getLoadCurrentStatus() && airPumpV2TestAddRequest.getNoiseLevelStatus())
+                .dateTime(LocalDateTime.now())
+                .build();
+
+    }
+
+    @Override
+    public Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<AirPumpV2TestDto>>>> getAirPumpV2Test(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
+        return Mono.just(request)
+                .map(req -> {
+                    log.info("Getting air pump v2 test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
+                    if (pageNo != null && pageNo.equals("all")) {
+                        return airPumpV2TestRepository.findByCustomQuery(getCustomQueryAirPumpV2Test(request, userDetails));
+                    } else {
+                        return airPumpV2TestRepository.findByCustomQuery(getCustomQueryAirPumpV2Test(request, userDetails), Integer.parseInt(pageNo) - 1);
+                    }
+                })
+                .flatMap(airPumpV2TestData -> {
+                    long total = airPumpV2TestData.size();
+                    long totalFailed = airPumpV2TestData.stream()
+                            .filter(data -> !data.getFlowRateStatus() || !data.getLoadVoltageStatus() || !data.getLoadCurrentStatus() || !data.getNoiseLevelStatus())
+                            .count();
+                    return Mono.just(ApiResponse.<GetTestResponse<AirPumpV2TestDto>>builder()
+                            .status("S1000")
+                            .statusDescription("Request successful")
+                            .data(GetTestResponse.<AirPumpV2TestDto>builder()
+                                    .tests(getAirPumpV2DtoFromEntity(airPumpV2TestData))
+                                    .totalRecords(total)
+                                    .totalFailed(totalFailed)
+                                    .build())
+                            .build());
+                })
+                .map(ResponseEntity::ok)
+                .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Air Pump V2 Tests")));
+    }
+
+    private TypedQuery<AirPumpV2TestData> getCustomQueryAirPumpV2Test(GetByPatternRequest request, UserDetails userDetails) {
+        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM AirPumpV2TestData v JOIN v.device d");
+
+        List<String> filterParts = new ArrayList<>();
+
+        calculateFilterParts(request, filterParts, userDetails);
+
+        TypedQuery<AirPumpV2TestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
+                .append(" ORDER BY v.dateTime DESC").toString(), AirPumpV2TestData.class);
+
+        return exchangeDateFilterInQuery(query, request);
+    }
+
+    private List<AirPumpV2TestDto> getAirPumpV2DtoFromEntity(List<AirPumpV2TestData> airPumpV2TestData) {
+        return airPumpV2TestData.stream()
+                .map(airPumpV2Test -> AirPumpV2TestDto.builder()
+                        .testId(airPumpV2Test.getTestId())
+                        .deviceId(airPumpV2Test.getDevice().getDeviceId())
+                        .flowRateLowThresh(airPumpV2Test.getFlowRateLowThresh())
+                        .flowRateUpThresh(airPumpV2Test.getFlowRateUpThresh())
+                        .loadVoltageLowThresh(airPumpV2Test.getLoadVoltageLowThresh())
+                        .loadVoltageUpThresh(airPumpV2Test.getLoadVoltageUpThresh())
+                        .loadCurrentUpThresh(airPumpV2Test.getLoadCurrentUpThresh())
+                        .pressureLowThresh(airPumpV2Test.getPressureLowThresh())
+                        .pressureUpThresh(airPumpV2Test.getPressureUpThresh())
+                        .pressure(airPumpV2Test.getPressure())
+                        .pressureStatus(airPumpV2Test.getPressureStatus())
+                        .serialNumber(airPumpV2Test.getSerialNumber())
+                        .flowRate(airPumpV2Test.getFlowRate())
+                        .flowRateStatus(airPumpV2Test.getFlowRateStatus())
+                        .loadVoltage(airPumpV2Test.getLoadVoltage())
+                        .loadVoltageStatus(airPumpV2Test.getLoadVoltageStatus())
+                        .loadCurrent(airPumpV2Test.getLoadCurrent())
+                        .loadCurrentStatus(airPumpV2Test.getLoadCurrentStatus())
+                        .noiseLevelStatus(airPumpV2Test.getNoiseLevelStatus())
+                        .status(airPumpV2Test.getStatus())
+                        .dateTime(airPumpV2Test.getDateTime())
+                        .build())
+                .toList();
+    }
+
     private static void calculateFilterParts(GetByPatternRequest request, List<String> filterParts, UserDetails userDetails) {
         if (request.getFilterType() != null && !request.getFilterValue().isEmpty()) {
             switch (request.getFilterType()) {
@@ -478,7 +580,8 @@ public class TestServiceImpl implements TestService {
         if (request.getStatus() != null && !request.getStatus().isEmpty() && availableStatusList.contains(request.getStatus())) {
             boolean status = request.getStatus().equals("PASS");
             switch (request.getRequestType()) {
-                case "AIR_PUMP", "POWER_PCB", "POWER_SUPPLY", "VALVE" -> filterParts.add("v.status = " + status);
+                case "AIR_PUMP", "POWER_PCB", "POWER_SUPPLY", "VALVE", "AIR_PUMP_V2" ->
+                        filterParts.add("v.status = " + status);
             }
         }
     }
