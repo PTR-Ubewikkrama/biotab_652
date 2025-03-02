@@ -34,6 +34,7 @@ public class DashboardServiceImpl implements DashboardService {
     private final ManiFoldLeakTestRepository maniFoldLeakTestRepository;
     private final UiPcbTestRepository uiPcbTestRepository;
     private final CableTestRepository cableTestRepository;
+    private final FanTestRepository fanTestRepository;
     private final HHDeviceRepository hhDeviceRepository;
     private final FinalAssemblyRepository finalAssemblyRepository;
 
@@ -183,6 +184,16 @@ public class DashboardServiceImpl implements DashboardService {
                                         "SELECT COUNT(c) FROM CableTestData c WHERE c.status = false",
                                         Long.class
                                 )))
+                        ),
+                        Mono.zip(
+                                Mono.fromSupplier(() -> fanTestRepository.countByCustomQuery(entityManager.createQuery(
+                                        "SELECT COUNT(f) FROM FanTestData f WHERE f.status = true",
+                                        Long.class
+                                ))),
+                                Mono.fromSupplier(() -> fanTestRepository.countByCustomQuery(entityManager.createQuery(
+                                        "SELECT COUNT(f) FROM FanTestData f WHERE f.status = false",
+                                        Long.class
+                                )))
                         )
                 ),
                 objects -> {
@@ -200,6 +211,7 @@ public class DashboardServiceImpl implements DashboardService {
                     Tuple2<Long, Long> maniFoldLeakTestCounts = (Tuple2<Long, Long>) objects[11];
                     Tuple2<Long, Long> uiPcbTestCounts = (Tuple2<Long, Long>) objects[12];
                     Tuple2<Long, Long> cableTestCounts = (Tuple2<Long, Long>) objects[13];
+                    Tuple2<Long, Long> fanTestCounts = (Tuple2<Long, Long>) objects[14];
 
                     Long totalSuccessValueTest = valueTestCounts.getT1();
                     Long totalFailedValueTest = valueTestCounts.getT2();
@@ -243,6 +255,9 @@ public class DashboardServiceImpl implements DashboardService {
                     Long totalSuccessCableTest = cableTestCounts.getT1();
                     Long totalFailedCableTest = cableTestCounts.getT2();
 
+                    Long totalSuccessFanTest = fanTestCounts.getT1();
+                    Long totalFailedFanTest = fanTestCounts.getT2();
+
                     return ResponseEntity.ok(
                             ApiResponse.<DashBoardSummaryResponse>builder()
                                     .status("S1000")
@@ -274,6 +289,8 @@ public class DashboardServiceImpl implements DashboardService {
                                             .totalSuccessUiPcbTest(totalSuccessUiPcbTest)
                                             .totalFailedCableTest(totalFailedCableTest)
                                             .totalSuccessCableTest(totalSuccessCableTest)
+                                            .totalFailedFanTest(totalFailedFanTest)
+                                            .totalSuccessFanTest(totalSuccessFanTest)
                                             .totalFinalAssembly(totalFinalAssembly)
                                             .totalHHDevice(totalHHDevice)
                                             .build()

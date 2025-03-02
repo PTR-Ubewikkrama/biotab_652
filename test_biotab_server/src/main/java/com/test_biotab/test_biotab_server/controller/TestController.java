@@ -79,8 +79,8 @@ public class TestController {
 
     @PostMapping("/get/air-pump-test/{pageNo}")
     Mono<ResponseEntity<ApiResponse<GetAirPumpTestResponse>>> getAirPumpTest(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                          @RequestBody GetByPatternRequest request,
-                                                                          @PathVariable("pageNo") String pageNo) {
+                                                                             @RequestBody GetByPatternRequest request,
+                                                                             @PathVariable("pageNo") String pageNo) {
         log.info("Received request to get air pump test with pattern: {}", request.getFilterValue());
         return principal
                 .flatMap(userDetails -> {
@@ -145,8 +145,8 @@ public class TestController {
 
     @PostMapping("/get/power-pcb-v2-test/{pageNo}")
     Mono<ResponseEntity<ApiResponse<GetTestResponse<PowerPCBV2TestDto>>>> getPowerPCBV2Test(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                                           @RequestBody GetByPatternRequest request,
-                                                                                           @PathVariable("pageNo") String pageNo) {
+                                                                                            @RequestBody GetByPatternRequest request,
+                                                                                            @PathVariable("pageNo") String pageNo) {
         log.info("Received request to get power pcb v2 test with pattern: {}", request.getFilterValue());
         return principal
                 .flatMap(userDetails -> {
@@ -189,8 +189,8 @@ public class TestController {
 
     @PostMapping("/get/op-valve-test/{pageNo}")
     Mono<ResponseEntity<ApiResponse<GetTestResponse<OpValveTestDto>>>> getOpValveTest(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                                            @RequestBody GetByPatternRequest request,
-                                                                                            @PathVariable("pageNo") String pageNo) {
+                                                                                      @RequestBody GetByPatternRequest request,
+                                                                                      @PathVariable("pageNo") String pageNo) {
         log.info("Received request to get op valve test with pattern: {}", request.getFilterValue());
         return principal
                 .flatMap(userDetails -> {
@@ -211,8 +211,8 @@ public class TestController {
 
     @PostMapping("/get/valve-sequence-test/{pageNo}")
     Mono<ResponseEntity<ApiResponse<GetTestResponse<ValveSequenceTestDto>>>> getValveSequenceTest(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                                      @RequestBody GetByPatternRequest request,
-                                                                                      @PathVariable("pageNo") String pageNo) {
+                                                                                                  @RequestBody GetByPatternRequest request,
+                                                                                                  @PathVariable("pageNo") String pageNo) {
         log.info("Received request to get valve sequence test with pattern: {}", request.getFilterValue());
         return principal
                 .flatMap(userDetails -> {
@@ -233,8 +233,8 @@ public class TestController {
 
     @PostMapping("/get/valve-card-test/{pageNo}")
     Mono<ResponseEntity<ApiResponse<GetTestResponse<ValveCardTestDto>>>> getValveCardTest(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                                                  @RequestBody GetByPatternRequest request,
-                                                                                                  @PathVariable("pageNo") String pageNo) {
+                                                                                          @RequestBody GetByPatternRequest request,
+                                                                                          @PathVariable("pageNo") String pageNo) {
         log.info("Received request to get valve card test with pattern: {}", request.getFilterValue());
         return principal
                 .flatMap(userDetails -> {
@@ -255,8 +255,8 @@ public class TestController {
 
     @PostMapping("/get/mani-fold-leak-test/{pageNo}")
     Mono<ResponseEntity<ApiResponse<GetTestResponse<ManiFoldLeakTestDto>>>> getManiFoldLeakTest(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                                          @RequestBody GetByPatternRequest request,
-                                                                                          @PathVariable("pageNo") String pageNo) {
+                                                                                                @RequestBody GetByPatternRequest request,
+                                                                                                @PathVariable("pageNo") String pageNo) {
         log.info("Received request to get manifold leak test with pattern: {}", request.getFilterValue());
         return principal
                 .flatMap(userDetails -> {
@@ -277,8 +277,8 @@ public class TestController {
 
     @PostMapping("/get/ui-pcb-test/{pageNo}")
     Mono<ResponseEntity<ApiResponse<GetTestResponse<UiPcbTestDto>>>> getUiPcbTest(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                                                @RequestBody GetByPatternRequest request,
-                                                                                                @PathVariable("pageNo") String pageNo) {
+                                                                                  @RequestBody GetByPatternRequest request,
+                                                                                  @PathVariable("pageNo") String pageNo) {
         log.info("Received request to get ui pcb test with pattern: {}", request.getFilterValue());
         return principal
                 .flatMap(userDetails -> {
@@ -307,6 +307,28 @@ public class TestController {
                     log.info("Getting cable test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
                     request.setRequestType("CABLE");
                     return testService.getCableTest(request, userDetails, pageNo);
+                });
+    }
+
+    @PostMapping("/add/fan-test")
+    public Mono<ResponseEntity<CommonResponse>> addFanTest(@RequestBody FanTestAddRequest fanTestAddRequest) {
+        if (!fanTestAddRequest.getHashKey().equals(hashKey)) {
+            return sendInvalidResponse(fanTestAddRequest.getHashKey());
+        }
+        log.info("Request received to add fan : {}", fanTestAddRequest);
+        return testService.addFanTest(fanTestAddRequest);
+    }
+
+    @PostMapping("/get/fan-test/{pageNo}")
+    Mono<ResponseEntity<ApiResponse<GetTestResponse<FanTestDto>>>> getFanTest(@AuthenticationPrincipal Mono<UserDetails> principal,
+                                                                              @RequestBody GetByPatternRequest request,
+                                                                              @PathVariable("pageNo") String pageNo) {
+        log.info("Received request to get fan test with pattern: {}", request.getFilterValue());
+        return principal
+                .flatMap(userDetails -> {
+                    log.info("Getting fan test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
+                    request.setRequestType("FAN");
+                    return testService.getFanTest(request, userDetails, pageNo);
                 });
     }
 

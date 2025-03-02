@@ -41,6 +41,7 @@ public class TestServiceImpl implements TestService {
     private final ManiFoldLeakTestRepository maniFoldLeakTestRepository;
     private final UiPcbTestRepository uiPcbTestRepository;
     private final CableTestRepository cableTestRepository;
+    private final FanTestRepository fanTestRepository;
     private final DeviceService deviceService;
 
     @PersistenceContext
@@ -1561,6 +1562,92 @@ public class TestServiceImpl implements TestService {
                 .toList();
     }
 
+    @Override
+    public Mono<ResponseEntity<CommonResponse>> addFanTest(FanTestAddRequest fanTestAddRequest) {
+        return Mono.just(fanTestAddRequest)
+                .flatMap(request -> deviceService.getDeviceByMac(fanTestAddRequest.getDeviceMac())
+                        .map(device -> toFanTest(fanTestAddRequest, device))
+                        .map(fanTestRepository::save))
+                .switchIfEmpty(Mono.error(new RuntimeException("Device not found")))
+                .map(opFanTest -> ResponseEntity.ok(CommonResponse.builder().message("Fan test added successfully").status("SUCCESS").build()));
+    }
+
+    private FanTestData toFanTest(FanTestAddRequest fanTestAddRequest, Device device) {
+        return FanTestData.builder()
+                .device(device)
+                .qrCode(fanTestAddRequest.getQrCode())
+                .visualInspection(fanTestAddRequest.getVisualInspection())
+                .drawCurrent(fanTestAddRequest.getDrawCurrent())
+                .drawCurrentState(fanTestAddRequest.getDrawCurrentState())
+                .fanSpeed(fanTestAddRequest.getFanSpeed())
+                .fanSpeedState(fanTestAddRequest.getFanSpeedState())
+                .overallFanState(fanTestAddRequest.getOverallFanState())
+                .status(fanTestAddRequest.getVisualInspection().equals("pass") && fanTestAddRequest.getOverallFanState().equals("pass"))
+                .dateTime(LocalDateTime.now())
+                .build();
+    }
+
+    @Override
+    public Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<FanTestDto>>>> getFanTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
+        return Mono.just(request)
+                .map(req -> {
+                    log.info("Getting fan test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
+                    if (pageNo != null && pageNo.equals("all")) {
+                        return fanTestRepository.findByCustomQuery(getCustomQueryFanTest(request, userDetails));
+                    } else {
+                        return fanTestRepository.findByCustomQuery(getCustomQueryFanTest(request, userDetails), Integer.parseInt(pageNo) - 1);
+                    }
+                })
+                .flatMap(fanTestData -> {
+                    long total = fanTestData.size();
+                    long totalFailed = fanTestData.stream()
+                            .filter(data -> !data.getStatus())
+                            .count();
+                    return Mono.just(ApiResponse.<GetTestResponse<FanTestDto>>builder()
+                            .status("S1000")
+                            .statusDescription("Request successful")
+                            .data(GetTestResponse.<FanTestDto>builder()
+                                    .tests(getFanDtoFromEntity(fanTestData))
+                                    .totalRecords(total)
+                                    .totalFailed(totalFailed)
+                                    .build())
+                            .build());
+                })
+                .map(ResponseEntity::ok)
+                .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Fan Tests")));
+    }
+
+    private TypedQuery<FanTestData> getCustomQueryFanTest(GetByPatternRequest request, UserDetails userDetails) {
+        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM FanTestData v JOIN v.device d");
+
+        List<String> filterParts = new ArrayList<>();
+
+        calculateFilterParts(request, filterParts, userDetails);
+
+        TypedQuery<FanTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
+                .append(" ORDER BY v.dateTime DESC").toString(), FanTestData.class);
+
+        return exchangeDateFilterInQuery(query, request);
+    }
+
+    private List<FanTestDto> getFanDtoFromEntity(List<FanTestData> fanTestData) {
+        return fanTestData.stream()
+                .map(fanTest -> FanTestDto.builder()
+                        .testId(fanTest.getTestId())
+                        .deviceId(fanTest.getDevice().getDeviceId())
+                        .qrCode(fanTest.getQrCode())
+                        .visualInspection(fanTest.getVisualInspection())
+                        .drawCurrent(fanTest.getDrawCurrent())
+                        .drawCurrentState(fanTest.getDrawCurrentState())
+                        .fanSpeed(fanTest.getFanSpeed())
+                        .fanSpeedState(fanTest.getFanSpeedState())
+                        .overallFanState(fanTest.getOverallFanState())
+                        .status(fanTest.getStatus())
+                        .dateTime(fanTest.getDateTime())
+                        .build())
+                .toList();
+    }
+
     private static void calculateFilterParts(GetByPatternRequest request, List<String> filterParts, UserDetails userDetails) {
         if (request.getFilterType() != null && !request.getFilterValue().isEmpty()) {
             switch (request.getFilterType()) {
@@ -1587,7 +1674,8 @@ public class TestServiceImpl implements TestService {
             boolean status = request.getStatus().equals("PASS");
             switch (request.getRequestType()) {
                 case "AIR_PUMP", "POWER_PCB", "POWER_SUPPLY", "VALVE", "AIR_PUMP_V2", "POWER_PCB_V2",
-                     "POWER_SUPPLY_V2" -> filterParts.add("v.status = " + status);
+                     "POWER_SUPPLY_V2", "OP_VALVE", "VALVE_SEQUENCE", "VALVE_CARD", "MANI_FOLD_LEAK", "UI_PCB", "CABLE",
+                     "FAN" -> filterParts.add("v.status = " + status);
             }
         }
     }

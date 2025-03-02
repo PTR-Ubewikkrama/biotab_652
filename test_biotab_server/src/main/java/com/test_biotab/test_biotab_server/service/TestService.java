@@ -58,4 +58,8 @@ public interface TestService {
     Mono<ResponseEntity<CommonResponse>> addCableTest(CableTestAddRequest cableTestAddRequest);
 
     Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<CableTestDto>>>> getCableTest(GetByPatternRequest request, UserDetails userDetails, String pageNo);
+
+    Mono<ResponseEntity<CommonResponse>> addFanTest(FanTestAddRequest fanTestAddRequest);
+
+    Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<FanTestDto>>>> getFanTest(GetByPatternRequest request, UserDetails userDetails, String pageNo);
 }
