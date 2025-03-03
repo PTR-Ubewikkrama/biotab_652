@@ -1,9 +1,9 @@
 import * as XLSX from "xlsx";
 import { List } from "reselect/es/types";
-import { PowerSupplyTest } from "../../../services/powerSupply_service";
+import { PowerSupplyV2Test } from "../../../services/powerSupply_service";
 import { format, parseISO } from "date-fns";
 
-export function handleGeneratePowerSupplyExcel(datas: List<PowerSupplyTest>) {
+export function handleGeneratePowerSupplyV2Excel(datas: List<PowerSupplyV2Test>) {
 
   const workbook = XLSX.utils.book_new();
 
@@ -28,11 +28,11 @@ export function handleGeneratePowerSupplyExcel(datas: List<PowerSupplyTest>) {
     ...datas.map((data) => [
       data.testId,
       data.serialNumber,
-      data.idleVolLowTh,
-      data.idleVolUpTh,
-      data.loadVolLowTh,
-      data.loadVolUpTh,
-      data.loadCurUpTh,
+      data.idleVoltageLowTh,
+      data.idleVoltageUpTh,
+      data.loadVoltageLowTh,
+      data.loadVoltageUpTh,
+      data.loadCurrentUpTh,
       data.idleVol,
       data.loadVol,
       data.loadVolStatus && data.loadVolStatus ? "Pass" : "Fail",
@@ -48,5 +48,5 @@ export function handleGeneratePowerSupplyExcel(datas: List<PowerSupplyTest>) {
   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
 
   // Save the workbook as an Excel file
-  XLSX.writeFile(workbook, "Power_Supply_Test_" + new Date().toISOString() + ".xlsx");
+  XLSX.writeFile(workbook, "Power_Supply_v2_Test_" + new Date().toISOString() + ".xlsx");
 }

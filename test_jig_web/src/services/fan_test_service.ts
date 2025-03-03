@@ -1,14 +1,17 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import config from '../config/config';
 
-export interface LatchButtonTest {
+export interface FanTest {
     testId: number;
-    qrCode: string;
-    deviceMac: string;
-    buttonOnTestStatus: boolean;
-    buttonOffTestStatus: boolean;
-    ledOnTestStatus: boolean;
-    latchButtonStatus: boolean;
+    deviceId: number;
+    serialNumber: string;
+    visualInspection: boolean | null;
+    drawCurrent: number | null;
+    drawCurrentState: boolean | null;
+    fanSpeed: number | null;
+    fanSpeedState: boolean | null;
+    overallFanState: boolean | null;
+    status: boolean | null;
     dateTime: string;
 }
 
@@ -16,14 +19,14 @@ export interface ApiResponse {
     status: string;
     statusDescription: string;
     data: {
-        latchButtonTests: LatchButtonTest[];
+        tests: FanTest[];
         totalRecords: number;
         totalFailed: number;
     };
 }
 
-export const latchButtonTestApi = createApi({
-    reducerPath: 'latchButtonTestApi',
+export const fanTestApi = createApi({
+    reducerPath: 'fanTestApi',
     baseQuery: fetchBaseQuery({
         baseUrl: config.apiBaseUrl,
         prepareHeaders: (headers) => {
@@ -34,33 +37,32 @@ export const latchButtonTestApi = createApi({
             return headers;
         },
     }),
-    tagTypes: ['latchButtonTestList'],
+    tagTypes: ['fanTestList'],
     endpoints: (build) => ({
-        getLatchButtonTests: build.mutation<ApiResponse, { data: {}, page: string }>({
+        getFanTests: build.mutation<ApiResponse, { data: {}, page: string }>({
             query(data) {
                 return {
-                    url: `test/get/latch-button-test/${data.page}`,
+                    url: `test/get/fan-test/${data.page}`,
                     method: 'POST',
                     body: data.data,
                 }
             },
-            invalidatesTags: [{ type: 'latchButtonTestList', id: "getAirPumpTests" }]
+            invalidatesTags: [{ type: 'fanTestList', id: "getValveTests" }]
         }),
-        getLatchButtonTestQ: build.query<ApiResponse, { data: {}, page: string }>({
+        getFanTestQ: build.query<ApiResponse, { data: {}, page: string }>({
             query(data) {
                 return {
-                    url: `test/get/latch-button-test/${data.page}`,
+                    url: `test/get/fan-test/${data.page}`,
                     method: 'POST',
                     body: data.data,
                 }
             },
-            providesTags: [{ type: 'latchButtonTestList', id: 'getAirPumpQ' }]
+            providesTags: [{ type: 'fanTestList', id: 'getValveTestQ' }]
         }),
     }),
-
 })
 
 export const {
-    useGetLatchButtonTestQQuery,
-    useGetLatchButtonTestsMutation
-} = latchButtonTestApi
+    useGetFanTestQQuery,
+    useGetFanTestsMutation
+} = fanTestApi

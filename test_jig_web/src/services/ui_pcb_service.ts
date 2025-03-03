@@ -1,17 +1,17 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import config from '../config/config';
 
-export interface BatteryTest {
+export interface UIPcbTest {
     testId: number;
-    deviceMac: string;
-    qrCode: string;
-    maximumCurrent: number;
-    maxCurrentDrawnTime: number;
-    maxCurrentCutOff: boolean;
-    normalCurrent: number;
-    normalCurrentDrawnTime: number;
-    normalCurrentCutOff: boolean;
-    batteryStatus: boolean;
+    deviceId: number;
+    serialNumber: string;
+    physicalInspectionState: boolean | null;
+    redLedState: boolean | null;
+    whiteLedState: boolean | null;
+    ledRingOnState: boolean | null;
+    ledRingFadeState: boolean | null;
+    overallUiPcbState: boolean | null;
+    status: boolean | null;
     dateTime: string;
 }
 
@@ -19,14 +19,14 @@ export interface ApiResponse {
     status: string;
     statusDescription: string;
     data: {
-        batteryTests: BatteryTest[];
+        tests: UIPcbTest[];
         totalRecords: number;
         totalFailed: number;
     };
 }
 
-export const batteryTestApi = createApi({
-    reducerPath: 'batteryTestApi',
+export const uiPcbApi = createApi({
+    reducerPath: 'uiPcbApi',
     baseQuery: fetchBaseQuery({
         baseUrl: config.apiBaseUrl,
         prepareHeaders: (headers) => {
@@ -37,33 +37,32 @@ export const batteryTestApi = createApi({
             return headers;
         },
     }),
-    tagTypes: ['batteryTestList'],
+    tagTypes: ['uiPcbList'],
     endpoints: (build) => ({
-        getBatteryTests: build.mutation<ApiResponse, { data: {}, page: string }>({
+        getUIPcbTests: build.mutation<ApiResponse, { data: {}, page: string }>({
             query(data) {
                 return {
-                    url: `test/get/battery-test/${data.page}`,
+                    url: `test/get/ui-pcb-test/${data.page}`,
                     method: 'POST',
                     body: data.data,
                 }
             },
-            invalidatesTags: [{ type: 'batteryTestList', id: "getAirPumpTests" }]
+            invalidatesTags: [{ type: 'uiPcbList', id: "getValveTests" }]
         }),
-        getBatteryTestQ: build.query<ApiResponse, { data: {}, page: string }>({
+        getUIPcbTestQ: build.query<ApiResponse, { data: {}, page: string }>({
             query(data) {
                 return {
-                    url: `test/get/battery-test/${data.page}`,
+                    url: `test/get/ui-pcb-test/${data.page}`,
                     method: 'POST',
                     body: data.data,
                 }
             },
-            providesTags: [{ type: 'batteryTestList', id: 'getAirPumpQ' }]
+            providesTags: [{ type: 'uiPcbList', id: 'getValveTestQ' }]
         }),
     }),
-
 })
 
 export const {
-    useGetBatteryTestQQuery,
-    useGetBatteryTestsMutation
-} = batteryTestApi
+    useGetUIPcbTestsMutation,
+    useGetUIPcbTestQQuery,
+} = uiPcbApi

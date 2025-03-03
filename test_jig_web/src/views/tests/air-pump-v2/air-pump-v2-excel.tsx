@@ -1,26 +1,25 @@
 import * as XLSX from "xlsx";
 import { List } from "reselect/es/types";
-import { AirPumpTest } from "../../../services/airPump_service";
+import { AirPumpV2Test } from "../../../services/airPump_service";
 import { format, parseISO } from "date-fns";
 
-export function handleGenerateAirDumpExcel(datas: List<AirPumpTest>) {
+export function handleGenerateAirPumpV2Excel(datas: List<AirPumpV2Test>) {
   // Create a new workbook
+
   const workbook = XLSX.utils.book_new();
 
   const worksheet = XLSX.utils.aoa_to_sheet([
     [
       "Serial Number",
-      "Idle Voltage Low Treshhold",
-      "Idle Voltage Upper Treshhold",
-      "Idle Current Upper Treshhold",
-      "Load Voltage Low Treshhold",
-      "Load Voltage Upper Treshhold",
-      "Load Current Upper Treshhold",
-      "Set Pressure",
-      "Idle Voltage",
-      "Idle Voltage Status",
-      "Idle Current",
-      "Idle Current Status",
+      "Flow Rate Low Threshold",
+      "Flow Rate Up Threshold",
+      "Load Voltage Low Threshold",
+      "Load Voltage Up Threshold",
+      "Load Current Up Threshold",
+      "Pressure Low Threshold",
+      "Pressure Up Threshold",
+      "Pressure",
+      "Pressure Status",
       "Load Voltage",
       "Load Voltage Status",
       "Load Current",
@@ -33,17 +32,15 @@ export function handleGenerateAirDumpExcel(datas: List<AirPumpTest>) {
     ],
     ...datas.map((data) => [
       data.serialNumber,
-      data.idleVoltageLowThresh,
-      data.idleVoltageUpThresh,
-      data.idleCurrentUpThresh,
+      data.flowRateLowThresh,
+      data.flowRateUpThresh,
       data.loadVoltageLowThresh,
       data.loadVoltageUpThresh,
       data.loadCurrentUpThresh,
-      data.setPressure,
-      data.idleVoltage,
-      data.idleVoltageStatus && data.idleVoltageStatus ? "Pass" : "Fail",
-      data.idleCurrent,
-      data.idleCurrentStatus && data.idleCurrentStatus ? "Pass" : "Fail",
+      data.pressureLowThresh,
+      data.pressureUpThresh,
+      data.pressure,
+      data.pressureStatus && data.pressureStatus ? "Pass" : "Fail",
       data.loadVoltage,
       data.loadVoltageStatus && data.loadVoltageStatus ? "Pass" : "Fail",
       data.loadCurrent,
@@ -60,5 +57,5 @@ export function handleGenerateAirDumpExcel(datas: List<AirPumpTest>) {
   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
 
   // Save the workbook as an Excel file
-  XLSX.writeFile(workbook, "Air_Pump_Test_" + new Date().toISOString() + ".xlsx");
+  XLSX.writeFile(workbook, "Air_Pump_V2_Test_" + new Date().toISOString() + ".xlsx");
 }

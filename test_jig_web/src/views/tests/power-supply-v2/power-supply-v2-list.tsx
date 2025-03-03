@@ -17,13 +17,13 @@ import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import { Download } from "@mui/icons-material";
-import { useState } from "react";
-import { handleGenerateValveExcel } from "./valve-excel";
-import { ValveTest, useGetValveTestQQuery, useGetValveTestsMutation } from "../../../services/valve_service";
+import { useState } from "react"
+import { handleGeneratePowerSupplyV2Excel } from "./power-supply-v2-excel";
+import { PowerSupplyV2Test, useGetPowerSupplyV2TestQQuery, useGetPowerSupplyV2TestsMutation } from "../../../services/powerSupply_service";
 import SessionTimeoutPopup from "../../common_components/session_logout";
 import { StyledTableCell, StyledTableRow } from "../../common_components/common";
-import GridOnIcon from '@mui/icons-material/GridOn';
 import TableSearchFormCommon from "../../common_components/table_search_form";
+import GridOnIcon from '@mui/icons-material/GridOn';
 import { format, parseISO } from "date-fns";
 
 const columns: GridColDef[] = [
@@ -33,108 +33,83 @@ const columns: GridColDef[] = [
     width: 80,
   },
   {
+    field: "TestId",
+    headerName: "Test Id",
+    width: 80,
+  },
+  {
     field: "serialNumber",
     headerName: "Serial Number",
-    width: 150,
-  },
-  {
-    field: "idleVoltageLowThresh",
-    headerName: "Idle Voltage Low Threshold",
-    width: 200,
-  },
-  {
-    field: "idleVoltageUpThresh",
-    headerName: "Idle Voltage Up Threshold",
-    width: 200,
-  },
-  {
-    field: "idleCurrentUpThresh",
-    headerName: "Idle Current Up Threshold",
-    width: 200,
-  },
-  {
-    field: "loadVoltageLowThresh",
-    headerName: "Load Voltage Low Threshold",
-    width: 200,
-  },
-  {
-    field: "loadVoltageUpThresh",
-    headerName: "Load Voltage Up Threshold",
-    width: 200,
-  },
-  {
-    field: "loadCurrentUpThresh",
-    headerName: "Load Current Up Threshold",
-    width: 200,
-  },
-  {
-    field: "setPressure",
-    headerName: "Set Pressure",
-    width: 150,
-  },
-  {
-    field: "idleVoltage",
-    headerName: "Idle Voltage",
-    width: 150,
-  },
-  {
-    field: "idleVoltageStatus",
-    headerName: "Idle Voltage Status",
-    width: 200,
-  },
-  {
-    field: "idleCurrent",
-    headerName: "Idle Current",
-    width: 150,
-  },
-  {
-    field: "idleCurrentStatus",
-    headerName: "Idle Current Status",
-    width: 200,
-  },
-  {
-    field: "coilResistance",
-    headerName: "Coil Resistance",
-    width: 150,
-  },
-  {
-    field: "operatingCurrent",
-    headerName: "Operating Current",
-    width: 150,
-  },
-  {
-    field: "peakPower",
-    headerName: "Peak Power",
-    width: 150,
-  },
-  {
-    field: "averagePower",
-    headerName: "Average Power",
-    width: 150,
-  },
-  {
-    field: "flowRate",
-    headerName: "Flow Rate",
-    width: 150,
-  },
-  {
-    field: "flowRateStatus",
-    headerName: "Flow Rate Status",
-    width: 200,
-  },
-  {
-    field: "Status",
-    headerName: "Status",
     width: 100,
   },
   {
-    field: "dateTime",
-    headerName: "Date Time",
-    width: 200,
+    field: "idleVolLowTh",
+    headerName: "idleVolLowTh",
+    width: 100,
   },
-];
+  {
+    field: "idleVolUpTh",
+    headerName: "idleVolUpTh",
+    width: 100,
+  },
+  {
+    field: "loadVolLowTh",
+    headerName: "loadVolLowTh",
+    width: 100,
+  },
+  {
+    field: "loadVolUpTh",
+    headerName: "loadVolUpTh",
+    width: 100,
+  },
+  {
+    field: "loadCurUpTh",
+    headerName: "loadCurUpTh",
+    width: 100,
+  },
+  {
+    field: "IdealVoltage",
+    headerName: "Ideal Voltage",
+    width: 100,
+  },
+  {
+    field: "LoadVoltage",
+    headerName: "Load Voltage",
+    width: 100,
+  },
+  {
+    field: "loadVolStatus",
+    headerName: "Load Voltage Status",
+    width: 100,
+  },
+  {
+    field: "LoadCurrent",
+    headerName: "Load Current",
+    width: 100,
+  },
+  {
+    field: "loadCurrentStatus",
+    headerName: "Load Current Status",
+    width: 100,
+  },
+  {
+    field: "OperatingPower",
+    headerName: "Operating Power",
+    width: 100,
+  },
+  {
+    field: "status",
+    headerName: "Status",
+    width: 150,
+  },
+  {
+    field: "Date",
+    headerName: "Date",
+    width: 150,
+  },
 
-export default function ValveList() {
+];
+export default function PowerSupplyV2List() {
   const [page, setPage] = useState(1);
   const [fromDate, setFromDate] = React.useState<Date | null>(null);
   const [toDate, setToDate] = React.useState<Date | null>(null);
@@ -143,9 +118,9 @@ export default function ValveList() {
   const [filterType, setFilterType] = React.useState('');
   const [filterValue, setFilterValue] = React.useState('');
   const [status, setStatus] = React.useState('');
-  const [selectedRows, setSelectedRows] = React.useState<ValveTest[]>([]);
+  const [selectedRows, setSelectedRows] = React.useState<PowerSupplyV2Test[]>([]);
 
-  var { data, error, isLoading } = useGetValveTestQQuery({
+  var { data, error, isLoading } = useGetPowerSupplyV2TestQQuery({
     data: {
       filterType: filterType,
       filterValue: filterValue,
@@ -154,13 +129,13 @@ export default function ValveList() {
       status: status
     }, page: page.toString()
   })
-  const [getAll] = useGetValveTestsMutation();
+  const [getAll] = useGetPowerSupplyV2TestsMutation();
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
 
-  const handleRowClick = (item: ValveTest) => {
+  const handleRowClick = (item: PowerSupplyV2Test) => {
     if (selectedRows.includes(item)) {
       setSelectedRows(selectedRows.filter((rowId) => rowId !== item));
     } else {
@@ -208,13 +183,13 @@ export default function ValveList() {
                   <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
                     <Grid item xs={4} sm={4} md={6} >
                       <Typography gutterBottom variant="h5" component="div" color="grey">
-                        Valve Test Results
+                        Power Supply V2 Test Results
                       </Typography>
                     </Grid>
                     <Grid item xs={4} sm={4} md={6} >
                       <Box display="flex" justifyContent="flex-end">
                         <Button variant="contained" startIcon={<Download />} color="success" onClick={() =>
-                          handleGenerateValveExcel(selectedRows)
+                          handleGeneratePowerSupplyV2Excel(selectedRows)
                         } disabled={selectedRows.length == 0}>
                           Download selected
                         </Button>
@@ -229,7 +204,7 @@ export default function ValveList() {
                             }, page: "all"
                           }).unwrap()
                             .then((payload) => {
-                              handleGenerateValveExcel(payload.data!.valveTests)
+                              handleGeneratePowerSupplyV2Excel(payload.data!.tests)
                             });
                         }}>
                           Download
@@ -284,7 +259,7 @@ export default function ValveList() {
                           </StyledTableRow>
                         </TableHead>
                         <TableBody>
-                          {data?.data?.valveTests
+                          {data?.data?.tests
                             .map((box) => {
                               return (
                                 <StyledTableRow
@@ -302,71 +277,52 @@ export default function ValveList() {
                                     />
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
+                                    {box.testId}
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
                                     {box.serialNumber}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.idleVoltageLowThresh}
+                                    {box.idleVoltageLowTh}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.idleVoltageUpThresh}
+                                    {box.idleVoltageUpTh}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.idleCurrentUpThresh}
+                                    {box.loadVoltageLowTh}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.loadVoltageLowThresh}
+                                    {box.loadVoltageUpTh}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.loadVoltageUpThresh}
+                                    {box.loadCurrentUpTh}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.loadCurrentUpThresh}
+                                    {box.idleVol}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.setPressure}
+                                    {box.loadVol}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.idleVoltage}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.idleVoltageStatus
-                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                    {box.loadVolStatus ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
                                       : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
                                     }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.idleCurrent}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.idleCurrentStatus
-                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                    {box.loadCurrent ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
                                       : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
                                     }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.coilResistance}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.operatingCurrent}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.peakPower}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.averagePower}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.flowRate}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.flowRateStatus
-                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                    {box.loadCurrentStatus ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
                                       : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
                                     }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.status
-                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                    {box.operatingPower}
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
+                                    {box.status ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
                                       : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
                                     }
                                   </StyledTableCell>

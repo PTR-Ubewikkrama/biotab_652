@@ -14,6 +14,46 @@ import loading from '../../images/loading.gif';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 
+
+// export interface DashBoardSummaryResponse {
+//   status: string;
+//   statusDescription: string;
+//   data: {
+//       totalSuccessAirPumpTest: number;
+//       totalFailedAirPumpTest: number;
+//       totalSuccessPowerSupplyTest: number;
+//       totalFailedPowerSupplyTest: number;
+//       totalSuccessValueTest: number;
+//       totalFailedValueTest: number;
+//       totalSuccessPcbTest: number;
+//       totalFailedPcbTest: number;
+//       totalSuccessPowerPcbTest: number;
+//       totalFailedPowerPcbTest: number;
+//       totalSuccessAirPumpV2Test: number;
+//       totalFailedAirPumpV2Test: number;
+//       totalSuccessPowerSupplyV2Test: number;
+//       totalFailedPowerSupplyV2Test: number;
+//       totalSuccessPowerPcbV2Test: number;
+//       totalFailedPowerPcbV2Test: number;
+//       totalSuccessOpValveTest: number;
+//       totalFailedOpValveTest: number;
+//       totalSuccessValveSequenceTest: number;
+//       totalFailedValveSequenceTest: number;
+//       totalSuccessValveCardTest: number;
+//       totalFailedValveCardTest: number;
+//       totalSuccessManiFoldLeakTest: number;
+//       totalFailedManiFoldLeakTest: number;
+//       totalSuccessUiPcbTest: number;
+//       totalFailedUiPcbTest: number;
+//       totalSuccessCableTest: number;
+//       totalFailedCableTest: number;
+//       totalSuccessFanTest: number;
+//       totalFailedFanTest: number;
+//       totalFinalAssembly: number;
+//       totalHHDevice: number;
+//   };
+// }
+
 export default function Dashboard() {
   const { data, error, isLoading } = useGetDashboardSummaryQuery("");
   // const isLoading = false;
@@ -73,7 +113,7 @@ export default function Dashboard() {
               icon={<LooksOneIcon />}
               value={((data?.data.totalFailedAirPumpTest ?? 0) + (data?.data.totalSuccessAirPumpTest ?? 0)).toString() || "0"}
               color="warning.main"
-              path="/air-dump-test"
+              path="/air-pump"
               image={card1}
             />
           </Grid>
@@ -83,7 +123,7 @@ export default function Dashboard() {
               icon={<LooksTwoIcon />}
               value={((data?.data.totalFailedPcbTest ?? 0) + (data?.data.totalSuccessPcbTest ?? 0)).toString() || "0"}
               color="success.light"
-              path="/pcb-test"
+              path="/power-pcb-test"
               image={card2}
             />
           </Grid>
@@ -109,34 +149,115 @@ export default function Dashboard() {
           </Grid>
           <Grid item xl={2} lg={3} sm={6} xs={12}>
             <SummaryCard
-              title="Battery Test"
-              icon={<Looks4Icon />}
-              value={((data?.data.totalFailedBatteryTest ?? 0) + (data?.data.totalSuccessBatteryTest ?? 0)).toString() || "0"}
+              title="Power Pcb Test"
+              icon={<InventoryIcon />}
+              value={((data?.data.totalFailedPowerPcbTest ?? 0) + (data?.data.totalSuccessPowerPcbTest ?? 0)).toString() || "0"}
               color="success.dark"
-              path="/battery-test"
+              path="/power-pcb-test"
+              image={card1}
+            />
+          </Grid>
+          <Grid item xl={2} lg={3} sm={6} xs={12}>
+            <SummaryCard
+              title="Air Pump V2 Test"
+              icon={<ListAltIcon />}
+              value={((data?.data.totalFailedAirPumpV2Test ?? 0) + (data?.data.totalSuccessAirPumpV2Test ?? 0)).toString() || "0"}
+              color="success.main"
+              path="/air-pump-2"
+              image={card2}
+            />
+          </Grid>
+          <Grid item xl={2} lg={3} sm={6} xs={12}>
+            <SummaryCard
+              title="Power Supply V2 Test"
+              icon={<InventoryIcon />}
+              value={((data?.data.totalFailedPowerSupplyV2Test ?? 0) + (data?.data.totalSuccessPowerSupplyV2Test ?? 0)).toString() || "0"}
+              color="success.dark"
+              path="/power-supply-test-2"
               image={card3}
             />
           </Grid>
           <Grid item xl={2} lg={3} sm={6} xs={12}>
             <SummaryCard
-              title="Latch Button Test"
-              icon={<Looks4Icon />}
-              value={((data?.data.totalFailedLatchButtonTest ?? 0) + (data?.data.totalSuccessLatchButtonTest ?? 0)).toString() || "0"}
-              color="success.dark"
-              path="/latch-button-test"
+              title="Power Pcb V2 Test"
+              icon={<ListAltIcon />}
+              value={((data?.data.totalFailedPowerPcbV2Test ?? 0) + (data?.data.totalSuccessPowerPcbV2Test ?? 0)).toString() || "0"}
+              color="success.main"
+              path="/power-pcb-test-2"
               image={card4}
             />
           </Grid>
           <Grid item xl={2} lg={3} sm={6} xs={12}>
             <SummaryCard
-              title="Over Pressure Test"
-              icon={<Looks4Icon />}
-              value={((data?.data.totalFailedOverPressureTest ?? 0) + (data?.data.totalSuccessOverPressureTest ?? 0)).toString() || "0"}
-              color="green"
-              path="/over-pressure-test"
+              title="Op Valve Test"
+              icon={<ListAltIcon />}
+              value={((data?.data.totalFailedOpValveTest ?? 0) + (data?.data.totalSuccessOpValveTest ?? 0)).toString() || "0"}
+              color="success.main"
+              path="/op-valve-test"
               image={card2}
             />
           </Grid>
+          <Grid item xl={2} lg={3} sm={6} xs={12}>
+            <SummaryCard
+              title="Valve Sequence Test"
+              icon={<InventoryIcon />}
+              value={((data?.data.totalFailedValveSequenceTest ?? 0) + (data?.data.totalSuccessValveSequenceTest ?? 0)).toString() || "0"}
+              color="success.dark"
+              path="/valve-sequence-test"
+              image={card3}
+            />
+          </Grid>
+          <Grid item xl={2} lg={3} sm={6} xs={12}>
+            <SummaryCard
+              title="Valve Card Test"
+              icon={<ListAltIcon />}
+              value={((data?.data.totalFailedValveCardTest ?? 0) + (data?.data.totalSuccessValveCardTest ?? 0)).toString() || "0"}
+              color="success.main"
+              path="/valve-card-test"
+              image={card4}
+            />
+          </Grid>
+          <Grid item xl={2} lg={3} sm={6} xs={12}>
+            <SummaryCard
+              title="Manifold Leak Test"
+              icon={<InventoryIcon />}
+              value={((data?.data.totalFailedManiFoldLeakTest ?? 0) + (data?.data.totalSuccessManiFoldLeakTest ?? 0)).toString() || "0"}
+              color="success.dark"
+              path="/mani-fold-leak-test"
+              image={card1}
+            />
+          </Grid>
+          <Grid item xl={2} lg={3} sm={6} xs={12}>
+            <SummaryCard
+              title="Ui Pcb Test"
+              icon={<ListAltIcon />}
+              value={((data?.data.totalFailedUiPcbTest ?? 0) + (data?.data.totalSuccessUiPcbTest ?? 0)).toString() || "0"}
+              color="success.main"
+              path="/ui-pcb-test"
+              image={card2}
+            />
+          </Grid>
+          <Grid item xl={2} lg={3} sm={6} xs={12}>
+            <SummaryCard
+              title="Cable Test"
+              icon={<InventoryIcon />}
+              value={((data?.data.totalFailedCableTest ?? 0) + (data?.data.totalSuccessCableTest ?? 0)).toString() || "0"}
+              color="success.dark"
+              path="/cable-test"
+              image={card3}
+            />
+          </Grid>
+          <Grid item xl={2} lg={3} sm={6} xs={12}>
+            <SummaryCard
+              title="Fan Test"
+              icon={<ListAltIcon />}
+              value={((data?.data.totalFailedFanTest ?? 0) + (data?.data.totalSuccessFanTest ?? 0)).toString() || "0"}
+              color="success.main"
+              path="/fan-test"
+              image={card4}
+            />
+          </Grid>
+
           <Grid item xl={2} lg={3} sm={6} xs={12}>
             <SummaryCard
               title="HH Device"

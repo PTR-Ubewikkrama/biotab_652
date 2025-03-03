@@ -24,6 +24,7 @@ import { AirPumpTest, useGetAirPumpQQuery, useGetAirPumpTestsMutation } from "..
 import { StyledTableCell, StyledTableRow } from "../../common_components/common";
 import SessionTimeoutPopup from "../../common_components/session_logout";
 import TableSearchFormCommon from "../../common_components/table_search_form";
+import { format, parseISO } from "date-fns";
 
 const columns: GridColDef[] = [
   {
@@ -37,68 +38,107 @@ const columns: GridColDef[] = [
     width: 150,
   },
   {
-    field: "Voltage",
-    headerName: "Voltage",
-    width: 100,
-  },
-  {
-    field: "Current",
-    headerName: "Current",
-    width: 100,
-  },
-  {
-    field: "MaxPressure",
-    headerName: "Max Pressure",
-    width: 100,
-  },
-  {
-    field: "NoiseLevel",
-    headerName: "Noise Level",
-    width: 100,
-  },
-  {
-    field: "Date",
-    headerName: "Date",
+    field: "idleVoltageLowThresh",
+    headerName: "Idle Voltage Low Treshhold",
     width: 150,
   },
   {
-    field: "DeviceStatus",
-    headerName: "Device Status",
-    width: 100,
+    field: "idleVoltageUpThresh",
+    headerName: "Idle Voltage Up Treshhold",
+    width: 150,
   },
   {
-    field: "Running time",
-    headerName: "Running time",
-    width: 100,
+    field: "idleCurrentUpThresh",
+    headerName: "Idle Current Up Treshhold",
+    width: 150,
   },
   {
-    field: "Voltage Lower value",
-    headerName: "Voltage Lower value",
-    width: 100,
+    field: "loadVoltageLowThresh",
+    headerName: "Load Voltage Low Treshhold",
+    width: 150,
   },
   {
-    field: "Voltage Upper value",
-    headerName: "Voltage Upper value",
-    width: 100,
+    field: "loadVoltageUpThresh",
+    headerName: "Load Voltage Up Treshhold",
+    width: 150,
   },
   {
-    field: "Max Current value",
-    headerName: "Max Current value",
-    width: 100,
+    field: "loadCurrentUpThresh",
+    headerName: "Load Current Up Treshhold",
+    width: 150,
   },
   {
-    field: "Load_Vol_Low_th",
-    headerName: "Load_Vol_Low_th",
-    width: 100,
+    field: "setPressure",
+    headerName: "Set Pressure",
+    width: 150,
   },
   {
-    field: "Set_Pressure",
-    headerName: "Set_Pressure",
-    width: 100,
+    field: "idleVoltage",
+    headerName: "Idle Voltage",
+    width: 150,
   },
-
+  {
+    field: "idleVoltageStatus",
+    headerName: "Idle Voltage Status",
+    width: 150,
+  },
+  {
+    field: "idleCurrent",
+    headerName: "Idle Current",
+    width: 150,
+  },
+  {
+    field: "idleCurrentStatus",
+    headerName: "Idle Current Status",
+    width: 150,
+  },
+  {
+    field: "loadVoltage",
+    headerName: "Load Voltage",
+    width: 150,
+  },
+  {
+    field: "loadVoltageStatus",
+    headerName: "Load Voltage Status",
+    width: 150,
+  },
+  {
+    field: "loadCurrent",
+    headerName: "Load Current",
+    width: 150,
+  },
+  {
+    field: "loadCurrentStatus",
+    headerName: "Load Current Status",
+    width: 150,
+  },
+  {
+    field: "flowRate",
+    headerName: "Flow Rate",
+    width: 150,
+  },
+  {
+    field: "flowRateStatus",
+    headerName: "Flow Rate Status",
+    width: 150,
+  },
+  {
+    field: "noiseLevelStatus",
+    headerName: "Noise Level Status",
+    width: 150,
+  },
+  {
+    field: "status",
+    headerName: "Status",
+    width: 150,
+  },
+  {
+    field: "dateTime",
+    headerName: "Date Time",
+    width: 150,
+  },
 ];
-export default function AirDumpList() {
+export default function AirPumpList() {
 
   const [page, setPage] = useState(1);
   const [fromDate, setFromDate] = React.useState<Date | null>(null);
@@ -270,40 +310,85 @@ export default function AirDumpList() {
                                     {box.serialNumber}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.idleVol}
+                                    {box.idleVoltageLowThresh}
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
+                                    {box.idleVoltageUpThresh}
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
+                                    {box.idleCurrentUpThresh}
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
+                                    {box.loadVoltageLowThresh}
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
+                                    {box.loadVoltageUpThresh}
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
+                                    {box.loadCurrentUpThresh}
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
+                                    {box.setPressure}
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
+                                    {box.idleVoltage}
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
+                                    {box.idleVoltageStatus
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
                                     {box.idleCurrent}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.maxPressure}
+                                    {box.idleCurrentStatus
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {(box.noiseLevel) ? "Yes" : "No"}
+                                    {box.loadVoltage}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.dateTime?.split("T")[0]}
+                                    {box.loadVoltageStatus
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.status ? "Pass" : "Fail"}
+                                    {box.loadCurrent}
                                   </StyledTableCell>
-                                  <StyledTableCell align={"center"}>
-                                    {box.idleCurUpTh}
+                                  <StyledTableCell align={"left"}>
+                                    {box.loadCurrentStatus
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
-                                  <StyledTableCell align={"center"}>
-                                    {box.idleVolLowTh}
+                                  <StyledTableCell align={"left"}>
+                                    {box.flowRate}
                                   </StyledTableCell>
-                                  <StyledTableCell align={"center"}>
-                                    {box.idleVolUpTh}
+                                  <StyledTableCell align={"left"}>
+                                    {box.flowRateStatus
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
-                                  <StyledTableCell align={"center"}>
-                                    {box.loadCurUpTh}
+                                  <StyledTableCell align={"left"}>
+                                    {box.noiseLevelStatus
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
-                                  <StyledTableCell align={"center"}>
-                                    {box.loadVolLowTh}
+                                  <StyledTableCell align={"left"}>
+                                    {box.status
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
-                                  <StyledTableCell align={"center"}>
-                                    {box.setPressure}
+                                  <StyledTableCell align={"left"}>
+                                    {format(parseISO(box.dateTime), "yyyy-MM-dd HH:mm:ss")}
                                   </StyledTableCell>
                                 </StyledTableRow>
                               );

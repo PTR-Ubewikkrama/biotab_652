@@ -9,8 +9,6 @@ import {
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import { NavItem } from "./nav-item";
 import {
-  Devices,
-  People,
   Power,
   Air,
   Support,
@@ -29,22 +27,15 @@ const items = [
     icon: <DashboardIcon fontSize="small" />,
     title: "Dashboard",
   },
-
   {
-    href: "/users",
-    icon: <People fontSize="small" />,
-    title: "Users",
-  },
-  {
-    href: "/devices",
-    icon: <Devices fontSize="small" />,
-    title: "Devices",
-  },
-
-  {
-    href: "/air-dump-test",
+    href: "/air-pump",
     icon: <Air fontSize="small" />,
-    title: "Air Pump Test",
+    title: "AirPump",
+  },
+  {
+    href: "/air-pump-2",
+    icon: <Air fontSize="small" />,
+    title: "AirPump v2.0",
   },
   {
     href: "/power-supply-test",
@@ -52,42 +43,65 @@ const items = [
     title: "Power Supply Test",
   },
   {
+    href: "/power-supply-test-2",
+    icon: <Power fontSize="small" />,
+    title: "Power Supply Test v2.0",
+  },
+  {
     href: "/valve-test",
     icon: <Support fontSize="small" />,
     title: "Valve Test",
   },
   {
-    href: "/battery-test",
-    icon: <BatterySaverIcon fontSize="small" />,
-    title: "Battery Test",
-  },
-  {
-    href: "/latch-button-test",
-    icon: <RadioButtonCheckedIcon fontSize="small" />,
-    title: "Latch Button Test",
-  },
-  {
-    href: "/over-pressure-test",
-    icon: <CompressIcon fontSize="small" />,
-    title: "Over Pressure Test",
-  },
-  {
-    href: "/pcb-test",
+    href: "/power-pcb-test",
     icon: <MonitorHeartIcon fontSize="small" />,
-    title: "PCB Test",
+    title: "Power PCB Test",
   },
   {
-    href: "/hh-device",
-    icon: <InventoryIcon fontSize="small" />,
-    title: "HH Device",
+    href: "/power-pcb-test-2",
+    icon: <MonitorHeartIcon fontSize="small" />,
+    title: "Power PCB Test v2.0",
   },
-  ,
+  {
+    href: "/op-valve-test",
+    icon: <RadioButtonCheckedIcon fontSize="small" />,
+    title: "OP Valve Test",
+  },
+  {
+    href: "/valve-sequence-test",
+    icon: <CompressIcon fontSize="small" />,
+    title: "Valve Sequence Test",
+  },
+  {
+    href: "/valve-card-test",
+    icon: <CompressIcon fontSize="small" />,
+    title: "Valve Card Test",
+  },
+  {
+    href: "/mani-fold-leak-test",
+    icon: <BatterySaverIcon fontSize="small" />,
+    title: "Manifold Leak Test",
+  },
+  {
+    href: "/ui-pcb-test",
+    icon: <InventoryIcon fontSize="small" />,
+    title: "UI PCB Test",
+  },
+  {
+    href: "/cable-test",
+    icon: <InventoryIcon fontSize="small" />,
+    title: "Cable Test",
+  },
+  {
+    href: "/fan-test",
+    icon: <InventoryIcon fontSize="small" />,
+    title: "Fan Test",
+  },
   {
     href: "/fas",
     icon: <ListAltIcon fontSize="small" />,
     title: "Final Assembly",
   },
-
 ];
 
 type DashboardSidebarData = {

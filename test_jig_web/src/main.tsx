@@ -7,19 +7,24 @@ import App from "./App";
 
 import { store } from "./store/store";
 import Dashboard from "./views/dashboard/dashboard";
-import UserList from "./views/user/view/UserList";
 import { theme } from "./theme";
-import DevicesList from "./views/device/view/DeviceList";
 import Login from "./views/login/login";
 import PowerSupplyList from "./views/tests/power-supply/power-supply-list";
 import ValveList from "./views/tests/valve/valve-list";
-import AirDumpList from "./views/tests/air-pump/air-dump-list";
-import BatteryTestList from "./views/tests/battery-test/battery-test-list";
-import LatchButtonTestList from "./views/tests/latch-button-test/latch-button-test-list";
-import OverPressureTestList from "./views/tests/over-pressure-test/over-pressure-test-list";
-import PcbTestList from "./views/tests/pcb-test/pcb-test-list";
+import AirPumpList from "./views/tests/air-pump/air-dump-list";
+import PowerPcbTestList from "./views/tests/power-pcb/power-pcb-test-list";
 import HHDeviceList from "./views/hh_device/hh_device_list";
 import FinalAssemblyList from "./views/fa/fa_list";
+import AirPumpV2List from "./views/tests/air-pump-v2/air-pump-v2-list";
+import PowerPcbV2TestList from "./views/tests/power-pcb-v2/power-pcb-v2-test-list";
+import PowerSupplyV2List from "./views/tests/power-supply-v2/power-supply-v2-list";
+import OPValveList from "./views/tests/op-valve/op-valve-list";
+import ValveSequenceList from "./views/tests/valve-sequence/valve-sequence-list";
+import ValveCardList from "./views/tests/valve-card/valve-card-list";
+import ManiFoldLeakList from "./views/tests/mani-fold-leak/mani-fold-leak-list";
+import UIPcbList from "./views/tests/ui-pcb/ui-pcb-list";
+import CableList from "./views/tests/cable/cable-list";
+import FanList from "./views/tests/fan/fan-list";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -29,16 +34,21 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <BrowserRouter>
           <App>
             <Routes>
-              <Route path="/users" element={<UserList />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/devices" element={<DevicesList />} />
+              <Route path="/air-pump" element={<AirPumpList />} />
+              <Route path="/air-pump-2" element={<AirPumpV2List />} />
               <Route path="/power-supply-test" element={<PowerSupplyList />} />
+              <Route path="/power-supply-test-2" element={<PowerSupplyV2List />} />
               <Route path="/valve-test" element={<ValveList />} />
-              <Route path="/air-dump-test" element={<AirDumpList />} />
-              <Route path="/battery-test" element={<BatteryTestList />} />
-              <Route path="/latch-button-test" element={<LatchButtonTestList />} />
-              <Route path="/over-pressure-test" element={<OverPressureTestList />} />
-              <Route path="/pcb-test" element={<PcbTestList />} />
+              <Route path="/power-pcb-test" element={<PowerPcbTestList />} />
+              <Route path="/power-pcb-test-2" element={<PowerPcbV2TestList />} />
+              <Route path="/op-valve-test" element={<OPValveList />} />
+              <Route path="/valve-sequence-test" element={<ValveSequenceList />} />
+              <Route path="/valve-card-test" element={<ValveCardList />} />
+              <Route path="/mani-fold-leak-test" element={<ManiFoldLeakList />} />
+              <Route path="/ui-pcb-test" element={<UIPcbList />} />
+              <Route path="/cable-test" element={<CableList />} />
+              <Route path="/fan-test" element={<FanList />} />
               <Route path="/hh-device" element={<HHDeviceList />} />
               <Route path="/fas" element={<FinalAssemblyList />} />
               <Route path="*" element={<Dashboard />} />

@@ -24,6 +24,7 @@ import SessionTimeoutPopup from "../../common_components/session_logout";
 import { StyledTableCell, StyledTableRow } from "../../common_components/common";
 import TableSearchFormCommon from "../../common_components/table_search_form";
 import GridOnIcon from '@mui/icons-material/GridOn';
+import { format, parseISO } from "date-fns";
 
 const columns: GridColDef[] = [
   {
@@ -37,9 +38,9 @@ const columns: GridColDef[] = [
     width: 80,
   },
   {
-    field: "DeviceId",
-    headerName: "Device Id",
-    width: 80,
+    field: "serialNumber",
+    headerName: "Serial Number",
+    width: 100,
   },
   {
     field: "idleVolLowTh",
@@ -67,11 +68,6 @@ const columns: GridColDef[] = [
     width: 100,
   },
   {
-    field: "serialNumber",
-    headerName: "Serial Number",
-    width: 100,
-  },
-  {
     field: "IdealVoltage",
     headerName: "Ideal Voltage",
     width: 100,
@@ -82,8 +78,18 @@ const columns: GridColDef[] = [
     width: 100,
   },
   {
+    field: "loadVolStatus",
+    headerName: "Load Voltage Status",
+    width: 100,
+  },
+  {
     field: "LoadCurrent",
     headerName: "Load Current",
+    width: 100,
+  },
+  {
+    field: "loadCurrentStatus",
+    headerName: "Load Current Status",
     width: 100,
   },
   {
@@ -92,17 +98,17 @@ const columns: GridColDef[] = [
     width: 100,
   },
   {
-    field: "Date",
-    headerName: "Date",
+    field: "status",
+    headerName: "Status",
     width: 150,
   },
   {
-    field: "DeviceStatus",
-    headerName: "Device Status",
-    width: 100,
-  },
-
+    field: "Date",
+    headerName: "Date",
+    width: 150,
+  }
 ];
+
 export default function PowerSupplyList() {
   const [page, setPage] = useState(1);
   const [fromDate, setFromDate] = React.useState<Date | null>(null);
@@ -274,7 +280,7 @@ export default function PowerSupplyList() {
                                     {box.testId}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.deviceId}
+                                    {box.serialNumber}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
                                     {box.idleVolLowTh}
@@ -292,25 +298,36 @@ export default function PowerSupplyList() {
                                     {box.loadCurUpTh}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.serialNumber}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
                                     {box.idleVol}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
                                     {box.loadVol}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.loadCurrent}
+                                    {box.loadVolStatus ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
+                                    {box.loadCurrent ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
+                                    {box.loadCurrentStatus ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
                                     {box.operatingPower}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.dateTime}
+                                    {box.status ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.deviceStatus}
+                                    {format(parseISO(box.dateTime), "yyyy-MM-dd HH:mm:ss")}
                                   </StyledTableCell>
                                 </StyledTableRow>
                               );

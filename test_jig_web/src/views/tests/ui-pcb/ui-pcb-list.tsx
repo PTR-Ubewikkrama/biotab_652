@@ -18,13 +18,14 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import { Download } from "@mui/icons-material";
 import { useState } from "react";
-import { handleGenerateValveExcel } from "./valve-excel";
-import { ValveTest, useGetValveTestQQuery, useGetValveTestsMutation } from "../../../services/valve_service";
+import { handleGenerateManiFoldLeakExcel } from "./ui-pcb-excel";
 import SessionTimeoutPopup from "../../common_components/session_logout";
 import { StyledTableCell, StyledTableRow } from "../../common_components/common";
 import GridOnIcon from '@mui/icons-material/GridOn';
 import TableSearchFormCommon from "../../common_components/table_search_form";
 import { format, parseISO } from "date-fns";
+import { ManiFoldLeakTest, useGetManiFoldLeakTestQQuery, useGetManiFoldLeakTestsMutation } from "../../../services/mani_fold_leak_service";
+import { UIPcbTest, useGetUIPcbTestQQuery, useGetUIPcbTestsMutation } from "../../../services/ui_pcb_service";
 
 const columns: GridColDef[] = [
   {
@@ -38,88 +39,33 @@ const columns: GridColDef[] = [
     width: 150,
   },
   {
-    field: "idleVoltageLowThresh",
-    headerName: "Idle Voltage Low Threshold",
+    field: "physicalInspectionState",
+    headerName: "Physical Inspection State",
     width: 200,
   },
   {
-    field: "idleVoltageUpThresh",
-    headerName: "Idle Voltage Up Threshold",
-    width: 200,
-  },
-  {
-    field: "idleCurrentUpThresh",
-    headerName: "Idle Current Up Threshold",
-    width: 200,
-  },
-  {
-    field: "loadVoltageLowThresh",
-    headerName: "Load Voltage Low Threshold",
-    width: 200,
-  },
-  {
-    field: "loadVoltageUpThresh",
-    headerName: "Load Voltage Up Threshold",
-    width: 200,
-  },
-  {
-    field: "loadCurrentUpThresh",
-    headerName: "Load Current Up Threshold",
-    width: 200,
-  },
-  {
-    field: "setPressure",
-    headerName: "Set Pressure",
+    field: "redLedState",
+    headerName: "Red Led State",
     width: 150,
   },
   {
-    field: "idleVoltage",
-    headerName: "Idle Voltage",
+    field: "whiteLedState",
+    headerName: "White Led State",
     width: 150,
   },
   {
-    field: "idleVoltageStatus",
-    headerName: "Idle Voltage Status",
-    width: 200,
-  },
-  {
-    field: "idleCurrent",
-    headerName: "Idle Current",
+    field: "ledRingOnState",
+    headerName: "Led Ring On State",
     width: 150,
   },
   {
-    field: "idleCurrentStatus",
-    headerName: "Idle Current Status",
-    width: 200,
-  },
-  {
-    field: "coilResistance",
-    headerName: "Coil Resistance",
+    field: "ledRingFadeState",
+    headerName: "Led Ring Fade State",
     width: 150,
   },
   {
-    field: "operatingCurrent",
-    headerName: "Operating Current",
-    width: 150,
-  },
-  {
-    field: "peakPower",
-    headerName: "Peak Power",
-    width: 150,
-  },
-  {
-    field: "averagePower",
-    headerName: "Average Power",
-    width: 150,
-  },
-  {
-    field: "flowRate",
-    headerName: "Flow Rate",
-    width: 150,
-  },
-  {
-    field: "flowRateStatus",
-    headerName: "Flow Rate Status",
+    field: "overallUiPcbState",
+    headerName: "Overall UiPcb State",
     width: 200,
   },
   {
@@ -134,7 +80,7 @@ const columns: GridColDef[] = [
   },
 ];
 
-export default function ValveList() {
+export default function UIPcbList() {
   const [page, setPage] = useState(1);
   const [fromDate, setFromDate] = React.useState<Date | null>(null);
   const [toDate, setToDate] = React.useState<Date | null>(null);
@@ -143,9 +89,9 @@ export default function ValveList() {
   const [filterType, setFilterType] = React.useState('');
   const [filterValue, setFilterValue] = React.useState('');
   const [status, setStatus] = React.useState('');
-  const [selectedRows, setSelectedRows] = React.useState<ValveTest[]>([]);
+  const [selectedRows, setSelectedRows] = React.useState<UIPcbTest[]>([]);
 
-  var { data, error, isLoading } = useGetValveTestQQuery({
+  var { data, error, isLoading } = useGetUIPcbTestQQuery({
     data: {
       filterType: filterType,
       filterValue: filterValue,
@@ -154,13 +100,13 @@ export default function ValveList() {
       status: status
     }, page: page.toString()
   })
-  const [getAll] = useGetValveTestsMutation();
+  const [getAll] = useGetUIPcbTestsMutation();
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
 
-  const handleRowClick = (item: ValveTest) => {
+  const handleRowClick = (item: UIPcbTest) => {
     if (selectedRows.includes(item)) {
       setSelectedRows(selectedRows.filter((rowId) => rowId !== item));
     } else {
@@ -208,13 +154,13 @@ export default function ValveList() {
                   <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
                     <Grid item xs={4} sm={4} md={6} >
                       <Typography gutterBottom variant="h5" component="div" color="grey">
-                        Valve Test Results
+                        UI PCB Test Results
                       </Typography>
                     </Grid>
                     <Grid item xs={4} sm={4} md={6} >
                       <Box display="flex" justifyContent="flex-end">
                         <Button variant="contained" startIcon={<Download />} color="success" onClick={() =>
-                          handleGenerateValveExcel(selectedRows)
+                          handleGenerateManiFoldLeakExcel(selectedRows)
                         } disabled={selectedRows.length == 0}>
                           Download selected
                         </Button>
@@ -229,7 +175,7 @@ export default function ValveList() {
                             }, page: "all"
                           }).unwrap()
                             .then((payload) => {
-                              handleGenerateValveExcel(payload.data!.valveTests)
+                              handleGenerateManiFoldLeakExcel(payload.data!.tests)
                             });
                         }}>
                           Download
@@ -284,7 +230,7 @@ export default function ValveList() {
                           </StyledTableRow>
                         </TableHead>
                         <TableBody>
-                          {data?.data?.valveTests
+                          {data?.data?.tests
                             .map((box) => {
                               return (
                                 <StyledTableRow
@@ -305,61 +251,37 @@ export default function ValveList() {
                                     {box.serialNumber}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.idleVoltageLowThresh}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.idleVoltageUpThresh}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.idleCurrentUpThresh}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.loadVoltageLowThresh}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.loadVoltageUpThresh}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.loadCurrentUpThresh}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.setPressure}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.idleVoltage}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.idleVoltageStatus
+                                    {box.physicalInspectionState
                                       ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
                                       : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
                                     }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.idleCurrent}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.idleCurrentStatus
+                                    {box.redLedState
                                       ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
                                       : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
                                     }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.coilResistance}
+                                    {box.whiteLedState
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.operatingCurrent}
+                                    {box.ledRingOnState
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.peakPower}
+                                    {box.ledRingFadeState
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.averagePower}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.flowRate}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.flowRateStatus
+                                    {box.overallUiPcbState
                                       ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
                                       : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
                                     }

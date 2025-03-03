@@ -1,18 +1,15 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import config from '../config/config';
 
-export interface OverPressureTest {
+export interface ManiFoldLeakTest {
     testId: number;
-    deviceMac: string;
-    qrCode: string;
-    maxPressure: number;
-    maxPressureTime: number;
-    maxPressureFlowRate: number;
-    normalPressure: number;
-    normalPressureTime: number;
-    normalPressureFlowRate: number;
-    overPressureValveStatus: boolean;
-    status: boolean;
+    deviceId: number;
+    serialNumber: string;
+    physicalInspectionState: boolean | null;
+    leakageFlowrate: number;
+    manifoldLeakState: boolean | null;
+    overallManifoldLeakState: boolean
+    status: boolean | null;
     dateTime: string;
 }
 
@@ -20,14 +17,14 @@ export interface ApiResponse {
     status: string;
     statusDescription: string;
     data: {
-        overPressureValveTests: OverPressureTest[];
+        tests: ManiFoldLeakTest[];
         totalRecords: number;
         totalFailed: number;
     };
 }
 
-export const overPressureTestApi = createApi({
-    reducerPath: 'overPressureTestApi',
+export const maniFoldLeakApi = createApi({
+    reducerPath: 'maniFoldLeakApi',
     baseQuery: fetchBaseQuery({
         baseUrl: config.apiBaseUrl,
         prepareHeaders: (headers) => {
@@ -38,33 +35,32 @@ export const overPressureTestApi = createApi({
             return headers;
         },
     }),
-    tagTypes: ['overPressureTestList'],
+    tagTypes: ['maniFoldLeakList'],
     endpoints: (build) => ({
-        getOverPressureTests: build.mutation<ApiResponse, { data: {}, page: string }>({
+        getManiFoldLeakTests: build.mutation<ApiResponse, { data: {}, page: string }>({
             query(data) {
                 return {
-                    url: `test/get/over-pressure-test/${data.page}`,
+                    url: `test/get/mani-fold-leak-test/${data.page}`,
                     method: 'POST',
                     body: data.data,
                 }
             },
-            invalidatesTags: [{ type: 'overPressureTestList', id: "getAirPumpTests" }]
+            invalidatesTags: [{ type: 'maniFoldLeakList', id: "getValveTests" }]
         }),
-        getOverPressureQ: build.query<ApiResponse, { data: {}, page: string }>({
+        getManiFoldLeakTestQ: build.query<ApiResponse, { data: {}, page: string }>({
             query(data) {
                 return {
-                    url: `test/get/over-pressure-test/${data.page}`,
+                    url: `test/get/mani-fold-leak-test/${data.page}`,
                     method: 'POST',
                     body: data.data,
                 }
             },
-            providesTags: [{ type: 'overPressureTestList', id: 'getAirPumpQ' }]
+            providesTags: [{ type: 'maniFoldLeakList', id: 'getValveTestQ' }]
         }),
     }),
-
 })
 
 export const {
-    useGetOverPressureQQuery,
-    useGetOverPressureTestsMutation
-} = overPressureTestApi
+    useGetManiFoldLeakTestQQuery,
+    useGetManiFoldLeakTestsMutation
+} = maniFoldLeakApi

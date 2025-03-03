@@ -4,22 +4,24 @@ import config from '../config/config';
 export interface ValveTest {
     testId: number;
     deviceId: number;
-    qrCode: string;
-    airChamberLoadingPressure: number;
-    airChamberStatus: boolean;
-    v1OutletPressureAfter10MsOnTime: number;
-    v1OutletOnStatus: boolean;
-    v1OutletPressureAfter10MsOffTime: number;
-    v1OutletOffStatus: boolean;
-    v2OutletPressureAfter10MsOnTime: number;
-    v2OutletOnStatus: boolean;
-    v2OutletPressureAfter10MsOffTime: number;
-    v2OutletOffStatus: boolean;
-    v3OutletPressureAfter10MsOnTime: number;
-    v3OutletOnStatus: boolean;
-    v3OutletPressureAfter10MsOffTime: number;
-    v3OutletOffStatus: boolean;
-    valveStatus: boolean;
+    serialNumber: string;
+    idleVoltageLowThresh: number;
+    idleVoltageUpThresh: number;
+    idleCurrentUpThresh: number;
+    loadVoltageLowThresh: number;
+    loadVoltageUpThresh: number;
+    loadCurrentUpThresh: number;
+    setPressure: number;
+    idleVoltage: number;
+    idleVoltageStatus: boolean | null;
+    idleCurrent: number;
+    idleCurrentStatus: boolean | null;
+    coilResistance: number;
+    operatingCurrent: number;
+    peakPower: number;
+    averagePower: number;
+    flowRate: number;
+    flowRateStatus: boolean | null;
     status: boolean | null;
     dateTime: string;
 }
@@ -53,7 +55,7 @@ export const valveApi = createApi({
         getValveTests: build.mutation<ApiResponseValve, { data: {}, page: string }>({
             query(data) {
                 return {
-                    url: `test/get/valve-test/all`,
+                    url: `test/get/valve-test/${data.page}`,
                     method: 'POST',
                     body: data.data,
                 }

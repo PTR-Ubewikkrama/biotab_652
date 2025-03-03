@@ -18,12 +18,13 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import { Download } from "@mui/icons-material";
 import { useState } from "react";
-import { handleGenerateOverPressureTesExcel } from "./over-pressure-test-excel";
+import { handleGeneratePcbV2TestExcel } from "./power-pcb-v2-test-excel";
 import GridOnIcon from '@mui/icons-material/GridOn';
 import { StyledTableCell, StyledTableRow } from "../../common_components/common";
 import SessionTimeoutPopup from "../../common_components/session_logout";
 import TableSearchFormCommon from "../../common_components/table_search_form";
-import { OverPressureTest, useGetOverPressureQQuery, useGetOverPressureTestsMutation } from "../../../services/over_pressure_test_service";
+import { PowerPcbV2TestDto, useGetPowerPcbV2TestQQuery, useGetPowerPcbV2TestsMutation } from "../../../services/power_pcb_test_service";
+import { format, parseISO } from "date-fns";
 
 const columns: GridColDef[] = [
   {
@@ -37,62 +38,63 @@ const columns: GridColDef[] = [
     width: 150,
   },
   {
-    field: "deviceMac",
-    headerName: "Device MAC",
+    field: "serialNumber",
+    headerName: "Serial Number",
     width: 150,
   },
   {
-    field: "qrCode",
-    headerName: "QR Code",
-    width: 150,
+    field: "loadVoltageLowThresh",
+    headerName: "Load Voltage Low Threshold",
+    width: 250,
   },
   {
-    field: "maxPressure",
-    headerName: "Max Pressure",
-    width: 150,
+    field: "loadCurrentLowThresh",
+    headerName: "Load Current Low Threshold",
+    width: 250,
   },
   {
-    field: "maxPressureTime",
-    headerName: "Max Pressure Time",
-    width: 150,
+    field: "usbCPowerOutletConnectivity",
+    headerName: "USB C Power Outlet Connectivity",
+    width: 250,
   },
   {
-    field: "maxPressureFlowRate",
-    headerName: "Max Pressure Flow Rate",
-    width: 150,
+    field: "loadVoltage",
+    headerName: "Load Voltage",
+    width: 250,
   },
   {
-    field: "normalPressure",
-    headerName: "Normal Pressure",
-    width: 150,
+    field: "loadVoltageStatus",
+    headerName: "Load Voltage Status",
+    width: 250,
   },
   {
-    field: "normalPressureTime",
-    headerName: "Normal Pressure Time",
-    width: 150,
+    field: "loadCurrentStatus",
+    headerName: "Load Current Status",
+    width: 250,
   },
   {
-    field: "normalPressureFlowRate",
-    headerName: "Normal Pressure Flow Rate",
-    width: 150,
+    field: "loadCurrent",
+    headerName: "Load Current",
+    width: 250,
   },
   {
-    field: "overPressureValveStatus",
-    headerName: "Over Pressure Valve Status",
-    width: 150,
+    field: "noiseLevelStatus",
+    headerName: "Noise Level Status",
+    width:
+      250,
   },
   {
     field: "status",
     headerName: "Status",
-    width: 150,
+    width: 250,
   },
   {
     field: "dateTime",
     headerName: "Date Time",
-    width: 150,
-  },
+    width: 250,
+  }
 ];
-export default function OverPressureTestList() {
+export default function PowerPcbV2TestList() {
 
   const [page, setPage] = useState(1);
   const [fromDate, setFromDate] = React.useState<Date | null>(null);
@@ -102,9 +104,9 @@ export default function OverPressureTestList() {
   const [filterType, setFilterType] = React.useState('');
   const [filterValue, setFilterValue] = React.useState('');
   const [status, setStatus] = React.useState('');
-  const [selectedRows, setSelectedRows] = React.useState<OverPressureTest[]>([]);
+  const [selectedRows, setSelectedRows] = React.useState<PowerPcbV2TestDto[]>([]);
 
-  var { data, error, isLoading } = useGetOverPressureQQuery({
+  var { data, error, isLoading } = useGetPowerPcbV2TestQQuery({
     data: {
       filterType: filterType,
       filterValue: filterValue,
@@ -113,13 +115,13 @@ export default function OverPressureTestList() {
       status: status
     }, page: page.toString()
   })
-  const [getAll] = useGetOverPressureTestsMutation();
+  const [getAll] = useGetPowerPcbV2TestsMutation();
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
 
-  const handleRowClick = (item: OverPressureTest) => {
+  const handleRowClick = (item: PowerPcbV2TestDto) => {
     if (selectedRows.includes(item)) {
       setSelectedRows(selectedRows.filter((rowId) => rowId !== item));
     } else {
@@ -167,13 +169,13 @@ export default function OverPressureTestList() {
                   <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
                     <Grid item xs={4} sm={4} md={6} >
                       <Typography gutterBottom variant="h5" component="div" color="grey">
-                        Over Pressure Test Results
+                        Power Pcb v2 Test Results
                       </Typography>
                     </Grid>
                     <Grid item xs={4} sm={4} md={6} >
                       <Box display="flex" justifyContent="flex-end">
                         <Button variant="contained" startIcon={<Download />} color="success" onClick={() =>
-                          handleGenerateOverPressureTesExcel(selectedRows)
+                          handleGeneratePcbV2TestExcel(selectedRows)
                         } disabled={selectedRows.length == 0}>
                           Download selected
                         </Button>
@@ -188,7 +190,7 @@ export default function OverPressureTestList() {
                             }, page: "all"
                           }).unwrap()
                             .then((payload) => {
-                              handleGenerateOverPressureTesExcel(payload.data!.overPressureValveTests)
+                              handleGeneratePcbV2TestExcel(payload.data!.tests)
                             });
                         }}>
                           Download
@@ -243,7 +245,7 @@ export default function OverPressureTestList() {
                           </StyledTableRow>
                         </TableHead>
                         <TableBody>
-                          {data?.data?.overPressureValveTests
+                          {data?.data?.tests
                             .map((box) => {
                               return (
                                 <StyledTableRow
@@ -264,37 +266,49 @@ export default function OverPressureTestList() {
                                     {box.testId}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.deviceMac}
+                                    {box.serialNumber}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.qrCode}
+                                    {box.loadVoltageLowThresh}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.maxPressure}
+                                    {box.loadCurrentLowThresh}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.maxPressureTime}
+                                    {box.usbCPowerOutletConnectivity}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.maxPressureFlowRate}
+                                    {box.loadVoltage}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.normalPressure}
+                                    {box.loadVoltageStatus
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.normalPressureTime}
+                                    {box.loadCurrentStatus
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.normalPressureFlowRate}
+                                    {box.loadCurrent}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.overPressureValveStatus ? "Pass" : "Fail"}
+                                    {box.noiseLevelStatus
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.status ? "Pass" : "Fail"}
+                                    {box.status
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.dateTime}
+                                    {format(parseISO(box.dateTime), "yyyy-MM-dd HH:mm:ss")}
                                   </StyledTableCell>
                                 </StyledTableRow>
                               );

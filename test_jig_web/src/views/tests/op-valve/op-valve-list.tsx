@@ -18,12 +18,13 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import { Download } from "@mui/icons-material";
 import { useState } from "react";
-import { handleGenerateLatchButtonExcel } from "./latch-button-test-excel";
-import GridOnIcon from '@mui/icons-material/GridOn';
-import { StyledTableCell, StyledTableRow } from "../../common_components/common";
+import { handleGenerateOPValveExcel } from "./op-valve-excel";
 import SessionTimeoutPopup from "../../common_components/session_logout";
+import { StyledTableCell, StyledTableRow } from "../../common_components/common";
+import GridOnIcon from '@mui/icons-material/GridOn';
 import TableSearchFormCommon from "../../common_components/table_search_form";
-import { LatchButtonTest, useGetLatchButtonTestQQuery, useGetLatchButtonTestsMutation } from "../../../services/latch_button_test_service";
+import { format, parseISO } from "date-fns";
+import { OPValveTest, useGetOPValveTestQQuery, useGetOPValveTestsMutation } from "../../../services/op_valve_service";
 
 const columns: GridColDef[] = [
   {
@@ -32,48 +33,78 @@ const columns: GridColDef[] = [
     width: 80,
   },
   {
-    field: "testId",
-    headerName: "Test ID",
+    field: "serialNumber",
+    headerName: "Serial Number",
     width: 150,
   },
   {
-    field: "deviceMac",
-    headerName: "Device MAC",
+    field: "physicalInspectionState",
+    headerName: "Physical Inspection State",
+    width: 100,
+  },
+  {
+    field: "startOpeningPressure",
+    headerName: "Start Opening Pressure",
     width: 150,
   },
   {
-    field: "qrCode",
-    headerName: "QR Code",
+    field: "startOpeningFlowrate",
+    headerName: "Start Opening Flowrate",
     width: 150,
   },
   {
-    field: "buttonOnTestStatus",
-    headerName: "Button On Test Status",
-    width: 200,
+    field: "valveStartOpeningState",
+    headerName: "Valve Start Opening State",
+    width: 100,
   },
   {
-    field: "buttonOffTestStatus",
-    headerName: "Button Off Test Status",
-    width: 200,
+    field: "fullyOpeningPressure",
+    headerName: "Fully Opening Pressure",
+    width: 150,
   },
   {
-    field: "ledOnTestStatus",
-    headerName: "LED On Test Status",
-    width: 200,
+    field: "fullyOpeningFlowrate",
+    headerName: "Fully Opening Flowrate",
+    width: 150,
   },
   {
-    field: "latchButtonStatus",
-    headerName: "Latch Button Status",
-    width: 200,
+    field: "valveFullyOpeningState",
+    headerName: "Valve Fully Opening State",
+    width: 100,
+  },
+  {
+    field: "closingPressure",
+    headerName: "Closing Pressure",
+    width: 150,
+  },
+  {
+    field: "closingFlowrate",
+    headerName: "Closing Flowrate",
+    width: 150,
+  },
+  {
+    field: "valveClosingState",
+    headerName: "Valve Closing State",
+    width: 100,
+  },
+  {
+    field: "overallOpValveState",
+    headerName: "Overall Op Valve State",
+    width: 150,
+  },
+  {
+    field: "Status",
+    headerName: "Status",
+    width: 100,
   },
   {
     field: "dateTime",
     headerName: "Date Time",
     width: 200,
-  },
+  }
 ];
-export default function LatchButtonTestList() {
 
+export default function OPValveList() {
   const [page, setPage] = useState(1);
   const [fromDate, setFromDate] = React.useState<Date | null>(null);
   const [toDate, setToDate] = React.useState<Date | null>(null);
@@ -82,9 +113,9 @@ export default function LatchButtonTestList() {
   const [filterType, setFilterType] = React.useState('');
   const [filterValue, setFilterValue] = React.useState('');
   const [status, setStatus] = React.useState('');
-  const [selectedRows, setSelectedRows] = React.useState<LatchButtonTest[]>([]);
+  const [selectedRows, setSelectedRows] = React.useState<OPValveTest[]>([]);
 
-  var { data, error, isLoading } = useGetLatchButtonTestQQuery({
+  var { data, error, isLoading } = useGetOPValveTestQQuery({
     data: {
       filterType: filterType,
       filterValue: filterValue,
@@ -93,13 +124,13 @@ export default function LatchButtonTestList() {
       status: status
     }, page: page.toString()
   })
-  const [getAll] = useGetLatchButtonTestsMutation();
+  const [getAll] = useGetOPValveTestsMutation();
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
 
-  const handleRowClick = (item: LatchButtonTest) => {
+  const handleRowClick = (item: OPValveTest) => {
     if (selectedRows.includes(item)) {
       setSelectedRows(selectedRows.filter((rowId) => rowId !== item));
     } else {
@@ -147,13 +178,13 @@ export default function LatchButtonTestList() {
                   <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
                     <Grid item xs={4} sm={4} md={6} >
                       <Typography gutterBottom variant="h5" component="div" color="grey">
-                        Latch Button Test Results
+                        OP Valve Test Results
                       </Typography>
                     </Grid>
                     <Grid item xs={4} sm={4} md={6} >
                       <Box display="flex" justifyContent="flex-end">
                         <Button variant="contained" startIcon={<Download />} color="success" onClick={() =>
-                          handleGenerateLatchButtonExcel(selectedRows)
+                          handleGenerateOPValveExcel(selectedRows)
                         } disabled={selectedRows.length == 0}>
                           Download selected
                         </Button>
@@ -168,7 +199,7 @@ export default function LatchButtonTestList() {
                             }, page: "all"
                           }).unwrap()
                             .then((payload) => {
-                              handleGenerateLatchButtonExcel(payload.data!.latchButtonTests)
+                              handleGenerateOPValveExcel(payload.data!.tests)
                             });
                         }}>
                           Download
@@ -223,7 +254,7 @@ export default function LatchButtonTestList() {
                           </StyledTableRow>
                         </TableHead>
                         <TableBody>
-                          {data?.data?.latchButtonTests
+                          {data?.data?.tests
                             .map((box) => {
                               return (
                                 <StyledTableRow
@@ -241,28 +272,64 @@ export default function LatchButtonTestList() {
                                     />
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.testId}
+                                    {box.serialNumber}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.deviceMac}
+                                    {box.physicalInspectionState
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.qrCode}
+                                    {box.startOpeningPressure}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.buttonOnTestStatus ? "Pass" : "Fail"}
+                                    {box.startOpeningFlowrate}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.buttonOffTestStatus ? "Pass" : "Fail"}
+                                    {box.valveStartOpeningState
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.ledOnTestStatus ? "Pass" : "Fail"}
+                                    {box.fullyOpeningPressure}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.latchButtonStatus ? "Pass" : "Fail"}
+                                    {box.fullyOpeningFlowrate}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.dateTime}
+                                    {box.valveFullyOpeningState
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
+                                    {box.closingPressure}
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
+                                    {box.closingFlowrate}
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
+                                    {box.valveClosingState
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
+                                    {box.overallOpValveState
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
+                                    {box.status
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
+                                    {format(parseISO(box.dateTime), "yyyy-MM-dd HH:mm:ss")}
                                   </StyledTableCell>
                                 </StyledTableRow>
                               );

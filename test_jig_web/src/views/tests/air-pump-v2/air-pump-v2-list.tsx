@@ -18,13 +18,36 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import { Download } from "@mui/icons-material";
 import { useState } from "react";
-import { handleGenerateValveExcel } from "./valve-excel";
-import { ValveTest, useGetValveTestQQuery, useGetValveTestsMutation } from "../../../services/valve_service";
-import SessionTimeoutPopup from "../../common_components/session_logout";
-import { StyledTableCell, StyledTableRow } from "../../common_components/common";
+import { handleGenerateAirPumpV2Excel } from "./air-pump-v2-excel";
 import GridOnIcon from '@mui/icons-material/GridOn';
+import { AirPumpV2Test, useGetAirPumpV2QQuery, useGetAirPumpV2TestsMutation } from "../../../services/airPump_service";
+import { StyledTableCell, StyledTableRow } from "../../common_components/common";
+import SessionTimeoutPopup from "../../common_components/session_logout";
 import TableSearchFormCommon from "../../common_components/table_search_form";
 import { format, parseISO } from "date-fns";
+
+// testId: number;
+// deviceId: number;
+// flowRateLowThresh: number;
+// flowRateUpThresh: number;
+// loadVoltageLowThresh: number;
+// loadVoltageUpThresh: number;
+// loadCurrentUpThresh: number;
+// pressureLowThresh: number;
+// pressureUpThresh: number;
+// serialNumber: string;
+// pressure: number;
+// pressureStatus: boolean | null;
+// loadVoltage: number;
+// loadVoltageStatus: boolean | null;
+// loadCurrent: number;
+// loadCurrentStatus: boolean | null;
+// flowRate: number;
+// flowRateStatus: boolean | null;
+// noiseLevelStatus: boolean | null;
+// status: boolean | null;
+// deviceStatus: boolean | null;
+// dateTime: string;
 
 const columns: GridColDef[] = [
   {
@@ -33,83 +56,73 @@ const columns: GridColDef[] = [
     width: 80,
   },
   {
-    field: "serialNumber",
+    field: "SerialNumber",
     headerName: "Serial Number",
     width: 150,
   },
   {
-    field: "idleVoltageLowThresh",
-    headerName: "Idle Voltage Low Threshold",
-    width: 200,
+    field: "flowRateLowThresh",
+    headerName: "Flow Rate Low Threshhold",
+    width: 150,
   },
   {
-    field: "idleVoltageUpThresh",
-    headerName: "Idle Voltage Up Threshold",
-    width: 200,
-  },
-  {
-    field: "idleCurrentUpThresh",
-    headerName: "Idle Current Up Threshold",
-    width: 200,
+    field: "flowRateUpThresh",
+    headerName: "Flow Rate Upper Threshhold",
+    width: 150,
   },
   {
     field: "loadVoltageLowThresh",
-    headerName: "Load Voltage Low Threshold",
-    width: 200,
+    headerName: "Load Voltage Low Threshhold",
+    width: 150,
   },
   {
     field: "loadVoltageUpThresh",
-    headerName: "Load Voltage Up Threshold",
-    width: 200,
+    headerName: "Load Voltage Upper Threshhold",
+    width: 150,
   },
   {
     field: "loadCurrentUpThresh",
-    headerName: "Load Current Up Threshold",
-    width: 200,
-  },
-  {
-    field: "setPressure",
-    headerName: "Set Pressure",
+    headerName: "Load Current Upper Threshhold",
     width: 150,
   },
   {
-    field: "idleVoltage",
-    headerName: "Idle Voltage",
+    field: "pressureLowThresh",
+    headerName: "Pressure Low Threshhold",
     width: 150,
   },
   {
-    field: "idleVoltageStatus",
-    headerName: "Idle Voltage Status",
-    width: 200,
-  },
-  {
-    field: "idleCurrent",
-    headerName: "Idle Current",
+    field: "pressureUpThresh",
+    headerName: "Pressure Upper Threshhold",
     width: 150,
   },
   {
-    field: "idleCurrentStatus",
-    headerName: "Idle Current Status",
-    width: 200,
-  },
-  {
-    field: "coilResistance",
-    headerName: "Coil Resistance",
+    field: "pressure",
+    headerName: "Pressure",
     width: 150,
   },
   {
-    field: "operatingCurrent",
-    headerName: "Operating Current",
+    field: "pressureStatus",
+    headerName: "Pressure Status",
     width: 150,
   },
   {
-    field: "peakPower",
-    headerName: "Peak Power",
+    field: "loadVoltage",
+    headerName: "Load Voltage",
     width: 150,
   },
   {
-    field: "averagePower",
-    headerName: "Average Power",
+    field: "loadVoltageStatus",
+    headerName: "Load Voltage Status",
+    width: 150,
+  },
+  {
+    field: "loadCurrent",
+    headerName: "Load Current",
+    width: 150,
+  },
+  {
+    field: "loadCurrentStatus",
+    headerName: "Load Current Status",
     width: 150,
   },
   {
@@ -120,21 +133,26 @@ const columns: GridColDef[] = [
   {
     field: "flowRateStatus",
     headerName: "Flow Rate Status",
-    width: 200,
+    width: 150,
   },
   {
-    field: "Status",
+    field: "noiseLevelStatus",
+    headerName: "Noise Level Status",
+    width: 150,
+  },
+  {
+    field: "status",
     headerName: "Status",
-    width: 100,
+    width: 150,
   },
   {
     field: "dateTime",
     headerName: "Date Time",
-    width: 200,
+    width: 150,
   },
 ];
+export default function AirPumpV2List() {
 
-export default function ValveList() {
   const [page, setPage] = useState(1);
   const [fromDate, setFromDate] = React.useState<Date | null>(null);
   const [toDate, setToDate] = React.useState<Date | null>(null);
@@ -143,9 +161,9 @@ export default function ValveList() {
   const [filterType, setFilterType] = React.useState('');
   const [filterValue, setFilterValue] = React.useState('');
   const [status, setStatus] = React.useState('');
-  const [selectedRows, setSelectedRows] = React.useState<ValveTest[]>([]);
+  const [selectedRows, setSelectedRows] = React.useState<AirPumpV2Test[]>([]);
 
-  var { data, error, isLoading } = useGetValveTestQQuery({
+  var { data, error, isLoading } = useGetAirPumpV2QQuery({
     data: {
       filterType: filterType,
       filterValue: filterValue,
@@ -154,13 +172,13 @@ export default function ValveList() {
       status: status
     }, page: page.toString()
   })
-  const [getAll] = useGetValveTestsMutation();
+  const [getAll] = useGetAirPumpV2TestsMutation();
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
 
-  const handleRowClick = (item: ValveTest) => {
+  const handleRowClick = (item: AirPumpV2Test) => {
     if (selectedRows.includes(item)) {
       setSelectedRows(selectedRows.filter((rowId) => rowId !== item));
     } else {
@@ -208,13 +226,13 @@ export default function ValveList() {
                   <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
                     <Grid item xs={4} sm={4} md={6} >
                       <Typography gutterBottom variant="h5" component="div" color="grey">
-                        Valve Test Results
+                        Air Pump v2 Results
                       </Typography>
                     </Grid>
                     <Grid item xs={4} sm={4} md={6} >
                       <Box display="flex" justifyContent="flex-end">
                         <Button variant="contained" startIcon={<Download />} color="success" onClick={() =>
-                          handleGenerateValveExcel(selectedRows)
+                          handleGenerateAirPumpV2Excel(selectedRows)
                         } disabled={selectedRows.length == 0}>
                           Download selected
                         </Button>
@@ -229,7 +247,7 @@ export default function ValveList() {
                             }, page: "all"
                           }).unwrap()
                             .then((payload) => {
-                              handleGenerateValveExcel(payload.data!.valveTests)
+                              handleGenerateAirPumpV2Excel(payload.data!.tests)
                             });
                         }}>
                           Download
@@ -284,7 +302,7 @@ export default function ValveList() {
                           </StyledTableRow>
                         </TableHead>
                         <TableBody>
-                          {data?.data?.valveTests
+                          {data?.data?.tests
                             .map((box) => {
                               return (
                                 <StyledTableRow
@@ -305,13 +323,10 @@ export default function ValveList() {
                                     {box.serialNumber}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.idleVoltageLowThresh}
+                                    {box.flowRateLowThresh}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.idleVoltageUpThresh}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.idleCurrentUpThresh}
+                                    {box.flowRateUpThresh}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
                                     {box.loadVoltageLowThresh}
@@ -323,43 +338,49 @@ export default function ValveList() {
                                     {box.loadCurrentUpThresh}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.setPressure}
+                                    {box.pressureLowThresh}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.idleVoltage}
+                                    {box.pressureUpThresh}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.idleVoltageStatus
+                                    {box.pressure}
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
+                                    {box.pressureStatus
                                       ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
                                       : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
                                     }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.idleCurrent}
+                                    {box.loadVoltage}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.idleCurrentStatus
+                                    {box.loadVoltageStatus
                                       ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
                                       : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
                                     }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.coilResistance}
+                                    {box.loadCurrent}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.operatingCurrent}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.peakPower}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.averagePower}
+                                    {box.loadCurrentStatus
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
                                     {box.flowRate}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
                                     {box.flowRateStatus
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
+                                    {box.noiseLevelStatus
                                       ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
                                       : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
                                     }
