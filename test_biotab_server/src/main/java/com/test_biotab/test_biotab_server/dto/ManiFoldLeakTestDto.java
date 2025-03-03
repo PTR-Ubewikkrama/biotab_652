@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class ManiFoldLeakTestDto {
     private int testId;
     private int deviceId;
-    private String qrCode;
+    private String serialNumber;
     private Boolean physicalInspectionState;
     private Double leakageFlowrate;
     private Boolean manifoldLeakState;

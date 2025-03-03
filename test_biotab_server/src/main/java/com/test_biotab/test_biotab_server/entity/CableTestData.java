@@ -21,7 +21,7 @@ public class CableTestData {
     @ManyToOne
     @JoinColumn(name = "device_id", nullable = false)
     private Device device;
-    private String qrCode;
+    private String serialNumber;
     private Integer cableSelection;
     private Boolean visualInspection;
     private Boolean cable1;

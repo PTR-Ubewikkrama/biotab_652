@@ -59,7 +59,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"filterType\": \"serialNumber\",\n    \"filterValue\": \"ABC1234\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\"\n}",
+					"raw": "{\n    \"filterType\": \"TEST_ID\",\n    \"filterValue\": \"ABC1234\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -106,7 +106,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"filterType\": \"serialNumber\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\"\n}",
+					"raw": "{\n    \"filterType\": \"TEST_ID\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -153,7 +153,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"filterType\": \"serialNumber\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\"\n}",
+					"raw": "{\n    \"filterType\": \"TEST_ID\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -371,7 +371,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"filterType\": \"serialNumber\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"POWER_PCB\"\n}",
+					"raw": "{\n    \"filterType\": \"TEST_ID\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"POWER_PCB\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -468,7 +468,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"filterType\": \"serialNumber\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"AIR_PUMP_V2\"\n}",
+					"raw": "{\n    \"filterType\": \"TEST_ID\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"AIR_PUMP_V2\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -565,7 +565,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"filterType\": \"serialNumber\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"POWER_PCB_V2\"\n}",
+					"raw": "{\n    \"filterType\": \"TEST_ID\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"POWER_PCB_V2\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -662,7 +662,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"filterType\": \"serialNumber\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"POWER_SUPPLY_V2\"\n}",
+					"raw": "{\n    \"filterType\": \"TEST_ID\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"POWER_SUPPLY_V2\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -759,7 +759,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"filterType\": \"qrCode\",\n    \"filterValue\": \"QR123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"OP_VALVE\"\n}",
+					"raw": "{\n    \"filterType\": \"TEST_ID\",\n    \"filterValue\": \"QR123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"OP_VALVE\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -856,7 +856,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"filterType\": \"qrCode\",\n    \"filterValue\": \"QR123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"VALVE_SEQUENCE\"\n}",
+					"raw": "{\n    \"filterType\": \"TEST_ID\",\n    \"filterValue\": \"QR123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"VALVE_SEQUENCE\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"

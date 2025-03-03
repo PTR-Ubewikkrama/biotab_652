@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class ValveCardTestDto {
     private int testId;
     private int deviceId;
-    private String qrCode;
+    private String serialNumber;
     private Boolean physicalInspectionState;
     private String rail;
     private String valve1;

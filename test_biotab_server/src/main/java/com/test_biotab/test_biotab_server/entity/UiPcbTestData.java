@@ -21,7 +21,7 @@ public class UiPcbTestData {
     @ManyToOne
     @JoinColumn(name = "device_id")
     private Device device;
-    private String qrCode;
+    private String serialNumber;
     private Boolean physicalInspectionState;
     private Boolean redLedState;
     private Boolean whiteLedState;

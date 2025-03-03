@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class UiPcbTestDto {
     private Integer testId;
     private int deviceId;
-    private String qrCode;
+    private String serialNumber;
     private Boolean physicalInspectionState;
     private Boolean redLedState;
     private Boolean whiteLedState;

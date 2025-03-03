@@ -22,7 +22,7 @@ public class ValveCardTestData {
     @ManyToOne
     @JoinColumn(name = "device_id")
     private Device device;
-    private String qrCode;
+    private String serialNumber;
     private Boolean physicalInspectionState;
     private String rail;
     private String valve1;

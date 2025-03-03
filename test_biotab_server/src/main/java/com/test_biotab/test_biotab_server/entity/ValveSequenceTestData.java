@@ -21,7 +21,7 @@ public class ValveSequenceTestData {
     @ManyToOne
     @JoinColumn(name = "device_id")
     private Device device;
-    private String qrCode;
+    private String serialNumber;
     private Boolean physicalInspectionState;
     private Double manifoldSealPressure;
     private Double manifoldPressureAfter1Sec;

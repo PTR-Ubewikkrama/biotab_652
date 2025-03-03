@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class CableTestDto {
     private int testId;
     private int deviceId;
-    private String qrCode;
+    private String serialNumber;
     private Integer cableSelection;
     private Boolean visualInspection;
     private Boolean cable1;

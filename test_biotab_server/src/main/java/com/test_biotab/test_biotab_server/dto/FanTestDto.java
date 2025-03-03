@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class FanTestDto {
     private int testId;
     private int deviceId;
-    private String qrCode;
+    private String serialNumber;
     private Boolean visualInspection;
     private Double drawCurrent;
     private Boolean drawCurrentState;
