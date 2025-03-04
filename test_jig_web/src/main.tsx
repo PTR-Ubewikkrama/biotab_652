@@ -49,7 +49,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
               <Route path="/ui-pcb-test" element={<UIPcbList />} />
               <Route path="/cable-test" element={<CableList />} />
               <Route path="/fan-test" element={<FanList />} />
-              <Route path="/hh-device" element={<HHDeviceList />} />
+              <Route path="/bt-device" element={<HHDeviceList />} />
               <Route path="/fas" element={<FinalAssemblyList />} />
               <Route path="*" element={<Dashboard />} />
             </Routes>

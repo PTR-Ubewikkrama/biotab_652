@@ -12,21 +12,21 @@ import 'package:pack_verity/views/common_components/common_popups.dart';
 import 'package:pack_verity/views/common_components/qr_scan.dart';
 import 'package:pack_verity/views/common_components/text_input.dart';
 
-class AddHHBoxPage extends StatefulWidget {
-  const AddHHBoxPage({super.key});
+class AddBTDevicePage extends StatefulWidget {
+  const AddBTDevicePage({super.key});
 
   @override
-  State<AddHHBoxPage> createState() => _AddHHBoxPageState();
+  State<AddBTDevicePage> createState() => _AddBTDevicePageState();
 }
 
-class _AddHHBoxPageState extends State<AddHHBoxPage> {
+class _AddBTDevicePageState extends State<AddBTDevicePage> {
   final _formKey = GlobalKey<FormState>();
   int _index = 0;
   final List<TextEditingController> _controllers =
-      List.generate(11, (index) => TextEditingController());
-  final List<String> _errors = List.generate(11, (index) => '');
-  final HhDeviceService _hhDeviceService = sl.get<HhDeviceService>();
-  final List<String> _componentStatus = List.generate(11, (index) => '');
+      List.generate(30, (index) => TextEditingController());
+  final List<String> _errors = List.generate(30, (index) => '');
+  final BTDeviceService _btDeviceService = sl.get<BTDeviceService>();
+  final List<String> _componentStatus = List.generate(30, (index) => '');
   bool isSubmitting = false;
   bool isForceSubmitClicked = false;
 
@@ -42,32 +42,55 @@ class _AddHHBoxPageState extends State<AddHHBoxPage> {
     setState(() {
       isSubmitting = true;
     });
-    Map<String, String> data = {
+    Map<String, dynamic> data = {
       'deviceCode': _controllers[0].text,
       'deviceCodeStatus': _componentStatus[0],
-      'pcbTestCode': _controllers[1].text,
-      'pcbTestCodeStatus': _componentStatus[1],
-      'valveTestOneCode': _controllers[2].text,
-      'valveTestOneCodeStatus': _componentStatus[2],
-      'valveTestTwoCode': _controllers[3].text,
-      'valveTestTwoCodeStatus': _componentStatus[3],
-      'airPumpTestCode': _controllers[4].text,
-      'airPumpTestCodeStatus': _componentStatus[4],
-      'latchButtonTestCode': _controllers[5].text,
-      'latchButtonTestCodeStatus': _componentStatus[5],
-      'overPressureValveTestCode': _controllers[6].text,
-      'overPressureValveTestCodeStatus': _componentStatus[6],
-      'batteryTestCode': _controllers[7].text,
-      'batteryTestCodeStatus': _componentStatus[7],
-      'enclosureCode': _controllers[8].text,
-      'enclosureCodeStatus': _componentStatus[8],
-      'airBladderCode': _controllers[9].text,
-      'airBladderCodeStatus': _componentStatus[9],
-      'powerSupplyTestCode': _controllers[10].text,
-      'powerSupplyTestCodeStatus': _componentStatus[10],
+      'powerPcbCode': _controllers[1].text,
+      'powerPcbCodeStatus': _componentStatus[1],
+      'pumpCode': _controllers[2].text,
+      'pumpCodeStatus': _componentStatus[2],
+      'fanCode': _controllers[3].text,
+      'fanCodeStatus': _componentStatus[3],
+      'uiPcbCode': _controllers[4].text,
+      'uiPcbCodeStatus': _componentStatus[4],
+      'encoderCode': _controllers[5].text,
+      'encoderCodeStatus': _componentStatus[5],
+      'mainPcbCode': _controllers[6].text,
+      'mainPcbCodeStatus': _componentStatus[6],
+      'manifoldCode': _controllers[7].text,
+      'manifoldCodeStatus': _componentStatus[7],
+      'valveCardInsideCableSetCode': _controllers[16].text,
+      'valveCardInsideCableSetCodeStatus': _componentStatus[16],
+      'valveCardInputOutputCableSetCode': _controllers[17].text,
+      'valveCardInputOutputCableSetCodeStatus': _componentStatus[17],
+      'overPressureValveCode': _controllers[18].text,
+      'overPressureValveCodeStatus': _componentStatus[18],
+      'powerCableCode': _controllers[19].text,
+      'uiCableCode': _controllers[20].text,
+      'displayCode': _controllers[21].text,
+      'frontBracketAssemblyCode': _controllers[22].text,
+      'frontBracketAssemblyCodeStatus': _componentStatus[22],
+      'powerAdaptorCode': _controllers[23].text,
+      'powerAdaptorCodeStatus': _componentStatus[23],
+      'enclosureTopCode': _controllers[24].text,
+      'enclosureBottomCode': _controllers[25].text,
+      'backVentCode': _controllers[26].text,
+      'fanMountCode': _controllers[27].text,
+      'encoderSupporterCode': _controllers[28].text,
+      'pcbHolderCode': _controllers[29].text,
+      'valveCards': [
+        _controllers[8].text,
+        _controllers[9].text,
+        _controllers[10].text,
+        _controllers[11].text,
+        _controllers[12].text,
+        _controllers[13].text,
+        _controllers[14].text,
+        _controllers[15].text
+      ]
     };
 
-    _hhDeviceService.addHhDevice(data).then((value) {
+    _btDeviceService.addBTDevice(data).then((value) {
       if (value != null && value.isSuccess()) {
         handleSuccessC(context, "Saving success");
         resetForm();
@@ -100,27 +123,65 @@ class _AddHHBoxPageState extends State<AddHHBoxPage> {
   String getStepTitles(int index) {
     switch (index) {
       case 0:
-        return 'HH Device';
+        return 'BT Device';
       case 1:
-        return 'PCB';
+        return 'Power PCB';
       case 2:
-        return 'Valve One ';
+        return 'Pump';
       case 3:
-        return 'Valve Two';
+        return 'Fan';
       case 4:
-        return 'Air Pump';
+        return 'UI PCB';
       case 5:
-        return 'Power Button';
+        return 'Encoder';
       case 6:
-        return 'Over Pressure Valve';
+        return 'Main PCB';
       case 7:
-        return 'Battery';
+        return 'Manifold';
       case 8:
-        return 'Encloser';
+        return 'Valve Card PCB 1';
       case 9:
-        return 'Air Bladder';
+        return 'Valve Card PCB 2';
       case 10:
-        return 'Power Adapter';
+        return 'Valve Card PCB 3';
+      case 11:
+        return 'Valve Card PCB 4';
+      case 12:
+        return 'Valve Card PCB 5';
+      case 13:
+        return 'Valve Card PCB 6';
+      case 14:
+        return 'Valve Card PCB 7';
+      case 15:
+        return 'Valve Card PCB 8';
+      case 16:
+        return 'Valve Card Inside Cable Set';
+      case 17:
+        return 'Valve Card Input Output Cable Set';
+      case 18:
+        return 'Over Pressure Valve';
+      case 19:
+        return 'Power Cable';
+      case 20:
+        return 'UI Cable';
+      case 21:
+        return 'Display';
+      case 22:
+        return 'Front Bracket Assembly';
+      case 23:
+        return 'Power Adaptor';
+      case 24:
+        return 'Enclosure Top';
+      case 25:
+        return 'Enclosure Bottom';
+      case 26:
+        return 'Back Vent';
+      case 27:
+        return 'Fan Mount';
+      case 28:
+        return 'Encoder Supporter';
+      case 29:
+        return 'PCB Holder';
       default:
         return '';
     }
@@ -132,10 +193,11 @@ class _AddHHBoxPageState extends State<AddHHBoxPage> {
   }
 
   void ignoreErrorsAndNext() {
-    if ([8, 9, 10].contains(_index) || _controllers[_index].text.isNotEmpty) {
-      _componentStatus[_index] = 'NOT VERIFIED';
+    if ([19, 20, 21, 24, 25, 26, 27, 28, 29].contains(_index) ||
+        _controllers[_index].text.isNotEmpty) {
+      _componentStatus[_index] = 'N/A';
 
-      if (_index < 10) {
+      if (_index < 29) {
         setState(() {
           _index += 1;
         });
@@ -171,7 +233,7 @@ class _AddHHBoxPageState extends State<AddHHBoxPage> {
           color: Colors.white,
         ),
         title: Text(
-          'Add HH Device',
+          'Add BT Device',
           style:
               const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
@@ -187,7 +249,7 @@ class _AddHHBoxPageState extends State<AddHHBoxPage> {
                 padding: const EdgeInsets.only(top: 10),
                 child: Row(
                   children: <Widget>[
-                    (_index != 10 && _errors[_index].isEmpty)
+                    (_index != 29 && _errors[_index].isEmpty)
                         ? Expanded(
                             flex: 1,
                             child: CupertinoButton(
@@ -203,7 +265,7 @@ class _AddHHBoxPageState extends State<AddHHBoxPage> {
                                       valueColor: AlwaysStoppedAnimation<Color>(
                                           Colors.white),
                                     )
-                                  : Text(_index == 10 ? 'Submit' : 'Next',
+                                  : Text(_index == 29 ? 'Submit' : 'Next',
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 14)),
                             ),
@@ -212,7 +274,7 @@ class _AddHHBoxPageState extends State<AddHHBoxPage> {
                     SizedBox(
                       width: 5,
                     ),
-                    (_index == 10 && _errors.any((error) => error.isNotEmpty))
+                    (_index == 29 && _errors.any((error) => error.isNotEmpty))
                         ? Expanded(
                             flex: 2,
                             child: CupertinoButton(
@@ -230,7 +292,7 @@ class _AddHHBoxPageState extends State<AddHHBoxPage> {
                                           Colors.white),
                                     )
                                   : Text(
-                                      _index == 10
+                                      _index == 29
                                           ? 'Ignore Errors & Submit'
                                           : 'Ignore Errors & Next',
                                       style: TextStyle(
@@ -254,7 +316,7 @@ class _AddHHBoxPageState extends State<AddHHBoxPage> {
                                           Colors.white),
                                     )
                                   : Text(
-                                      _index == 10
+                                      _index == 29
                                           ? 'Ignore Errors & Submit'
                                           : 'Ignore Errors & Next',
                                       style: TextStyle(
@@ -293,7 +355,7 @@ class _AddHHBoxPageState extends State<AddHHBoxPage> {
               if (_controllers[_index].text.isNotEmpty &&
                   _errors[_index] == '') {
                 _componentStatus[_index] = 'VERIFIED';
-                if (_index < 10) {
+                if (_index < 29) {
                   setState(() {
                     _index += 1;
                   });
@@ -325,7 +387,7 @@ class _AddHHBoxPageState extends State<AddHHBoxPage> {
                 );
               }
             },
-            steps: List<Step>.generate(11, (index) {
+            steps: List<Step>.generate(30, (index) {
               return Step(
                 title: Text(getStepTitles(index)),
                 subtitle: _controllers[index].text.isNotEmpty
@@ -371,14 +433,14 @@ class _AddHHBoxPageState extends State<AddHHBoxPage> {
                                 if (index == 0 &&
                                     !value['status'] &&
                                     value['code'] == "E1200") {
-                                  handleErrorHHDeviceAlreadyPresent(
+                                  handleErrorBTDeviceAlreadyPresent(
                                     context,
-                                    "HH Device already added. Do you want to delete and add again?",
+                                    "BT Device already added. Do you want to delete and add again?",
                                     val,
                                   );
                                   _errors[index] =
-                                      value['HH Device already added'];
-                                  return value['HH Device already added'];
+                                      value['BT Device already added'];
+                                  return value['BT Device already added'];
                                 }
 
                                 if (index == 3 && _controllers[2].text == val) {
@@ -464,7 +526,7 @@ class _AddHHBoxPageState extends State<AddHHBoxPage> {
     switch (index) {
       case 0:
         CommonResponse? resp =
-            await _hhDeviceService.validateHHDeviceByCode(val);
+            await _btDeviceService.validateBTDeviceByCode(val);
         if (resp != null && resp.isSuccess()) {
           return {'status': true, 'message': resp.statusDescription};
         } else {
@@ -476,7 +538,7 @@ class _AddHHBoxPageState extends State<AddHHBoxPage> {
         }
       case 1:
         ValidateComponentResp? resp =
-            await _hhDeviceService.validatePcbTest(val);
+            await _btDeviceService.validatePcbTest(val);
         if (resp != null && resp.isSuccess()) {
           return {'status': true, 'message': resp.statusDescription};
         } else {
@@ -484,7 +546,7 @@ class _AddHHBoxPageState extends State<AddHHBoxPage> {
         }
       case 2:
         ValidateComponentResp? resp =
-            await _hhDeviceService.validateValveTest(val);
+            await _btDeviceService.validateAirPumpTest(val);
         if (resp != null && resp.isSuccess()) {
           return {'status': true, 'message': resp.statusDescription};
         } else {
@@ -492,7 +554,7 @@ class _AddHHBoxPageState extends State<AddHHBoxPage> {
         }
       case 3:
         ValidateComponentResp? resp =
-            await _hhDeviceService.validateValveTest(val);
+            await _btDeviceService.validateFanTest(val);
         if (resp != null && resp.isSuccess()) {
           return {'status': true, 'message': resp.statusDescription};
         } else {
@@ -500,48 +562,76 @@ class _AddHHBoxPageState extends State<AddHHBoxPage> {
         }
       case 4:
         ValidateComponentResp? resp =
-            await _hhDeviceService.validateAirPumpTest(val);
+            await _btDeviceService.validateUIPcbTest(val);
         if (resp != null && resp.isSuccess()) {
           return {'status': true, 'message': resp.statusDescription};
         } else {
           return {'status': false, 'message': resp!.statusDescription};
         }
       case 5:
-        ValidateComponentResp? resp =
-            await _hhDeviceService.validateLatchButtonTest(val);
-        if (resp != null && resp.isSuccess()) {
-          return {'status': true, 'message': resp.statusDescription};
-        } else {
-          return {'status': false, 'message': resp!.statusDescription};
-        }
+        return {'status': true, 'message': 'Valid Encloser Code'};
       case 6:
-        ValidateComponentResp? resp =
-            await _hhDeviceService.validateOverPressureValveTest(val);
-        if (resp != null && resp.isSuccess()) {
-          return {'status': true, 'message': resp.statusDescription};
-        } else {
-          return {'status': false, 'message': resp!.statusDescription};
-        }
+        return {'status': true, 'message': 'Valid Main PCB Code'};
       case 7:
         ValidateComponentResp? resp =
-            await _hhDeviceService.validateBatteryTest(val);
+            await _btDeviceService.validateManiFoldTest(val);
         if (resp != null && resp.isSuccess()) {
           return {'status': true, 'message': resp.statusDescription};
         } else {
           return {'status': false, 'message': resp!.statusDescription};
         }
-      case 8:
-        return {'status': true, 'message': 'Valid Encloser Code'};
-      case 9:
-        return {'status': true, 'message': 'Valid Air Bladder Code'};
-      case 10:
+      case 8 || 11 || 12 || 13 || 14 || 15:
         ValidateComponentResp? resp =
-            await _hhDeviceService.validatePowerSupplyTest(val);
+            await _btDeviceService.validateValveCardTest(val);
         if (resp != null && resp.isSuccess()) {
           return {'status': true, 'message': resp.statusDescription};
         } else {
           return {'status': false, 'message': resp!.statusDescription};
         }
+      case 16 || 17:
+        return {'status': true, 'message': 'Valid Valve Card Cable Set Code'};
+      case 18:
+        ValidateComponentResp? resp =
+            await _btDeviceService.validateOverPressureValveTest(val);
+        if (resp != null && resp.isSuccess()) {
+          return {'status': true, 'message': resp.statusDescription};
+        } else {
+          return {'status': false, 'message': resp!.statusDescription};
+        }
+      case 19:
+        return {'status': true, 'message': 'Valid Power Cable Code'};
+      case 20:
+        return {'status': true, 'message': 'Valid UI Cable Code'};
+      case 21:
+        return {'status': true, 'message': 'Valid Display Code'};
+      case 22:
+        ValidateComponentResp? resp =
+            await _btDeviceService.validateFrontBracketAssemblyTest(val);
+        if (resp != null && resp.isSuccess()) {
+          return {'status': true, 'message': resp.statusDescription};
+        } else {
+          return {'status': false, 'message': resp!.statusDescription};
+        }
+      case 23:
+        ValidateComponentResp? resp =
+            await _btDeviceService.validatePowerSupplyTest(val);
+        if (resp != null && resp.isSuccess()) {
+          return {'status': true, 'message': resp.statusDescription};
+        } else {
+          return {'status': false, 'message': resp!.statusDescription};
+        }
+      case 24:
+        return {'status': true, 'message': 'Valid Enclosure Top Code'};
+      case 25:
+        return {'status': true, 'message': 'Valid Enclosure Bottom Code'};
+      case 26:
+        return {'status': true, 'message': 'Valid Back Vent Code'};
+      case 27:
+        return {'status': true, 'message': 'Valid Fan Mount Code'};
+      case 28:
+        return {'status': true, 'message': 'Valid Encoder Supporter Code'};
+      case 29:
+        return {'status': true, 'message': 'Valid PCB Holder Code'};
       default:
     }
 

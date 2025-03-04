@@ -221,7 +221,7 @@ export default function HHDeviceList() {
                   <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
                     <Grid item xs={4} sm={4} md={6} >
                       <Typography gutterBottom variant="h5" component="div" color="grey">
-                        HH Devices
+                        BT Devices
                       </Typography>
                     </Grid>
                     <Grid item xs={4} sm={4} md={6} >

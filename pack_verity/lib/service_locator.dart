@@ -11,6 +11,6 @@ void initialize() {
   sl.registerSingleton<Dio>(Dio());
   sl.registerSingleton<FlutterSecureStorage>(const FlutterSecureStorage());
   sl.registerSingleton<AuthService>(AuthService());
-  sl.registerSingleton<HhDeviceService>(HhDeviceService());
+  sl.registerSingleton<BTDeviceService>(BTDeviceService());
   sl.registerSingleton<FAService>(FAService());
 }

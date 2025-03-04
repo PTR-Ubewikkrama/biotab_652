@@ -56,7 +56,7 @@ handleError(BuildContext context, String s) {
   ).show();
 }
 
-handleErrorHHDeviceAlreadyPresent(
+handleErrorBTDeviceAlreadyPresent(
     BuildContext context, String s, String deviceCode) {
   AwesomeDialog(
     context: context,
@@ -107,10 +107,10 @@ handleErrorHHDeviceAlreadyPresent(
                     padding: const EdgeInsets.all(0),
                     color: Colors.green,
                     onPressed: () {
-                      HhDeviceService _hhDeviceService =
-                          sl.get<HhDeviceService>();
+                      BTDeviceService _hhDeviceService =
+                          sl.get<BTDeviceService>();
                       _hhDeviceService
-                          .deleteHhDeviceByCode(deviceCode)
+                          .deleteBTDeviceByCode(deviceCode)
                           .then((value) {
                         Navigator.of(context).pop();
                       });

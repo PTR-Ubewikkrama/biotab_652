@@ -49,7 +49,7 @@ public class UiPcbTestRepositoryImpl implements UiPcbTestRepository {
     @Override
     public UiPcbTestData findByCode(String code) {
         log.info("Finding UiPcbTestData by code: {}", code);
-        TypedQuery<UiPcbTestData> query = entityManager.createQuery("SELECT v FROM UiPcbTestData v WHERE v.qrCode = :code AND v.status = :status", UiPcbTestData.class);
+        TypedQuery<UiPcbTestData> query = entityManager.createQuery("SELECT v FROM UiPcbTestData v WHERE v.serialNumber = :code AND v.status = :status", UiPcbTestData.class);
         query.setParameter("code", code);
         query.setParameter("status", true);
         query.setMaxResults(1);

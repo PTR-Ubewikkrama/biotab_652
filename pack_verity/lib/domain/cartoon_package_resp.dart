@@ -27,7 +27,7 @@ class GetCartoonPackageResponse {
 class GetFinalAssemblyByIdResponse {
   final FADto? finalAssembly;
   final CartoonBoxDto? cartoonBox;
-  final HhDevice device;
+  final BTDevice device;
 
   GetFinalAssemblyByIdResponse(
       {required this.finalAssembly,
@@ -42,7 +42,7 @@ class GetFinalAssemblyByIdResponse {
       cartoonBox: json['cartoonBox'] != null
           ? CartoonBoxDto.fromJson(json['cartoonBox'])
           : null,
-      device: HhDevice.fromJson(json['device']),
+      device: BTDevice.fromJson(json['device']),
     );
   }
 

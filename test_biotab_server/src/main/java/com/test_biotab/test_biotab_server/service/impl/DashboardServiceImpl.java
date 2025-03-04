@@ -35,7 +35,7 @@ public class DashboardServiceImpl implements DashboardService {
     private final UiPcbTestRepository uiPcbTestRepository;
     private final CableTestRepository cableTestRepository;
     private final FanTestRepository fanTestRepository;
-    private final HHDeviceRepository hhDeviceRepository;
+    private final BTDeviceRepository BTDeviceRepository;
     private final FinalAssemblyRepository finalAssemblyRepository;
 
     @PersistenceContext
@@ -80,8 +80,8 @@ public class DashboardServiceImpl implements DashboardService {
                                         "SELECT COUNT(f) FROM FinalAssembly f",
                                         Long.class
                                 ))),
-                                Mono.fromSupplier(() -> hhDeviceRepository.countByCustomQuery(entityManager.createQuery(
-                                        "SELECT COUNT(h) FROM HHDevice h",
+                                Mono.fromSupplier(() -> BTDeviceRepository.countByCustomQuery(entityManager.createQuery(
+                                        "SELECT COUNT(h) FROM BTDevice h",
                                         Long.class
                                 )))
                         ),

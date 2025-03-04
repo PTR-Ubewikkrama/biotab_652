@@ -4,15 +4,15 @@ import com.test_biotab.test_biotab_server.domain.ApiResponse;
 import com.test_biotab.test_biotab_server.domain.GetByPatternRequest;
 import com.test_biotab.test_biotab_server.domain.ValidateRequest;
 import com.test_biotab.test_biotab_server.domain.fa.*;
-import com.test_biotab.test_biotab_server.dto.DeviceHHDto;
+import com.test_biotab.test_biotab_server.dto.BTDeviceDto;
 import com.test_biotab.test_biotab_server.dto.fa.CartoonBoxDto;
 import com.test_biotab.test_biotab_server.dto.fa.FinalAssemblyDto;
 import com.test_biotab.test_biotab_server.entity.CartoonBox;
 import com.test_biotab.test_biotab_server.entity.FinalAssembly;
-import com.test_biotab.test_biotab_server.entity.HHDevice;
+import com.test_biotab.test_biotab_server.entity.BTDevice;
 import com.test_biotab.test_biotab_server.repository.CartoonBoxRepository;
 import com.test_biotab.test_biotab_server.repository.FinalAssemblyRepository;
-import com.test_biotab.test_biotab_server.repository.HHDeviceRepository;
+import com.test_biotab.test_biotab_server.repository.BTDeviceRepository;
 import com.test_biotab.test_biotab_server.service.FinalAssemblyService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 public class FinalAssemblyServiceImpl implements FinalAssemblyService {
     private final FinalAssemblyRepository finalAssemblyRepository;
     private final CartoonBoxRepository cartoonBoxRepository;
-    private final HHDeviceRepository hhDeviceRepository;
+    private final BTDeviceRepository BTDeviceRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -48,7 +48,7 @@ public class FinalAssemblyServiceImpl implements FinalAssemblyService {
         return Mono.just(request)
                 .map(validateRequest -> {
                     log.info("Validating Device ID: {}", validateRequest.getCode());
-                    HHDevice device = hhDeviceRepository.findByCode(validateRequest.getCode());
+                    BTDevice device = BTDeviceRepository.findByCode(validateRequest.getCode());
                     FinalAssembly finalAssembly = finalAssemblyRepository.findByDeviceId(validateRequest.getCode());
 
                     if (device == null && finalAssembly == null) {
@@ -565,7 +565,7 @@ public class FinalAssemblyServiceImpl implements FinalAssemblyService {
 
                     CartoonBox cartoonBox = cartoonBoxRepository.findByCartoonNumber(finalAssembly.getCartoonNumber());
 
-                    HHDevice device = hhDeviceRepository.findByCode(finalAssembly.getDeviceCode());
+                    BTDevice device = BTDeviceRepository.findByCode(finalAssembly.getDeviceCode());
 
                     return ResponseEntity.ok(ApiResponse.<GetFinalAssemblyByIdResponse>builder()
                             .status("S1000")
@@ -596,29 +596,29 @@ public class FinalAssemblyServiceImpl implements FinalAssemblyService {
                                             .createdBy("N/A")
                                             .build()
                                     )
-                                    .device(DeviceHHDto.builder()
+                                    .device(BTDeviceDto.builder()
                                             .deviceCode(device.getDeviceCode())
-                                            .deviceCodeStatus(device.getDeviceCodeStatus())
-                                            .pcbTestCode(device.getPcbTestCode())
-                                            .pcbTestCodeStatus(device.getPcbTestCodeStatus())
-                                            .valveTestOneCode(device.getValveTestOneCode())
-                                            .valveTestOneCodeStatus(device.getValveTestOneCodeStatus())
-                                            .valveTestTwoCode(device.getValveTestTwoCode())
-                                            .valveTestTwoCodeStatus(device.getValveTestTwoCodeStatus())
-                                            .airPumpTestCode(device.getAirPumpTestCode())
-                                            .airPumpTestCodeStatus(device.getAirPumpTestCodeStatus())
-                                            .latchButtonTestCode(device.getLatchButtonTestCode())
-                                            .latchButtonTestCodeStatus(device.getLatchButtonTestCodeStatus())
-                                            .overPressureValveTestCode(device.getOverPressureValveTestCode())
-                                            .overPressureValveTestCodeStatus(device.getOverPressureValveTestCodeStatus())
-                                            .batteryTestCode(device.getBatteryTestCode())
-                                            .batteryTestCodeStatus(device.getBatteryTestCodeStatus())
-                                            .enclosureCode(device.getEnclosureCode())
-                                            .enclosureCodeStatus(device.getEnclosureCodeStatus())
-                                            .airBladderCode(device.getAirBladderCode())
-                                            .airBladderCodeStatus(device.getAirBladderCodeStatus())
-                                            .powerSupplyTestCode(device.getPowerSupplyTestCode())
-                                            .powerSupplyTestCodeStatus(device.getPowerSupplyTestCodeStatus())
+//                                            .deviceCodeStatus(device.getDeviceCodeStatus())
+//                                            .pcbTestCode(device.getPcbTestCode())
+//                                            .pcbTestCodeStatus(device.getPcbTestCodeStatus())
+//                                            .valveTestOneCode(device.getValveTestOneCode())
+//                                            .valveTestOneCodeStatus(device.getValveTestOneCodeStatus())
+//                                            .valveTestTwoCode(device.getValveTestTwoCode())
+//                                            .valveTestTwoCodeStatus(device.getValveTestTwoCodeStatus())
+//                                            .airPumpTestCode(device.getAirPumpTestCode())
+//                                            .airPumpTestCodeStatus(device.getAirPumpTestCodeStatus())
+//                                            .latchButtonTestCode(device.getLatchButtonTestCode())
+//                                            .latchButtonTestCodeStatus(device.getLatchButtonTestCodeStatus())
+//                                            .overPressureValveTestCode(device.getOverPressureValveTestCode())
+//                                            .overPressureValveTestCodeStatus(device.getOverPressureValveTestCodeStatus())
+//                                            .batteryTestCode(device.getBatteryTestCode())
+//                                            .batteryTestCodeStatus(device.getBatteryTestCodeStatus())
+//                                            .enclosureCode(device.getEnclosureCode())
+//                                            .enclosureCodeStatus(device.getEnclosureCodeStatus())
+//                                            .airBladderCode(device.getAirBladderCode())
+//                                            .airBladderCodeStatus(device.getAirBladderCodeStatus())
+//                                            .powerSupplyTestCode(device.getPowerSupplyTestCode())
+//                                            .powerSupplyTestCodeStatus(device.getPowerSupplyTestCodeStatus())
                                             .createdBy(device.getCreatedBy())
                                             .dateTime(device.getDateTime().toString())
                                             .build())
@@ -664,7 +664,7 @@ public class FinalAssemblyServiceImpl implements FinalAssemblyService {
         return Mono.just(request)
                 .map(validateRequest -> {
                     log.info("Validating Device ID for Stage Two: {}", validateRequest.getCode());
-                    HHDevice device = hhDeviceRepository.findByCode(validateRequest.getCode());
+                    BTDevice device = BTDeviceRepository.findByCode(validateRequest.getCode());
                     FinalAssembly finalAssembly = finalAssemblyRepository.findByDeviceId(validateRequest.getCode());
 
                     if (device == null && finalAssembly == null) {

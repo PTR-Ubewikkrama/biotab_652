@@ -8,15 +8,15 @@ import 'package:pack_verity/domain/validate_component_resp.dart';
 import 'package:pack_verity/service_locator.dart';
 import 'package:pack_verity/utils/keyBox.dart';
 
-class HhDeviceService {
+class BTDeviceService {
   final dio = sl.get<Dio>();
 
-  Future<CommonResponse?> addHhDevice(Map<String, String> requestBody) async {
+  Future<CommonResponse?> addBTDevice(Map<String, dynamic> requestBody) async {
     String? jwt = await sl.get<FlutterSecureStorage>().read(key: jwtDB);
 
     try {
       final response = await dio
-          .post('$baseUrl$addHHDevicePath',
+          .post('$baseUrl$addBTDevicePath',
               data: requestBody,
               options: Options(headers: {'Authorization': 'Bearer $jwt'}))
           .timeout(const Duration(seconds: 20));
@@ -43,12 +43,12 @@ class HhDeviceService {
     return null;
   }
 
-  Future<GetHHDeviceResponse?> getHhDevice(String code) async {
+  Future<GetBTDeviceResponse?> getBTDevice(String code) async {
     String? jwt = await sl.get<FlutterSecureStorage>().read(key: jwtDB);
 
     try {
       final response = await dio
-          .post('$baseUrl$getHHDevicePath',
+          .post('$baseUrl$getBTDevicePath',
               data: {'code': code},
               options: Options(headers: {'Authorization': 'Bearer $jwt'}))
           .timeout(const Duration(seconds: 20));
@@ -56,11 +56,11 @@ class HhDeviceService {
       final data = response.data;
 
       if (data is Map<String, dynamic>) {
-        return GetHHDeviceResponse.fromJson(data);
+        return GetBTDeviceResponse.fromJson(data);
       }
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout) {
-        return GetHHDeviceResponse(
+        return GetBTDeviceResponse(
             status: "E2000",
             statusDescription: 'Server Connection Timeout',
             data: null);
@@ -68,12 +68,12 @@ class HhDeviceService {
       if (kDebugMode) {
         print(e.error.toString());
       }
-      return GetHHDeviceResponse(
+      return GetBTDeviceResponse(
           status: "E2000",
           statusDescription: 'Something went wrong',
           data: null);
     } on Exception {
-      return GetHHDeviceResponse(
+      return GetBTDeviceResponse(
           status: "E2000",
           statusDescription: 'Something went wrong',
           data: null);
@@ -81,12 +81,12 @@ class HhDeviceService {
     return null;
   }
 
-  Future<CommonResponse?> validateHHDeviceByCode(String code) async {
+  Future<CommonResponse?> validateBTDeviceByCode(String code) async {
     String? jwt = await sl.get<FlutterSecureStorage>().read(key: jwtDB);
 
     try {
       final response = await dio
-          .post('$baseUrl$validateHHDevicePath',
+          .post('$baseUrl$validateBTDevicePath',
               data: {'code': code},
               options: Options(headers: {'Authorization': 'Bearer $jwt'}))
           .timeout(const Duration(seconds: 20));
@@ -226,12 +226,50 @@ class HhDeviceService {
     return null;
   }
 
-  Future<ValidateComponentResp?> validateBatteryTest(String code) async {
+  Future<ValidateComponentResp?> validateFanTest(String code) async {
     String? jwt = await sl.get<FlutterSecureStorage>().read(key: jwtDB);
 
     try {
       final response = await dio
-          .post('$baseUrl$validateBatteryTestCode',
+          .post('$baseUrl$validateFanTestCode',
+              data: {'code': code},
+              options: Options(headers: {'Authorization': 'Bearer $jwt'}))
+          .timeout(const Duration(seconds: 20));
+
+      final data = response.data;
+
+      if (data is Map<String, dynamic>) {
+        return ValidateComponentResp.fromJson(data);
+      }
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout) {
+        return ValidateComponentResp(
+            status: "E2000",
+            statusDescription: 'Server Connection Timeout',
+            data: null);
+      }
+      if (kDebugMode) {
+        print(e.error.toString());
+      }
+      return ValidateComponentResp(
+          status: "E2000",
+          statusDescription: 'Something went wrong',
+          data: null);
+    } on Exception {
+      return ValidateComponentResp(
+          status: "E2000",
+          statusDescription: 'Something went wrong',
+          data: null);
+    }
+    return null;
+  }
+
+  Future<ValidateComponentResp?> validateManiFoldTest(String code) async {
+    String? jwt = await sl.get<FlutterSecureStorage>().read(key: jwtDB);
+
+    try {
+      final response = await dio
+          .post('$baseUrl$validateManiFoldTestCode',
               data: {'code': code},
               options: Options(headers: {'Authorization': 'Bearer $jwt'}))
           .timeout(const Duration(seconds: 20));
@@ -379,12 +417,12 @@ class HhDeviceService {
     return null;
   }
 
-  Future<ValidateComponentResp?> validateValveTest(String code) async {
+  Future<ValidateComponentResp?> validateValveCardTest(String code) async {
     String? jwt = await sl.get<FlutterSecureStorage>().read(key: jwtDB);
 
     try {
       final response = await dio
-          .post('$baseUrl$validateValveTestCode',
+          .post('$baseUrl$validateValveCardTestCode',
               data: {'code': code},
               options: Options(headers: {'Authorization': 'Bearer $jwt'}))
           .timeout(const Duration(seconds: 20));
@@ -417,7 +455,7 @@ class HhDeviceService {
     return null;
   }
 
-  Future<CommonResponse?> deleteHhDeviceByCode(String code) async {
+  Future<CommonResponse?> deleteBTDeviceByCode(String code) async {
     String? jwt = await sl.get<FlutterSecureStorage>().read(key: jwtDB);
 
     try {
@@ -447,6 +485,83 @@ class HhDeviceService {
     } on Exception {
       return CommonResponse(
           status: "E2000", statusDescription: 'Something went wrong');
+    }
+    return null;
+  }
+
+  Future<ValidateComponentResp?> validateUIPcbTest(String code) async {
+    String? jwt = await sl.get<FlutterSecureStorage>().read(key: jwtDB);
+
+    try {
+      final response = await dio
+          .post('$baseUrl$validateUIPcbTestCode',
+              data: {'code': code},
+              options: Options(headers: {'Authorization': 'Bearer $jwt'}))
+          .timeout(const Duration(seconds: 20));
+
+      final data = response.data;
+
+      if (data is Map<String, dynamic>) {
+        return ValidateComponentResp.fromJson(data);
+      }
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout) {
+        return ValidateComponentResp(
+            status: "E2000",
+            statusDescription: 'Server Connection Timeout',
+            data: null);
+      }
+      if (kDebugMode) {
+        print(e.error.toString());
+      }
+      return ValidateComponentResp(
+          status: "E2000",
+          statusDescription: 'Something went wrong',
+          data: null);
+    } on Exception {
+      return ValidateComponentResp(
+          status: "E2000",
+          statusDescription: 'Something went wrong',
+          data: null);
+    }
+    return null;
+  }
+
+  Future<ValidateComponentResp?> validateFrontBracketAssemblyTest(
+      String code) async {
+    String? jwt = await sl.get<FlutterSecureStorage>().read(key: jwtDB);
+
+    try {
+      final response = await dio
+          .post('$baseUrl$validateFrontBracketAssemblyPath',
+              data: {'code': code},
+              options: Options(headers: {'Authorization': 'Bearer $jwt'}))
+          .timeout(const Duration(seconds: 20));
+
+      final data = response.data;
+
+      if (data is Map<String, dynamic>) {
+        return ValidateComponentResp.fromJson(data);
+      }
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout) {
+        return ValidateComponentResp(
+            status: "E2000",
+            statusDescription: 'Server Connection Timeout',
+            data: null);
+      }
+      if (kDebugMode) {
+        print(e.error.toString());
+      }
+      return ValidateComponentResp(
+          status: "E2000",
+          statusDescription: 'Something went wrong',
+          data: null);
+    } on Exception {
+      return ValidateComponentResp(
+          status: "E2000",
+          statusDescription: 'Something went wrong',
+          data: null);
     }
     return null;
   }

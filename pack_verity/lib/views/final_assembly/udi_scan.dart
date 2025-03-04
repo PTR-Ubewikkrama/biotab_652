@@ -382,128 +382,247 @@ class _UDIScanPageState extends State<UDIScanPage> {
                                     DataCell(Text(getCPFullResp!
                                             .data!.device.deviceCode ??
                                         '')),
-                                    DataCell(getStatus(getCPFullResp!
-                                        .data!.device.deviceCodeStatus)),
+                                    DataCell(Text("")),
                                   ],
                                 ),
                                 DataRow(
                                   cells: <DataCell>[
-                                    DataCell(Text("PCB")),
+                                    DataCell(Text("Power PCB")),
                                     DataCell(Text(getCPFullResp!
-                                            .data!.device.pcbTestCode ??
+                                            .data!.device.powerPcbCode ??
                                         '')),
                                     DataCell(getStatus(getCPFullResp!
-                                        .data!.device.pcbTestCodeStatus)),
+                                        .data!.device.powerPcbCodeStatus)),
                                   ],
                                 ),
                                 DataRow(
                                   cells: <DataCell>[
-                                    DataCell(Text("Valve One")),
-                                    DataCell(Text(getCPFullResp!
-                                            .data!.device.valveTestOneCode ??
-                                        '')),
+                                    DataCell(Text("Pump")),
+                                    DataCell(Text(
+                                        getCPFullResp!.data!.device.pumpCode ??
+                                            '')),
                                     DataCell(getStatus(getCPFullResp!
-                                        .data!.device.valveTestOneCodeStatus)),
+                                        .data!.device.pumpCodeStatus)),
                                   ],
                                 ),
                                 DataRow(
                                   cells: <DataCell>[
-                                    DataCell(Text("Valve Two")),
-                                    DataCell(Text(getCPFullResp!
-                                            .data!.device.valveTestTwoCode ??
-                                        '')),
+                                    DataCell(Text("Fan")),
+                                    DataCell(Text(
+                                        getCPFullResp!.data!.device.fanCode ??
+                                            '')),
                                     DataCell(getStatus(getCPFullResp!
-                                        .data!.device.valveTestTwoCodeStatus)),
+                                        .data!.device.fanCodeStatus)),
                                   ],
                                 ),
                                 DataRow(
                                   cells: <DataCell>[
-                                    DataCell(Text("Air Pump")),
-                                    DataCell(Text(getCPFullResp!
-                                            .data!.device.airPumpTestCode ??
-                                        '')),
+                                    DataCell(Text("UI PCB")),
+                                    DataCell(Text(
+                                        getCPFullResp!.data!.device.uiPcbCode ??
+                                            '')),
                                     DataCell(getStatus(getCPFullResp!
-                                        .data!.device.airPumpTestCodeStatus)),
+                                        .data!.device.uiPcbCodeStatus)),
                                   ],
                                 ),
                                 DataRow(
                                   cells: <DataCell>[
-                                    DataCell(Text("Power Button")),
+                                    DataCell(Text("Encoder")),
                                     DataCell(Text(getCPFullResp!
-                                            .data!.device.latchButtonTestCode ??
+                                            .data!.device.encoderCode ??
                                         '')),
-                                    DataCell(getStatus(getCPFullResp!.data!
-                                        .device.latchButtonTestCodeStatus)),
+                                    DataCell(getStatus(getCPFullResp!
+                                        .data!.device.encoderCodeStatus)),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text("Main PCB")),
+                                    DataCell(Text(getCPFullResp!
+                                            .data!.device.mainPcbCode ??
+                                        '')),
+                                    DataCell(getStatus(getCPFullResp!
+                                        .data!.device.mainPcbCodeStatus)),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text("Manifold")),
+                                    DataCell(Text(getCPFullResp!
+                                            .data!.device.manifoldCode ??
+                                        '')),
+                                    DataCell(getStatus(getCPFullResp!
+                                        .data!.device.manifoldCodeStatus)),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(
+                                        Text("Valve Card Inside Cable Set")),
+                                    DataCell(Text(getCPFullResp!.data!.device
+                                            .valveCardInsideCableSetCode ??
+                                        '')),
+                                    DataCell(getStatus(getCPFullResp!
+                                        .data!
+                                        .device
+                                        .valveCardInsideCableSetCodeStatus)),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text(
+                                        "Valve Card Input Output Cable Set")),
+                                    DataCell(Text(getCPFullResp!.data!.device
+                                            .valveCardInputOutputCableSetCode ??
+                                        '')),
+                                    DataCell(getStatus(getCPFullResp!
+                                        .data!
+                                        .device
+                                        .valveCardInputOutputCableSetCodeStatus)),
                                   ],
                                 ),
                                 DataRow(
                                   cells: <DataCell>[
                                     DataCell(Text("Over Pressure Valve")),
                                     DataCell(Text(getCPFullResp!.data!.device
-                                            .overPressureValveTestCode ??
+                                            .overPressureValveCode ??
+                                        '')),
+                                    DataCell(getStatus(getCPFullResp!.data!
+                                        .device.overPressureValveCodeStatus)),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text("Power Cable")),
+                                    DataCell(Text(getCPFullResp!
+                                            .data!.device.powerCableCode ??
+                                        '')),
+                                    DataCell(Text("")),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text("UI Cable")),
+                                    DataCell(Text(getCPFullResp!
+                                            .data!.device.uiCableCode ??
+                                        '')),
+                                    DataCell(Text("")),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text("Display")),
+                                    DataCell(Text(getCPFullResp!
+                                            .data!.device.displayCode ??
+                                        '')),
+                                    DataCell(Text("")),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text("Front Bracket Assembly")),
+                                    DataCell(Text(getCPFullResp!.data!.device
+                                            .frontBracketAssemblyCode ??
                                         '')),
                                     DataCell(getStatus(getCPFullResp!
                                         .data!
                                         .device
-                                        .overPressureValveTestCodeStatus)),
+                                        .frontBracketAssemblyCodeStatus)),
                                   ],
                                 ),
                                 DataRow(
                                   cells: <DataCell>[
-                                    DataCell(Text("Battery Test")),
+                                    DataCell(Text("Power Adaptor")),
                                     DataCell(Text(getCPFullResp!
-                                            .data!.device.batteryTestCode ??
+                                            .data!.device.powerAdaptorCode ??
                                         '')),
                                     DataCell(getStatus(getCPFullResp!
-                                        .data!.device.batteryTestCodeStatus)),
+                                        .data!.device.powerAdaptorCodeStatus)),
                                   ],
                                 ),
                                 DataRow(
                                   cells: <DataCell>[
-                                    DataCell(Text("Enclosure")),
+                                    DataCell(Text("Enclosure Top")),
                                     DataCell(Text(getCPFullResp!
-                                            .data!.device.enclosureCode ??
+                                            .data!.device.enclosureTopCode ??
                                         '')),
-                                    DataCell(getStatus(getCPFullResp!
-                                        .data!.device.enclosureCodeStatus)),
+                                    DataCell(Text("")),
                                   ],
                                 ),
                                 DataRow(
                                   cells: <DataCell>[
-                                    DataCell(Text("Air Bladder")),
+                                    DataCell(Text("Enclosure Bottom")),
                                     DataCell(Text(getCPFullResp!
-                                            .data!.device.airBladderCode ??
+                                            .data!.device.enclosureBottomCode ??
                                         '')),
-                                    DataCell(getStatus(getCPFullResp!
-                                        .data!.device.airBladderCodeStatus)),
+                                    DataCell(Text("")),
                                   ],
                                 ),
                                 DataRow(
                                   cells: <DataCell>[
-                                    DataCell(Text("Power Supply")),
+                                    DataCell(Text("Back Vent")),
                                     DataCell(Text(getCPFullResp!
-                                            .data!.device.powerSupplyTestCode ??
+                                            .data!.device.backVentCode ??
                                         '')),
-                                    DataCell(getStatus(getCPFullResp!.data!
-                                        .device.powerSupplyTestCodeStatus)),
+                                    DataCell(Text("")),
                                   ],
                                 ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text("Fan Mount")),
+                                    DataCell(Text(getCPFullResp!
+                                            .data!.device.fanMountCode ??
+                                        '')),
+                                    DataCell(Text("")),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text("Encoder Supporter")),
+                                    DataCell(Text(getCPFullResp!.data!.device
+                                            .encoderSupporterCode ??
+                                        '')),
+                                    DataCell(Text("")),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text("PCB Holder")),
+                                    DataCell(Text(getCPFullResp!
+                                            .data!.device.pcbHolderCode ??
+                                        '')),
+                                    DataCell(Text("")),
+                                  ],
+                                ),
+                                for (int i = 0;
+                                    i <
+                                        (getCPFullResp!.data!.device.valveCards
+                                                ?.length ??
+                                            0);
+                                    i++)
+                                  DataRow(
+                                    cells: <DataCell>[
+                                      DataCell(Text("Valve Card ${i + 1}")),
+                                      DataCell(Text(getCPFullResp!
+                                          .data!.device.valveCards![i])),
+                                      DataCell(Text("")),
+                                    ],
+                                  ),
                                 DataRow(
                                   cells: <DataCell>[
                                     DataCell(Text("Created By")),
                                     DataCell(Text(
                                         getCPFullResp!.data!.device.createdBy ??
                                             '')),
-                                    DataCell(Text('')),
+                                    DataCell(Text("")),
                                   ],
                                 ),
                                 DataRow(
                                   cells: <DataCell>[
-                                    DataCell(Text("Date Time")),
-                                    DataCell(Text(formatDate(getCPFullResp!
-                                            .data!.device.dateTime) ??
-                                        '')),
-                                    DataCell(Text('')),
+                                    DataCell(Text("Created At")),
+                                    DataCell(Text(formatDate(
+                                        getCPFullResp!.data!.device.dateTime))),
+                                    DataCell(Text("")),
                                   ],
                                 ),
                               ],

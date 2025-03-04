@@ -49,7 +49,7 @@ public class CableTestRepositoryImpl implements CableTestRepository {
     @Override
     public CableTestData findByCode(String code) {
         log.info("Finding CableTestData by code: {}", code);
-        TypedQuery<CableTestData> query = entityManager.createQuery("SELECT v FROM CableTestData v WHERE v.qrCode = :code AND v.status = :status", CableTestData.class);
+        TypedQuery<CableTestData> query = entityManager.createQuery("SELECT v FROM CableTestData v WHERE v.serialNumber = :code AND v.status = :status", CableTestData.class);
         query.setParameter("code", code);
         query.setParameter("status", true);
         query.setMaxResults(1);

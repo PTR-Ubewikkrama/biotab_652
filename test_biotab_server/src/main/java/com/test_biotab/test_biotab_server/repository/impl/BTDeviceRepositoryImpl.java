@@ -1,7 +1,7 @@
 package com.test_biotab.test_biotab_server.repository.impl;
 
-import com.test_biotab.test_biotab_server.entity.HHDevice;
-import com.test_biotab.test_biotab_server.repository.HHDeviceRepository;
+import com.test_biotab.test_biotab_server.entity.BTDevice;
+import com.test_biotab.test_biotab_server.repository.BTDeviceRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
@@ -15,16 +15,16 @@ import java.util.List;
 @Repository
 @Transactional
 @Slf4j
-public class HHDeviceRepositoryImpl implements HHDeviceRepository {
+public class BTDeviceRepositoryImpl implements BTDeviceRepository {
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public HHDevice findByCode(String code) {
-        log.info("Finding HHDevice by code: {}", code);
-        String jpql = "SELECT d FROM HHDevice d WHERE d.deviceCode = :code";
-        TypedQuery<HHDevice> query = entityManager.createQuery(jpql, HHDevice.class);
+    public BTDevice findByCode(String code) {
+        log.info("Finding BTdevice by code: {}", code);
+        String jpql = "SELECT d FROM BTDevice d WHERE d.deviceCode = :code";
+        TypedQuery<BTDevice> query = entityManager.createQuery(jpql, BTDevice.class);
         query.setParameter("code", code);
 
         try {
@@ -35,14 +35,14 @@ public class HHDeviceRepositoryImpl implements HHDeviceRepository {
     }
 
     @Override
-    public HHDevice save(HHDevice hhDevice) {
-        log.info("Saving HHDevice: {}", hhDevice.getDeviceId());
-        return entityManager.merge(hhDevice);
+    public BTDevice save(BTDevice btDevice) {
+        log.info("Saving BTDevice: {}", btDevice.getDeviceId());
+        return entityManager.merge(btDevice);
     }
 
     @Override
-    public List<HHDevice> findByCustomQuery(TypedQuery<HHDevice> query, int pageNo) {
-        log.info("Finding HHDevice by custom query: {}", query.toString());
+    public List<BTDevice> findByCustomQuery(TypedQuery<BTDevice> query, int pageNo) {
+        log.info("Finding BTDevice by custom query: {}", query.toString());
         return query
                 .setFirstResult(pageNo * 15)
                 .setMaxResults(15)
@@ -50,22 +50,22 @@ public class HHDeviceRepositoryImpl implements HHDeviceRepository {
     }
 
     @Override
-    public List<HHDevice> findByCustomQuery(TypedQuery<HHDevice> query) {
-        log.info("Finding HHDevice by custom query without pagination: {}", query.toString());
+    public List<BTDevice> findByCustomQuery(TypedQuery<BTDevice> query) {
+        log.info("Finding BTDevice by custom query without pagination: {}", query.toString());
         return query.getResultList();
     }
 
     @Override
     public Long countByCustomQuery(TypedQuery<Long> query) {
-        log.info("Counting HHDevice by custom query: {}", query.toString());
+        log.info("Counting BTDevice by custom query: {}", query.toString());
         return query.getSingleResult();
     }
 
     @Override
     @Transactional
     public void deleteByCode(String code) {
-        log.info("Deleting HHDevice by code: {}", code);
-        String jpql = "DELETE FROM HHDevice d WHERE d.deviceCode = :code";
+        log.info("Deleting BTDevice by code: {}", code);
+        String jpql = "DELETE FROM BTdevice d WHERE d.deviceCode = :code";
         Query query = entityManager.createQuery(jpql);
         query.setParameter("code", code);
         query.executeUpdate();

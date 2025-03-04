@@ -48,7 +48,7 @@ public class FanTestRepositoryImpl implements FanTestRepository {
     @Override
     public FanTestData findByCode(String code) {
         log.info("Finding FanTestData by code: {}", code);
-        TypedQuery<FanTestData> query = entityManager.createQuery("SELECT v FROM FanTestData v WHERE v.qrCode = :code AND v.status = :status", FanTestData.class);
+        TypedQuery<FanTestData> query = entityManager.createQuery("SELECT v FROM FanTestData v WHERE v.serialNumber = :code AND v.status = :status", FanTestData.class);
         query.setParameter("code", code);
         query.setParameter("status", true);
         query.setMaxResults(1);

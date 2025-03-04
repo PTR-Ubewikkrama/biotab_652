@@ -136,8 +136,8 @@ class HomePage extends StatelessWidget {
                                   data: HomeOperationsButtonData(
                                       const Color.fromARGB(255, 218, 206, 156),
                                       const Color.fromARGB(255, 197, 172, 7),
-                                      "HH Device",
-                                      "Add a new HH Device",
+                                      "BT Device",
+                                      "Add a new BT Device",
                                       const Icon(
                                         Icons.add_box,
                                         size: 60,
@@ -149,7 +149,7 @@ class HomePage extends StatelessWidget {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      const AddHHBoxPage()),
+                                                      const AddBTDevicePage()),
                                             )
                                           })),
                             ),
@@ -179,31 +179,28 @@ class HomePage extends StatelessWidget {
                                             )
                                           })),
                             ),
-                            Expanded(
-                              child: HomeOperationsButton(
-                                  data: HomeOperationsButtonData(
-                                      const Color.fromARGB(255, 218, 206, 156),
-                                      const Color.fromARGB(255, 197, 172, 7),
-                                      "Final Assembly",
-                                      "FA operations",
-                                      const Icon(
-                                        Icons.precision_manufacturing,
-                                        size: 60,
-                                        color: Color.fromARGB(255, 149, 185, 102),
-                                      ),
-                                      () => {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const FinalAssembly()),
-                                            )
-                                          })),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
+                            // Expanded(
+                            //   child: HomeOperationsButton(
+                            //       data: HomeOperationsButtonData(
+                            //           const Color.fromARGB(255, 218, 206, 156),
+                            //           const Color.fromARGB(255, 197, 172, 7),
+                            //           "Final Assembly",
+                            //           "FA operations",
+                            //           const Icon(
+                            //             Icons.precision_manufacturing,
+                            //             size: 60,
+                            //             color:
+                            //                 Color.fromARGB(255, 149, 185, 102),
+                            //           ),
+                            //           () => {
+                            //                 Navigator.push(
+                            //                   context,
+                            //                   MaterialPageRoute(
+                            //                       builder: (context) =>
+                            //                           const FinalAssembly()),
+                            //                 )
+                            //               })),
+                            // ),
                             Expanded(
                               child: HomeOperationsButton(
                                   data: HomeOperationsButtonData(
@@ -225,6 +222,31 @@ class HomePage extends StatelessWidget {
                                             )
                                           })),
                             ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            // Expanded(
+                            //   child: HomeOperationsButton(
+                            //       data: HomeOperationsButtonData(
+                            //           const Color.fromARGB(255, 218, 206, 156),
+                            //           const Color.fromARGB(255, 197, 172, 7),
+                            //           "Settings",
+                            //           "Set camera view point settings",
+                            //           const Icon(
+                            //             Icons.settings,
+                            //             size: 60,
+                            //             color: Color.fromARGB(255, 0, 0, 0),
+                            //           ),
+                            //           () => {
+                            //                 Navigator.push(
+                            //                   context,
+                            //                   MaterialPageRoute(
+                            //                       builder: (context) =>
+                            //                           const SettingsView()),
+                            //                 )
+                            //               })),
+                            // ),
                             Expanded(
                               child: SizedBox.shrink(),
                             ),

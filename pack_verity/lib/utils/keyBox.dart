@@ -1,22 +1,26 @@
 // Server URLs and paths
-const String baseUrl = "https://bt.wavetec-qc.com/test_jig_api/v1/";
+const String baseUrl = "https://bt.wavetec-qc.com/biotab_e0652_api/v1/";
 const String loginPath = "login";
 const String validatePath = "validate";
-const String addHHDevicePath = "hh_device/add";
-const String getHHDevicePath = "hh_device/get/by_code";
-const String validateHHDevicePath = "hh_device/validate";
-const String componentVerificationPath = "hh_device/component/verification";
-const String validatePcbTestCode = "hh_device/validate/pcbTestCode";
-const String validateAirPumpTestCode = "hh_device/validate/airPumpTestCode";
-const String validateBatteryTestCode = "hh_device/validate/batteryTestCode";
+const String addBTDevicePath = "bt_device/add";
+const String getBTDevicePath = "bt_device/get/by_code";
+const String validateBTDevicePath = "bt_device/validate";
+const String componentVerificationPath = "bt_device/component/verification";
+const String validatePcbTestCode = "bt_device/validate/pcbTestCode";
+const String validateAirPumpTestCode = "bt_device/validate/airPumpTestCode";
+const String validateFanTestCode = "bt_device/validate/fanTestCode";
+const String validateUIPcbTestCode = "bt_device/validate/uiPcbTestCode";
+const String validateManiFoldTestCode = "bt_device/validate/manifoldTestCode";
 const String validateLatchButtonTestCode =
-    "hh_device/validate/latchButtonTestCode";
+    "bt_device/validate/latchButtonTestCode";
+const String validateFrontBracketAssemblyPath =
+    "bt_device/validate/valveSequenceTestCode";
 const String validateOverPressureValveTestCode =
-    "hh_device/validate/overPressureValveTestCode";
+    "bt_device/validate/overPressureValveTestCode";
 const String validatePowerSupplyTestCode =
-    "hh_device/validate/powerSupplyTestCode";
-const String validateValveTestCode = "hh_device/validate/valveTestCode";
-const String deleteHHDeviceByCodePath = "hh_device/delete";
+    "bt_device/validate/powerSupplyTestCode";
+const String validateValveCardTestCode = "bt_device/validate/valveCardTestCode";
+const String deleteHHDeviceByCodePath = "bt_device/delete";
 
 //final assembly paths
 const String validateDeviceForFAPath = "fa/validate/device-id";
@@ -44,7 +48,7 @@ const String getCartoonPackageByCartoonNumberFAPath =
     "fa/get/cartoon-package/by-id";
 
 //Project Name
-const String projectName = "Pack Verifier";
+const String projectName = "BioTab E0652";
 
 // Keys for secure storage
 const String userGroupDB = "USER_GROUP";

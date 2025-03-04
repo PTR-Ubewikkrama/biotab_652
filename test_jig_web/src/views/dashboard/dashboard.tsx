@@ -14,46 +14,6 @@ import loading from '../../images/loading.gif';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 
-
-// export interface DashBoardSummaryResponse {
-//   status: string;
-//   statusDescription: string;
-//   data: {
-//       totalSuccessAirPumpTest: number;
-//       totalFailedAirPumpTest: number;
-//       totalSuccessPowerSupplyTest: number;
-//       totalFailedPowerSupplyTest: number;
-//       totalSuccessValueTest: number;
-//       totalFailedValueTest: number;
-//       totalSuccessPcbTest: number;
-//       totalFailedPcbTest: number;
-//       totalSuccessPowerPcbTest: number;
-//       totalFailedPowerPcbTest: number;
-//       totalSuccessAirPumpV2Test: number;
-//       totalFailedAirPumpV2Test: number;
-//       totalSuccessPowerSupplyV2Test: number;
-//       totalFailedPowerSupplyV2Test: number;
-//       totalSuccessPowerPcbV2Test: number;
-//       totalFailedPowerPcbV2Test: number;
-//       totalSuccessOpValveTest: number;
-//       totalFailedOpValveTest: number;
-//       totalSuccessValveSequenceTest: number;
-//       totalFailedValveSequenceTest: number;
-//       totalSuccessValveCardTest: number;
-//       totalFailedValveCardTest: number;
-//       totalSuccessManiFoldLeakTest: number;
-//       totalFailedManiFoldLeakTest: number;
-//       totalSuccessUiPcbTest: number;
-//       totalFailedUiPcbTest: number;
-//       totalSuccessCableTest: number;
-//       totalFailedCableTest: number;
-//       totalSuccessFanTest: number;
-//       totalFailedFanTest: number;
-//       totalFinalAssembly: number;
-//       totalHHDevice: number;
-//   };
-// }
-
 export default function Dashboard() {
   const { data, error, isLoading } = useGetDashboardSummaryQuery("");
   // const isLoading = false;
@@ -119,7 +79,7 @@ export default function Dashboard() {
           </Grid>
           <Grid item xl={2} lg={3} sm={6} xs={12}>
             <SummaryCard
-              title="Pcb Test"
+              title="PCB Test"
               icon={<LooksTwoIcon />}
               value={((data?.data.totalFailedPcbTest ?? 0) + (data?.data.totalSuccessPcbTest ?? 0)).toString() || "0"}
               color="success.light"
@@ -179,7 +139,7 @@ export default function Dashboard() {
           </Grid>
           <Grid item xl={2} lg={3} sm={6} xs={12}>
             <SummaryCard
-              title="Power Pcb V2 Test"
+              title="Power PCB V2 Test"
               icon={<ListAltIcon />}
               value={((data?.data.totalFailedPowerPcbV2Test ?? 0) + (data?.data.totalSuccessPowerPcbV2Test ?? 0)).toString() || "0"}
               color="success.main"
@@ -229,7 +189,7 @@ export default function Dashboard() {
           </Grid>
           <Grid item xl={2} lg={3} sm={6} xs={12}>
             <SummaryCard
-              title="Ui Pcb Test"
+              title="Ui PCB Test"
               icon={<ListAltIcon />}
               value={((data?.data.totalFailedUiPcbTest ?? 0) + (data?.data.totalSuccessUiPcbTest ?? 0)).toString() || "0"}
               color="success.main"
@@ -260,11 +220,11 @@ export default function Dashboard() {
 
           <Grid item xl={2} lg={3} sm={6} xs={12}>
             <SummaryCard
-              title="HH Device"
+              title="BT Device"
               icon={<InventoryIcon />}
               value={((data?.data.totalHHDevice ?? 0) + (data?.data.totalHHDevice ?? 0)).toString() || "0"}
               color="success.dark"
-              path="/hh-device"
+              path="/bt-device"
               image={card4}
             />
           </Grid>

@@ -50,7 +50,7 @@ public class ValveSequenceTestRepositoryImpl implements ValveSequenceTestReposit
     @Override
     public ValveSequenceTestData findByCode(String code) {
         log.info("Finding ValveSequenceTestData by code: {}", code);
-        TypedQuery<ValveSequenceTestData> query = entityManager.createQuery("SELECT v FROM ValveSequenceTestData v WHERE v.qrCode = :code AND v.status = :status", ValveSequenceTestData.class);
+        TypedQuery<ValveSequenceTestData> query = entityManager.createQuery("SELECT v FROM ValveSequenceTestData v WHERE v.serialNumber = :code AND v.status = :status", ValveSequenceTestData.class);
         query.setParameter("code", code);
         query.setParameter("status", true);
         query.setMaxResults(1);

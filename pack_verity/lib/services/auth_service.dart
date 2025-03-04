@@ -18,6 +18,9 @@ class AuthService {
 
       final data = response.data;
 
+      print(("==========================================================="));
+      print(data);
+
       if (data is Map<String, dynamic>) {
         loginResp = LoginResponse.fromJson(data);
       }

@@ -1,16 +1,16 @@
-class GetHHDeviceResponse {
+class GetBTDeviceResponse {
   final String status;
   final String statusDescription;
-  final HhDevice? data;
+  final BTDevice? data;
 
-  GetHHDeviceResponse(
+  GetBTDeviceResponse(
       {required this.status, required this.statusDescription, this.data});
 
-  factory GetHHDeviceResponse.fromJson(Map<String, dynamic> json) {
-    return GetHHDeviceResponse(
+  factory GetBTDeviceResponse.fromJson(Map<String, dynamic> json) {
+    return GetBTDeviceResponse(
       status: json['status'] ?? '',
       statusDescription: json['statusDescription'] ?? '',
-      data: json['data'] != null ? HhDevice.fromJson(json['data']) : null,
+      data: json['data'] != null ? BTDevice.fromJson(json['data']) : null,
     );
   }
 
@@ -19,85 +19,129 @@ class GetHHDeviceResponse {
   }
 }
 
-class HhDevice {
+class BTDevice {
   final int? deviceId;
   final String? deviceCode;
-  final String? deviceCodeStatus;
-  final String? pcbTestCode;
-  final String? pcbTestCodeStatus;
-  final String? valveTestOneCode;
-  final String? valveTestOneCodeStatus;
-  final String? valveTestTwoCode;
-  final String? valveTestTwoCodeStatus;
-  final String? airPumpTestCode;
-  final String? airPumpTestCodeStatus;
-  final String? latchButtonTestCode;
-  final String? latchButtonTestCodeStatus;
-  final String? overPressureValveTestCode;
-  final String? overPressureValveTestCodeStatus;
-  final String? batteryTestCode;
-  final String? batteryTestCodeStatus;
-  final String? enclosureCode;
-  final String? enclosureCodeStatus;
-  final String? airBladderCode;
-  final String? airBladderCodeStatus;
-  final String? powerSupplyTestCode;
-  final String? powerSupplyTestCodeStatus;
+  final String? powerPcbCode;
+  final String? powerPcbCodeStatus;
+  final String? pumpCode;
+  final String? pumpCodeStatus;
+  final String? fanCode;
+  final String? fanCodeStatus;
+  final String? uiPcbCode;
+  final String? uiPcbCodeStatus;
+  final String? encoderCode;
+  final String? encoderCodeStatus;
+  final String? mainPcbCode;
+  final String? mainPcbCodeStatus;
+  final String? manifoldCode;
+  final String? manifoldCodeStatus;
+  final String? valveCardInsideCableSetCode;
+  final String? valveCardInsideCableSetCodeStatus;
+  final String? valveCardInputOutputCableSetCode;
+  final String? valveCardInputOutputCableSetCodeStatus;
+  final String? overPressureValveCode;
+  final String? overPressureValveCodeStatus;
+  final String? powerCableCode;
+  final String? uiCableCode;
+  final String? displayCode;
+  final String? frontBracketAssemblyCode;
+  final String? frontBracketAssemblyCodeStatus;
+  final String? powerAdaptorCode;
+  final String? powerAdaptorCodeStatus;
+  final String? enclosureTopCode;
+  final String? enclosureBottomCode;
+  final String? backVentCode;
+  final String? fanMountCode;
+  final String? encoderSupporterCode;
+  final String? pcbHolderCode;
+  final List<String>? valveCards;
   final String? createdBy;
   final String? dateTime;
 
-  HhDevice(
+  BTDevice(
       {this.deviceId,
       this.deviceCode,
-      this.deviceCodeStatus,
-      this.pcbTestCode,
-      this.pcbTestCodeStatus,
-      this.valveTestOneCode,
-      this.valveTestOneCodeStatus,
-      this.valveTestTwoCode,
-      this.valveTestTwoCodeStatus,
-      this.airPumpTestCode,
-      this.airPumpTestCodeStatus,
-      this.latchButtonTestCode,
-      this.latchButtonTestCodeStatus,
-      this.overPressureValveTestCode,
-      this.overPressureValveTestCodeStatus,
-      this.batteryTestCode,
-      this.batteryTestCodeStatus,
-      this.enclosureCode,
-      this.enclosureCodeStatus,
-      this.airBladderCode,
-      this.airBladderCodeStatus,
-      this.powerSupplyTestCode,
-      this.powerSupplyTestCodeStatus,
+      this.powerPcbCode,
+      this.powerPcbCodeStatus,
+      this.pumpCode,
+      this.pumpCodeStatus,
+      this.fanCode,
+      this.fanCodeStatus,
+      this.uiPcbCode,
+      this.uiPcbCodeStatus,
+      this.encoderCode,
+      this.encoderCodeStatus,
+      this.mainPcbCode,
+      this.mainPcbCodeStatus,
+      this.manifoldCode,
+      this.manifoldCodeStatus,
+      this.valveCardInsideCableSetCode,
+      this.valveCardInsideCableSetCodeStatus,
+      this.valveCardInputOutputCableSetCode,
+      this.valveCardInputOutputCableSetCodeStatus,
+      this.overPressureValveCode,
+      this.overPressureValveCodeStatus,
+      this.powerCableCode,
+      this.uiCableCode,
+      this.displayCode,
+      this.frontBracketAssemblyCode,
+      this.frontBracketAssemblyCodeStatus,
+      this.powerAdaptorCode,
+      this.powerAdaptorCodeStatus,
+      this.enclosureTopCode,
+      this.enclosureBottomCode,
+      this.backVentCode,
+      this.fanMountCode,
+      this.encoderSupporterCode,
+      this.pcbHolderCode,
+      this.valveCards,
       this.createdBy,
       this.dateTime});
 
-  factory HhDevice.fromJson(Map<String, dynamic> json) {
-    return HhDevice(
+  factory BTDevice.fromJson(Map<String, dynamic> json) {
+    return BTDevice(
       deviceId: json['deviceId'],
       deviceCode: json['deviceCode'],
-      deviceCodeStatus: json['deviceCodeStatus'],
-      pcbTestCode: json['pcbTestCode'],
-      pcbTestCodeStatus: json['pcbTestCodeStatus'],
-      valveTestOneCode: json['valveTestOneCode'],
-      valveTestTwoCodeStatus: json['valveTestTwoCodeStatus'],
-      valveTestTwoCode: json['valveTestTwoCode'],
-      valveTestOneCodeStatus: json['valveTestOneCodeStatus'],
-      airPumpTestCodeStatus: json['airPumpTestCodeStatus'],
-      airPumpTestCode: json['airPumpTestCode'],
-      latchButtonTestCodeStatus: json['latchButtonTestCodeStatus'],
-      latchButtonTestCode: json['latchButtonTestCode'],
-      overPressureValveTestCodeStatus: json['overPressureValveTestCodeStatus'],
-      overPressureValveTestCode: json['overPressureValveTestCode'],
-      batteryTestCodeStatus: json['batteryTestCodeStatus'],
-      batteryTestCode: json['batteryTestCode'],
-      enclosureCodeStatus: json['enclosureCodeStatus'],
-      enclosureCode: json['enclosureCode'],
-      airBladderCodeStatus: json['airBladderCodeStatus'],
-      airBladderCode: json['airBladderCode'],
-      powerSupplyTestCodeStatus: json['powerSupplyTestCodeStatus'],
-      powerSupplyTestCode: json['powerSupplyTestCode'],
+      powerPcbCode: json['powerPcbCode'],
+      powerPcbCodeStatus: json['powerPcbCodeStatus'],
+      pumpCode: json['pumpCode'],
+      pumpCodeStatus: json['pumpCodeStatus'],
+      fanCode: json['fanCode'],
+      fanCodeStatus: json['fanCodeStatus'],
+      uiPcbCode: json['uiPcbCode'],
+      uiPcbCodeStatus: json['uiPcbCodeStatus'],
+      encoderCode: json['encoderCode'],
+      encoderCodeStatus: json['encoderCodeStatus'],
+      mainPcbCode: json['mainPcbCode'],
+      mainPcbCodeStatus: json['mainPcbCodeStatus'],
+      manifoldCode: json['manifoldCode'],
+      manifoldCodeStatus: json['manifoldCodeStatus'],
+      valveCardInsideCableSetCode: json['valveCardInsideCableSetCode'],
+      valveCardInsideCableSetCodeStatus:
+          json['valveCardInsideCableSetCodeStatus'],
+      valveCardInputOutputCableSetCode:
+          json['valveCardInputOutputCableSetCode'],
+      valveCardInputOutputCableSetCodeStatus:
+          json['valveCardInputOutputCableSetCodeStatus'],
+      overPressureValveCode: json['overPressureValveCode'],
+      overPressureValveCodeStatus: json['overPressureValveCodeStatus'],
+      powerCableCode: json['powerCableCode'],
+      uiCableCode: json['uiCableCode'],
+      displayCode: json['displayCode'],
+      frontBracketAssemblyCode: json['frontBracketAssemblyCode'],
+      frontBracketAssemblyCodeStatus: json['frontBracketAssemblyCodeStatus'],
+      powerAdaptorCode: json['powerAdaptorCode'],
+      powerAdaptorCodeStatus: json['powerAdaptorCodeStatus'],
+      enclosureTopCode: json['enclosureTopCode'],
+      enclosureBottomCode: json['enclosureBottomCode'],
+      backVentCode: json['backVentCode'],
+      fanMountCode: json['fanMountCode'],
+      encoderSupporterCode: json['encoderSupporterCode'],
+      pcbHolderCode: json['pcbHolderCode'],
+      valveCards: json['valveCards'] != null
+          ? List<String>.from(json['valveCards'])
+          : null,
       createdBy: json['createdBy'],
       dateTime: json['dateTime'],
     );
@@ -107,27 +151,42 @@ class HhDevice {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['deviceId'] = deviceId;
     data['deviceCode'] = deviceCode;
-    data['deviceCodeStatus'] = deviceCodeStatus;
-    data['pcbTestCode'] = pcbTestCode;
-    data['pcbTestCodeStatus'] = pcbTestCodeStatus;
-    data['valveTestOneCode'] = valveTestOneCode;
-    data['valveTestOneCodeStatus'] = valveTestOneCodeStatus;
-    data['valveTestTwoCode'] = valveTestTwoCode;
-    data['valveTestTwoCodeStatus'] = valveTestTwoCodeStatus;
-    data['airPumpTestCode'] = airPumpTestCode;
-    data['airPumpTestCodeStatus'] = airPumpTestCodeStatus;
-    data['latchButtonTestCode'] = latchButtonTestCode;
-    data['latchButtonTestCodeStatus'] = latchButtonTestCodeStatus;
-    data['overPressureValveTestCode'] = overPressureValveTestCode;
-    data['overPressureValveTestCodeStatus'] = overPressureValveTestCodeStatus;
-    data['batteryTestCode'] = batteryTestCode;
-    data['batteryTestCodeStatus'] = batteryTestCodeStatus;
-    data['enclosureCode'] = enclosureCode;
-    data['enclosureCodeStatus'] = enclosureCodeStatus;
-    data['airBladderCode'] = airBladderCode;
-    data['airBladderCodeStatus'] = airBladderCodeStatus;
-    data['powerSupplyTestCode'] = powerSupplyTestCode;
-    data['powerSupplyTestCodeStatus'] = powerSupplyTestCodeStatus;
+    data['powerPcbCode'] = powerPcbCode;
+    data['powerPcbCodeStatus'] = powerPcbCodeStatus;
+    data['pumpCode'] = pumpCode;
+    data['pumpCodeStatus'] = pumpCodeStatus;
+    data['fanCode'] = fanCode;
+    data['fanCodeStatus'] = fanCodeStatus;
+    data['uiPcbCode'] = uiPcbCode;
+    data['uiPcbCodeStatus'] = uiPcbCodeStatus;
+    data['encoderCode'] = encoderCode;
+    data['encoderCodeStatus'] = encoderCodeStatus;
+    data['mainPcbCode'] = mainPcbCode;
+    data['mainPcbCodeStatus'] = mainPcbCodeStatus;
+    data['manifoldCode'] = manifoldCode;
+    data['manifoldCodeStatus'] = manifoldCodeStatus;
+    data['valveCardInsideCableSetCode'] = valveCardInsideCableSetCode;
+    data['valveCardInsideCableSetCodeStatus'] =
+        valveCardInsideCableSetCodeStatus;
+    data['valveCardInputOutputCableSetCode'] = valveCardInputOutputCableSetCode;
+    data['valveCardInputOutputCableSetCodeStatus'] =
+        valveCardInputOutputCableSetCodeStatus;
+    data['overPressureValveCode'] = overPressureValveCode;
+    data['overPressureValveCodeStatus'] = overPressureValveCodeStatus;
+    data['powerCableCode'] = powerCableCode;
+    data['uiCableCode'] = uiCableCode;
+    data['displayCode'] = displayCode;
+    data['frontBracketAssemblyCode'] = frontBracketAssemblyCode;
+    data['frontBracketAssemblyCodeStatus'] = frontBracketAssemblyCodeStatus;
+    data['powerAdaptorCode'] = powerAdaptorCode;
+    data['powerAdaptorCodeStatus'] = powerAdaptorCodeStatus;
+    data['enclosureTopCode'] = enclosureTopCode;
+    data['enclosureBottomCode'] = enclosureBottomCode;
+    data['backVentCode'] = backVentCode;
+    data['fanMountCode'] = fanMountCode;
+    data['encoderSupporterCode'] = encoderSupporterCode;
+    data['pcbHolderCode'] = pcbHolderCode;
+    data['valveCards'] = valveCards;
     data['createdBy'] = createdBy;
     data['dateTime'] = dateTime;
     return data;

@@ -1,4 +1,4 @@
-use wavetechTest;
+use biotab_e652;
 
 INSERT INTO bt_user (name, email, password, user_group, status, created_by, updated_by, created_at, updated_at)
 VALUES (

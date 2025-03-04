@@ -24,8 +24,8 @@ class _HistoryPageState extends State<HistoryPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController qrCodeController = TextEditingController();
   String error = '';
-  final HhDeviceService _hhDeviceService = sl.get<HhDeviceService>();
-  GetHHDeviceResponse? hhDeviceResponse;
+  final BTDeviceService _hhDeviceService = sl.get<BTDeviceService>();
+  GetBTDeviceResponse? hhDeviceResponse;
   bool deleteClicked = false;
 
   void setScannedValue(String value, int index) {
@@ -40,12 +40,12 @@ class _HistoryPageState extends State<HistoryPage> {
 
       try {
         final result = await _hhDeviceService
-            .deleteHhDeviceByCode(hhDeviceResponse!.data!.deviceCode!);
+            .deleteBTDeviceByCode(hhDeviceResponse!.data!.deviceCode!);
 
         if (!mounted) return;
 
         if (result != null && result.isSuccess()) {
-          handleSuccessC(context, "HH Device deleted successfully");
+          handleSuccessC(context, "BT Device deleted successfully");
           setState(() {
             hhDeviceResponse = null;
             qrCodeController.text = '';
@@ -104,7 +104,7 @@ class _HistoryPageState extends State<HistoryPage> {
             color: Colors.white,
           ),
           title: Text(
-            'HH Device Details',
+            'BT Device Details',
             style: const TextStyle(
                 color: Colors.white, fontWeight: FontWeight.bold),
           ),
@@ -132,9 +132,9 @@ class _HistoryPageState extends State<HistoryPage> {
                             asyncValidatorFun: (val) async {
                               if (val!.isEmpty) {
                                 setState(() {
-                                  error = 'Please enter HH Device Code';
+                                  error = 'Please enter BT Device Code';
                                 });
-                                return 'Please enter HH Device Code';
+                                return 'Please enter BT Device Code';
                               } else {
                                 return await getRemoveDevice(val).then((value) {
                                   if (value) {
@@ -144,14 +144,14 @@ class _HistoryPageState extends State<HistoryPage> {
                                     return null;
                                   } else {
                                     setState(() {
-                                      error = 'HH Device not found';
+                                      error = 'BT Device not found';
                                     });
-                                    return 'HH Device not found';
+                                    return 'BT Device not found';
                                   }
                                 });
                               }
                             },
-                            labelText: 'QR Code HH Device ...',
+                            labelText: 'QR Code BT Device ...',
                           ),
                         ),
                       ),
@@ -245,126 +245,240 @@ class _HistoryPageState extends State<HistoryPage> {
                                     DataCell(Text(
                                         hhDeviceResponse!.data!.deviceCode ??
                                             '')),
-                                    DataCell(getStatus(hhDeviceResponse!
-                                        .data!.deviceCodeStatus)),
+                                    DataCell(Text("")),
                                   ],
                                 ),
                                 DataRow(
                                   cells: <DataCell>[
-                                    DataCell(Text("PCB")),
+                                    DataCell(Text("Power PCB")),
                                     DataCell(Text(
-                                        hhDeviceResponse!.data!.pcbTestCode ??
+                                        hhDeviceResponse!.data!.powerPcbCode ??
                                             '')),
                                     DataCell(getStatus(hhDeviceResponse!
-                                        .data!.pcbTestCodeStatus)),
+                                        .data!.powerPcbCodeStatus)),
                                   ],
                                 ),
                                 DataRow(
                                   cells: <DataCell>[
-                                    DataCell(Text("Valve One")),
-                                    DataCell(Text(hhDeviceResponse!
-                                            .data!.valveTestOneCode ??
-                                        '')),
+                                    DataCell(Text("Pump")),
+                                    DataCell(Text(
+                                        hhDeviceResponse!.data!.pumpCode ??
+                                            '')),
                                     DataCell(getStatus(hhDeviceResponse!
-                                        .data!.valveTestOneCodeStatus)),
+                                        .data!.pumpCodeStatus)),
                                   ],
                                 ),
                                 DataRow(
                                   cells: <DataCell>[
-                                    DataCell(Text("Valve Two")),
-                                    DataCell(Text(hhDeviceResponse!
-                                            .data!.valveTestTwoCode ??
-                                        '')),
-                                    DataCell(getStatus(hhDeviceResponse!
-                                        .data!.valveTestTwoCodeStatus)),
+                                    DataCell(Text("Fan")),
+                                    DataCell(Text(
+                                        hhDeviceResponse!.data!.fanCode ?? '')),
+                                    DataCell(getStatus(
+                                        hhDeviceResponse!.data!.fanCodeStatus)),
                                   ],
                                 ),
                                 DataRow(
                                   cells: <DataCell>[
-                                    DataCell(Text("Air Pump")),
-                                    DataCell(Text(hhDeviceResponse!
-                                            .data!.airPumpTestCode ??
-                                        '')),
+                                    DataCell(Text("UI PCB")),
+                                    DataCell(Text(
+                                        hhDeviceResponse!.data!.uiPcbCode ??
+                                            '')),
                                     DataCell(getStatus(hhDeviceResponse!
-                                        .data!.airPumpTestCodeStatus)),
+                                        .data!.uiPcbCodeStatus)),
                                   ],
                                 ),
                                 DataRow(
                                   cells: <DataCell>[
-                                    DataCell(Text("Power Button")),
-                                    DataCell(Text(hhDeviceResponse!
-                                            .data!.latchButtonTestCode ??
-                                        '')),
+                                    DataCell(Text("Encoder")),
+                                    DataCell(Text(
+                                        hhDeviceResponse!.data!.encoderCode ??
+                                            '')),
                                     DataCell(getStatus(hhDeviceResponse!
-                                        .data!.latchButtonTestCodeStatus)),
+                                        .data!.encoderCodeStatus)),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text("Main PCB")),
+                                    DataCell(Text(
+                                        hhDeviceResponse!.data!.mainPcbCode ??
+                                            '')),
+                                    DataCell(getStatus(hhDeviceResponse!
+                                        .data!.mainPcbCodeStatus)),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text("Manifold")),
+                                    DataCell(Text(
+                                        hhDeviceResponse!.data!.manifoldCode ??
+                                            '')),
+                                    DataCell(getStatus(hhDeviceResponse!
+                                        .data!.manifoldCodeStatus)),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(
+                                        Text("Valve Card Inside Cable Set")),
+                                    DataCell(Text(hhDeviceResponse!.data!
+                                            .valveCardInsideCableSetCode ??
+                                        '')),
+                                    DataCell(getStatus(hhDeviceResponse!.data!
+                                        .valveCardInsideCableSetCodeStatus)),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text(
+                                        "Valve Card Input Output Cable Set")),
+                                    DataCell(Text(hhDeviceResponse!.data!
+                                            .valveCardInputOutputCableSetCode ??
+                                        '')),
+                                    DataCell(getStatus(hhDeviceResponse!.data!
+                                        .valveCardInputOutputCableSetCodeStatus)),
                                   ],
                                 ),
                                 DataRow(
                                   cells: <DataCell>[
                                     DataCell(Text("Over Pressure Valve")),
                                     DataCell(Text(hhDeviceResponse!
-                                            .data!.overPressureValveTestCode ??
-                                        '')),
-                                    DataCell(getStatus(hhDeviceResponse!.data!
-                                        .overPressureValveTestCodeStatus)),
-                                  ],
-                                ),
-                                DataRow(
-                                  cells: <DataCell>[
-                                    DataCell(Text("Battery Test")),
-                                    DataCell(Text(hhDeviceResponse!
-                                            .data!.batteryTestCode ??
+                                            .data!.overPressureValveCode ??
                                         '')),
                                     DataCell(getStatus(hhDeviceResponse!
-                                        .data!.batteryTestCodeStatus)),
+                                        .data!.overPressureValveCodeStatus)),
                                   ],
                                 ),
                                 DataRow(
                                   cells: <DataCell>[
-                                    DataCell(Text("Enclosure")),
+                                    DataCell(Text("Power Cable")),
+                                    DataCell(Text(hhDeviceResponse!
+                                            .data!.powerCableCode ??
+                                        '')),
+                                    DataCell(Text("")),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text("UI Cable")),
                                     DataCell(Text(
-                                        hhDeviceResponse!.data!.enclosureCode ??
+                                        hhDeviceResponse!.data!.uiCableCode ??
                                             '')),
-                                    DataCell(getStatus(hhDeviceResponse!
-                                        .data!.enclosureCodeStatus)),
+                                    DataCell(Text("")),
                                   ],
                                 ),
                                 DataRow(
                                   cells: <DataCell>[
-                                    DataCell(Text("Air Bladder")),
-                                    DataCell(Text(hhDeviceResponse!
-                                            .data!.airBladderCode ??
-                                        '')),
-                                    DataCell(getStatus(hhDeviceResponse!
-                                        .data!.airBladderCodeStatus)),
+                                    DataCell(Text("Display")),
+                                    DataCell(Text(
+                                        hhDeviceResponse!.data!.displayCode ??
+                                            '')),
+                                    DataCell(Text("")),
                                   ],
                                 ),
                                 DataRow(
                                   cells: <DataCell>[
-                                    DataCell(Text("Power Supply")),
+                                    DataCell(Text("Front Bracket Assembly")),
                                     DataCell(Text(hhDeviceResponse!
-                                            .data!.powerSupplyTestCode ??
+                                            .data!.frontBracketAssemblyCode ??
                                         '')),
                                     DataCell(getStatus(hhDeviceResponse!
-                                        .data!.powerSupplyTestCodeStatus)),
+                                        .data!.frontBracketAssemblyCodeStatus)),
                                   ],
                                 ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text("Power Adaptor")),
+                                    DataCell(Text(hhDeviceResponse!
+                                            .data!.powerAdaptorCode ??
+                                        '')),
+                                    DataCell(getStatus(hhDeviceResponse!
+                                        .data!.powerAdaptorCodeStatus)),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text("Enclosure Top")),
+                                    DataCell(Text(hhDeviceResponse!
+                                            .data!.enclosureTopCode ??
+                                        '')),
+                                    DataCell(Text("")),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text("Enclosure Bottom")),
+                                    DataCell(Text(hhDeviceResponse!
+                                            .data!.enclosureBottomCode ??
+                                        '')),
+                                    DataCell(Text("")),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text("Back Vent")),
+                                    DataCell(Text(
+                                        hhDeviceResponse!.data!.backVentCode ??
+                                            '')),
+                                    DataCell(Text("")),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text("Fan Mount")),
+                                    DataCell(Text(
+                                        hhDeviceResponse!.data!.fanMountCode ??
+                                            '')),
+                                    DataCell(Text("")),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text("Encoder Supporter")),
+                                    DataCell(Text(hhDeviceResponse!
+                                            .data!.encoderSupporterCode ??
+                                        '')),
+                                    DataCell(Text("")),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text("PCB Holder")),
+                                    DataCell(Text(
+                                        hhDeviceResponse!.data!.pcbHolderCode ??
+                                            '')),
+                                    DataCell(Text("")),
+                                  ],
+                                ),
+                                for (int i = 0;
+                                    i <
+                                        (hhDeviceResponse!
+                                                .data!.valveCards?.length ??
+                                            0);
+                                    i++)
+                                  DataRow(
+                                    cells: <DataCell>[
+                                      DataCell(Text("Valve Card ${i + 1}")),
+                                      DataCell(Text(hhDeviceResponse!
+                                          .data!.valveCards![i])),
+                                      DataCell(Text("")),
+                                    ],
+                                  ),
                                 DataRow(
                                   cells: <DataCell>[
                                     DataCell(Text("Created By")),
                                     DataCell(Text(
                                         hhDeviceResponse!.data!.createdBy ??
                                             '')),
-                                    DataCell(Text('')),
+                                    DataCell(Text("")),
                                   ],
                                 ),
                                 DataRow(
                                   cells: <DataCell>[
-                                    DataCell(Text("Date Time")),
+                                    DataCell(Text("Created At")),
                                     DataCell(Text(formatDate(
-                                            hhDeviceResponse!.data!.dateTime) ??
-                                        '')),
-                                    DataCell(Text('')),
+                                        hhDeviceResponse!.data!.dateTime))),
+                                    DataCell(Text("")),
                                   ],
                                 ),
                               ],
@@ -410,7 +524,7 @@ class _HistoryPageState extends State<HistoryPage> {
   }
 
   Future<bool> getRemoveDevice(String val) async {
-    GetHHDeviceResponse? resp = await _hhDeviceService.getHhDevice(val);
+    GetBTDeviceResponse? resp = await _hhDeviceService.getBTDevice(val);
 
     if (resp != null) {
       setState(() {

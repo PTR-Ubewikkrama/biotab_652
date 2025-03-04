@@ -21,7 +21,7 @@ class _VerifyComponentPageState extends State<VerifyComponentPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController qrCodeController = TextEditingController();
   String error = '';
-  final HhDeviceService _hhDeviceService = sl.get<HhDeviceService>();
+  final BTDeviceService _hhDeviceService = sl.get<BTDeviceService>();
   ComponentVerificationResp? hhDeviceResponse;
 
   void setScannedValue(String value, int index) {

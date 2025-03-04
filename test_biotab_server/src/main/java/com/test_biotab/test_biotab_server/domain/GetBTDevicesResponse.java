@@ -1,6 +1,6 @@
 package com.test_biotab.test_biotab_server.domain;
 
-import com.test_biotab.test_biotab_server.dto.DeviceHHDto;
+import com.test_biotab.test_biotab_server.dto.BTDeviceDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetHHDevicesResponse {
-    private List<DeviceHHDto> devices;
+public class GetBTDevicesResponse {
+    private List<BTDeviceDto> devices;
     private long total;
 }
