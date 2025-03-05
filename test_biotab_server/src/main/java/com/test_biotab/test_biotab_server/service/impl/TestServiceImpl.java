@@ -85,10 +85,10 @@ public class TestServiceImpl implements TestService {
                 .map(req -> {
                     log.info("Getting power supply test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
                     if (pageNo != null && pageNo.equals("all")) {
-                        return powerSupplyTestRepository.findByCustomQuery(getCustomQueryPowerSupplyTest(request, userDetails));
+                        return powerSupplyTestRepository.findByCustomQuery(getCustomQuery(PowerSupplyTestData.class,request, userDetails));
                     } else {
                         assert pageNo != null;
-                        return powerSupplyTestRepository.findByCustomQuery(getCustomQueryPowerSupplyTest(request, userDetails), Integer.parseInt(pageNo) - 1);
+                        return powerSupplyTestRepository.findByCustomQuery(getCustomQuery(PowerSupplyTestData.class,request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
                 .flatMap(powerSupplyTestData -> Mono.just(valveTestRepository.countByCustomQuery(getCustomCountQuery(PowerSupplyTestData.class, request, userDetails)))
@@ -133,18 +133,6 @@ public class TestServiceImpl implements TestService {
                 .toList();
     }
 
-    private TypedQuery<PowerSupplyTestData> getCustomQueryPowerSupplyTest(GetByPatternRequest request, UserDetails userDetails) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM PowerSupplyTestData v JOIN v.device d");
-
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, userDetails);
-
-        TypedQuery<PowerSupplyTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder).append(" ORDER BY v.dateTime DESC").toString(), PowerSupplyTestData.class);
-
-        return exchangeDateFilterInQuery(query, request);
-    }
-
     @Override
     public Mono<ResponseEntity<CommonResponse>> addValveTest(ValveTestAddRequest valveTestAddRequest) {
         return Mono.just(valveTestAddRequest)
@@ -187,10 +175,10 @@ public class TestServiceImpl implements TestService {
                 .map(req -> {
                     log.info("Getting valve test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
                     if (pageNo != null && pageNo.equals("all")) {
-                        return valveTestRepository.findByCustomQuery(getCustomQueryValveTest(request, userDetails));
+                        return valveTestRepository.findByCustomQuery(getCustomQuery(ValveTestData.class,request, userDetails));
                     } else {
                         assert pageNo != null;
-                        return valveTestRepository.findByCustomQuery(getCustomQueryValveTest(request, userDetails), Integer.parseInt(pageNo) - 1);
+                        return valveTestRepository.findByCustomQuery(getCustomQuery(ValveTestData.class,request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
                 .flatMap(valveTestData -> Mono.just(valveTestRepository.countByCustomQuery(getCustomCountQuery(ValveTestData.class, request, userDetails)))
@@ -208,19 +196,6 @@ public class TestServiceImpl implements TestService {
                     log.error("Error getting valve tests", e);
                     return Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get valve Tests"));
                 });
-    }
-
-    private TypedQuery<ValveTestData> getCustomQueryValveTest(GetByPatternRequest request, UserDetails userDetails) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM ValveTestData v JOIN v.device d");
-
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, userDetails);
-
-        TypedQuery<ValveTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
-                .append(" ORDER BY v.dateTime DESC").toString(), ValveTestData.class);
-
-        return exchangeDateFilterInQuery(query, request);
     }
 
     private List<ValveTestDto> getValveDtoFromEntity(List<ValveTestData> valveTestData) {
@@ -295,9 +270,9 @@ public class TestServiceImpl implements TestService {
                 .map(req -> {
                     log.info("Getting air pump test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
                     if (pageNo != null && pageNo.equals("all")) {
-                        return airPumpTestRepository.findByCustomQuery(getCustomQueryAirPumpTest(request, userDetails));
+                        return airPumpTestRepository.findByCustomQuery(getCustomQuery(AirPumpTestData.class,request, userDetails));
                     } else {
-                        return airPumpTestRepository.findByCustomQuery(getCustomQueryAirPumpTest(request, userDetails), Integer.parseInt(pageNo) - 1);
+                        return airPumpTestRepository.findByCustomQuery(getCustomQuery(AirPumpTestData.class,request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
                 .flatMap(airPumpTestData -> Mono.just(powerPCBTestRepository.countByCustomQuery(getCustomCountQuery(AirPumpTestData.class, request, userDetails)))
@@ -313,19 +288,6 @@ public class TestServiceImpl implements TestService {
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Air Pump Tests")));
 
-    }
-
-    private TypedQuery<AirPumpTestData> getCustomQueryAirPumpTest(GetByPatternRequest request, UserDetails userDetails) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM AirPumpTestData v JOIN v.device d");
-
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, userDetails);
-
-        TypedQuery<AirPumpTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
-                .append(" ORDER BY v.dateTime DESC").toString(), AirPumpTestData.class);
-
-        return exchangeDateFilterInQuery(query, request);
     }
 
     private List<AirPumpTestDto> getAirPumpDtoFromEntity(List<AirPumpTestData> airPumpTestData) {
@@ -388,9 +350,9 @@ public class TestServiceImpl implements TestService {
                 .map(req -> {
                     log.info("Getting power pcb test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
                     if (pageNo != null && pageNo.equals("all")) {
-                        return powerPCBTestRepository.findByCustomQuery(getCustomQueryPowerPCPTest(request, userDetails));
+                        return powerPCBTestRepository.findByCustomQuery(getCustomQuery(PowerPCBTestData.class, request, userDetails));
                     } else {
-                        return powerPCBTestRepository.findByCustomQuery(getCustomQueryPowerPCPTest(request, userDetails), Integer.parseInt(pageNo) - 1);
+                        return powerPCBTestRepository.findByCustomQuery(getCustomQuery(PowerPCBTestData.class, request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
                 .flatMap(powerPCBTestData -> Mono.just(powerPCBTestRepository.countByCustomQuery(getCustomCountQuery(PowerPCBTestData.class, request, userDetails)))
@@ -405,19 +367,6 @@ public class TestServiceImpl implements TestService {
                 )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Power PCB Tests")));
-    }
-
-    private TypedQuery<PowerPCBTestData> getCustomQueryPowerPCPTest(GetByPatternRequest request, UserDetails userDetails) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM PowerPCBTestData v JOIN v.device d");
-
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, userDetails);
-
-        TypedQuery<PowerPCBTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
-                .append(" ORDER BY v.dateTime DESC").toString(), PowerPCBTestData.class);
-
-        return exchangeDateFilterInQuery(query, request);
     }
 
     private List<PowerPCBTestDto> getPowerPCPDtoFromEntity(List<PowerPCBTestData> powerPCBTestData) {
@@ -479,9 +428,9 @@ public class TestServiceImpl implements TestService {
                 .map(req -> {
                     log.info("Getting air pump v2 test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
                     if (pageNo != null && pageNo.equals("all")) {
-                        return airPumpV2TestRepository.findByCustomQuery(getCustomQueryAirPumpV2Test(request, userDetails));
+                        return airPumpV2TestRepository.findByCustomQuery(getCustomQuery(AirPumpV2TestData.class, request, userDetails));
                     } else {
-                        return airPumpV2TestRepository.findByCustomQuery(getCustomQueryAirPumpV2Test(request, userDetails), Integer.parseInt(pageNo) - 1);
+                        return airPumpV2TestRepository.findByCustomQuery(getCustomQuery(AirPumpV2TestData.class, request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
                 .flatMap(airPumpV2TestData -> Mono.just(airPumpV2TestRepository.countByCustomQuery(getCustomCountQuery(AirPumpV2TestData.class, request, userDetails)))
@@ -496,19 +445,6 @@ public class TestServiceImpl implements TestService {
                 )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Air Pump V2 Tests")));
-    }
-
-    private TypedQuery<AirPumpV2TestData> getCustomQueryAirPumpV2Test(GetByPatternRequest request, UserDetails userDetails) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM AirPumpV2TestData v JOIN v.device d");
-
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, userDetails);
-
-        TypedQuery<AirPumpV2TestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
-                .append(" ORDER BY v.dateTime DESC").toString(), AirPumpV2TestData.class);
-
-        return exchangeDateFilterInQuery(query, request);
     }
 
     private List<AirPumpV2TestDto> getAirPumpV2DtoFromEntity(List<AirPumpV2TestData> airPumpV2TestData) {
@@ -573,9 +509,9 @@ public class TestServiceImpl implements TestService {
                 .map(req -> {
                     log.info("Getting power pcb v2 test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
                     if (pageNo != null && pageNo.equals("all")) {
-                        return powerPCBV2TestRepository.findByCustomQuery(getCustomQueryPowerPCBV2Test(request, userDetails));
+                        return powerPCBV2TestRepository.findByCustomQuery(getCustomQuery(PowerPCBV2TestData.class, request, userDetails));
                     } else {
-                        return powerPCBV2TestRepository.findByCustomQuery(getCustomQueryPowerPCBV2Test(request, userDetails), Integer.parseInt(pageNo) - 1);
+                        return powerPCBV2TestRepository.findByCustomQuery(getCustomQuery(PowerPCBV2TestData.class, request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
                 .flatMap(powerPCBV2TestData -> Mono.just(powerPCBV2TestRepository.countByCustomQuery(getCustomCountQuery(PowerPCBV2TestData.class, request, userDetails)))
@@ -590,19 +526,6 @@ public class TestServiceImpl implements TestService {
                 )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Power PCB V2 Tests")));
-    }
-
-    private TypedQuery<PowerPCBV2TestData> getCustomQueryPowerPCBV2Test(GetByPatternRequest request, UserDetails userDetails) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM PowerPCBV2TestData v JOIN v.device d");
-
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, userDetails);
-
-        TypedQuery<PowerPCBV2TestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
-                .append(" ORDER BY v.dateTime DESC").toString(), PowerPCBV2TestData.class);
-
-        return exchangeDateFilterInQuery(query, request);
     }
 
     private List<PowerPCBV2TestDto> getPowerPCBV2DtoFromEntity(List<PowerPCBV2TestData> powerPCBV2TestData) {
@@ -664,9 +587,9 @@ public class TestServiceImpl implements TestService {
                 .map(req -> {
                     log.info("Getting power supply v2 test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
                     if (pageNo != null && pageNo.equals("all")) {
-                        return powerSupplyV2TestRepository.findByCustomQuery(getCustomQueryPowerSupplyV2Test(request, userDetails));
+                        return powerSupplyV2TestRepository.findByCustomQuery(getCustomQuery(PowerSupplyV2TestData.class, request, userDetails));
                     } else {
-                        return powerSupplyV2TestRepository.findByCustomQuery(getCustomQueryPowerSupplyV2Test(request, userDetails), Integer.parseInt(pageNo) - 1);
+                        return powerSupplyV2TestRepository.findByCustomQuery(getCustomQuery(PowerSupplyV2TestData.class, request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
                 .flatMap(powerSupplyV2TestData -> Mono.just(valveSequenceTestRepository.countByCustomQuery(getCustomCountQuery(PowerSupplyV2TestData.class, request, userDetails)))
@@ -681,19 +604,6 @@ public class TestServiceImpl implements TestService {
                 )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Power Supply V2 Tests")));
-    }
-
-    private TypedQuery<PowerSupplyV2TestData> getCustomQueryPowerSupplyV2Test(GetByPatternRequest request, UserDetails userDetails) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM PowerSupplyV2TestData v JOIN v.device d");
-
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, userDetails);
-
-        TypedQuery<PowerSupplyV2TestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
-                .append(" ORDER BY v.dateTime DESC").toString(), PowerSupplyV2TestData.class);
-
-        return exchangeDateFilterInQuery(query, request);
     }
 
     private List<PowerSupplyV2TestDto> getPowerSupplyV2DtoFromEntity(List<PowerSupplyV2TestData> powerSupplyV2TestData) {
@@ -757,9 +667,9 @@ public class TestServiceImpl implements TestService {
                 .map(req -> {
                     log.info("Getting op valve test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
                     if (pageNo != null && pageNo.equals("all")) {
-                        return opValveTestRepository.findByCustomQuery(getCustomQueryOpValveTest(request, userDetails));
+                        return opValveTestRepository.findByCustomQuery(getCustomQuery(OpValveTestData.class, request, userDetails));
                     } else {
-                        return opValveTestRepository.findByCustomQuery(getCustomQueryOpValveTest(request, userDetails), Integer.parseInt(pageNo) - 1);
+                        return opValveTestRepository.findByCustomQuery(getCustomQuery(OpValveTestData.class, request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
                 .flatMap(opValveTestData -> Mono.just(valveSequenceTestRepository.countByCustomQuery(getCustomCountQuery(OpValveTestData.class, request, userDetails)))
@@ -774,19 +684,6 @@ public class TestServiceImpl implements TestService {
                 )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Op Valve Tests")));
-    }
-
-    private TypedQuery<OpValveTestData> getCustomQueryOpValveTest(GetByPatternRequest request, UserDetails userDetails) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM OpValveTestData v JOIN v.device d");
-
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, userDetails);
-
-        TypedQuery<OpValveTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
-                .append(" ORDER BY v.dateTime DESC").toString(), OpValveTestData.class);
-
-        return exchangeDateFilterInQuery(query, request);
     }
 
     private List<OpValveTestDto> getOpValveDtoFromEntity(List<OpValveTestData> opValveTestData) {
@@ -971,9 +868,9 @@ public class TestServiceImpl implements TestService {
                 .map(req -> {
                     log.info("Getting valve sequence test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
                     if (pageNo != null && pageNo.equals("all")) {
-                        return valveSequenceTestRepository.findByCustomQuery(getCustomQueryValveSequenceTest(request, userDetails));
+                        return valveSequenceTestRepository.findByCustomQuery(getCustomQuery(ValveSequenceTestData.class, request, userDetails));
                     } else {
-                        return valveSequenceTestRepository.findByCustomQuery(getCustomQueryValveSequenceTest(request, userDetails), Integer.parseInt(pageNo) - 1);
+                        return valveSequenceTestRepository.findByCustomQuery(getCustomQuery(ValveSequenceTestData.class, request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
                 .flatMap(valveSequenceTestData -> Mono.just(valveSequenceTestRepository.countByCustomQuery(getCustomCountQuery(ValveSequenceTestData.class, request, userDetails)))
@@ -988,19 +885,6 @@ public class TestServiceImpl implements TestService {
                 )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Valve Sequence Tests")));
-    }
-
-    private TypedQuery<ValveSequenceTestData> getCustomQueryValveSequenceTest(GetByPatternRequest request, UserDetails userDetails) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM ValveSequenceTestData v JOIN v.device d");
-
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, userDetails);
-
-        TypedQuery<ValveSequenceTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
-                .append(" ORDER BY v.dateTime DESC").toString(), ValveSequenceTestData.class);
-
-        return exchangeDateFilterInQuery(query, request);
     }
 
     private List<ValveSequenceTestDto> getValveSequenceDtoFromEntity(List<ValveSequenceTestData> valveSequenceTestData) {
@@ -1187,9 +1071,9 @@ public class TestServiceImpl implements TestService {
                 .map(req -> {
                     log.info("Getting valve card test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
                     if (pageNo != null && pageNo.equals("all")) {
-                        return valveCardTestRepository.findByCustomQuery(getCustomQueryValveCardTest(request, userDetails));
+                        return valveCardTestRepository.findByCustomQuery(getCustomQuery(ValveCardTestData.class, request, userDetails));
                     } else {
-                        return valveCardTestRepository.findByCustomQuery(getCustomQueryValveCardTest(request, userDetails), Integer.parseInt(pageNo) - 1);
+                        return valveCardTestRepository.findByCustomQuery(getCustomQuery(ValveCardTestData.class, request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
                 .flatMap(valveCardTestData -> Mono.just(valveCardTestRepository.countByCustomQuery(getCustomCountQuery(ValveCardTestData.class, request, userDetails)))
@@ -1204,19 +1088,6 @@ public class TestServiceImpl implements TestService {
                 )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Valve Card Tests")));
-    }
-
-    private TypedQuery<ValveCardTestData> getCustomQueryValveCardTest(GetByPatternRequest request, UserDetails userDetails) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM ValveCardTestData v JOIN v.device d");
-
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, userDetails);
-
-        TypedQuery<ValveCardTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
-                .append(" ORDER BY v.dateTime DESC").toString(), ValveCardTestData.class);
-
-        return exchangeDateFilterInQuery(query, request);
     }
 
     private List<ValveCardTestDto> getValveCardDtoFromEntity(List<ValveCardTestData> valveCardTestData) {
@@ -1273,9 +1144,9 @@ public class TestServiceImpl implements TestService {
                 .map(req -> {
                     log.info("Getting manifold leak test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
                     if (pageNo != null && pageNo.equals("all")) {
-                        return maniFoldLeakTestRepository.findByCustomQuery(getCustomQueryManiFoldLeakTest(request, userDetails));
+                        return maniFoldLeakTestRepository.findByCustomQuery(getCustomQuery(ManiFoldLeakTestData.class, request, userDetails));
                     } else {
-                        return maniFoldLeakTestRepository.findByCustomQuery(getCustomQueryManiFoldLeakTest(request, userDetails), Integer.parseInt(pageNo) - 1);
+                        return maniFoldLeakTestRepository.findByCustomQuery(getCustomQuery(ManiFoldLeakTestData.class, request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
                 .flatMap(maniFoldLeakTestData -> Mono.just(maniFoldLeakTestRepository.countByCustomQuery(getCustomCountQuery(ManiFoldLeakTestData.class, request, userDetails)))
@@ -1290,19 +1161,6 @@ public class TestServiceImpl implements TestService {
                 )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Manifold Leak Tests")));
-    }
-
-    private TypedQuery<ManiFoldLeakTestData> getCustomQueryManiFoldLeakTest(GetByPatternRequest request, UserDetails userDetails) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM ManiFoldLeakTestData v JOIN v.device d");
-
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, userDetails);
-
-        TypedQuery<ManiFoldLeakTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
-                .append(" ORDER BY v.dateTime DESC").toString(), ManiFoldLeakTestData.class);
-
-        return exchangeDateFilterInQuery(query, request);
     }
 
     private List<ManiFoldLeakTestDto> getManiFoldLeakDtoFromEntity(List<ManiFoldLeakTestData> maniFoldLeakTestData) {
@@ -1352,9 +1210,9 @@ public class TestServiceImpl implements TestService {
                 .map(req -> {
                     log.info("Getting UI PCB test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
                     if (pageNo != null && pageNo.equals("all")) {
-                        return uiPcbTestRepository.findByCustomQuery(getCustomQueryUiPcbTest(request, userDetails));
+                        return uiPcbTestRepository.findByCustomQuery(getCustomQuery(UiPcbTestData.class, request, userDetails));
                     } else {
-                        return uiPcbTestRepository.findByCustomQuery(getCustomQueryUiPcbTest(request, userDetails), Integer.parseInt(pageNo) - 1);
+                        return uiPcbTestRepository.findByCustomQuery(getCustomQuery(UiPcbTestData.class, request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
                 .flatMap(uiPcbTestData -> Mono.just(uiPcbTestRepository.countByCustomQuery(getCustomCountQuery(UiPcbTestData.class, request, userDetails)))
@@ -1369,19 +1227,6 @@ public class TestServiceImpl implements TestService {
                 )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get UI PCB Tests")));
-    }
-
-    private TypedQuery<UiPcbTestData> getCustomQueryUiPcbTest(GetByPatternRequest request, UserDetails userDetails) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM UiPcbTestData v JOIN v.device d");
-
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, userDetails);
-
-        TypedQuery<UiPcbTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
-                .append(" ORDER BY v.dateTime DESC").toString(), UiPcbTestData.class);
-
-        return exchangeDateFilterInQuery(query, request);
     }
 
     private List<UiPcbTestDto> getUiPcbDtoFromEntity(List<UiPcbTestData> uiPcbTestData) {
@@ -1440,9 +1285,9 @@ public class TestServiceImpl implements TestService {
                 .map(req -> {
                     log.info("Getting cable test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
                     if (pageNo != null && pageNo.equals("all")) {
-                        return cableTestRepository.findByCustomQuery(getCustomQueryCableTest(request, userDetails));
+                        return cableTestRepository.findByCustomQuery(getCustomQuery(CableTestData.class, request, userDetails));
                     } else {
-                        return cableTestRepository.findByCustomQuery(getCustomQueryCableTest(request, userDetails), Integer.parseInt(pageNo) - 1);
+                        return cableTestRepository.findByCustomQuery(getCustomQuery(CableTestData.class, request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
                 .flatMap(cableTestData -> Mono.just(cableTestRepository.countByCustomQuery(getCustomCountQuery(CableTestData.class, request, userDetails)))
@@ -1457,19 +1302,6 @@ public class TestServiceImpl implements TestService {
                 )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Cable Tests")));
-    }
-
-    private TypedQuery<CableTestData> getCustomQueryCableTest(GetByPatternRequest request, UserDetails userDetails) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM CableTestData v JOIN v.device d");
-
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, userDetails);
-
-        TypedQuery<CableTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
-                .append(" ORDER BY v.dateTime DESC").toString(), CableTestData.class);
-
-        return exchangeDateFilterInQuery(query, request);
     }
 
     private List<CableTestDto> getCableDtoFromEntity(List<CableTestData> cableTestData) {
@@ -1528,9 +1360,9 @@ public class TestServiceImpl implements TestService {
                 .map(req -> {
                     log.info("Getting fan test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
                     if (pageNo != null && pageNo.equals("all")) {
-                        return fanTestRepository.findByCustomQuery(getCustomQueryFanTest(request, userDetails));
+                        return fanTestRepository.findByCustomQuery(getCustomQuery(FanTestData.class, request, userDetails));
                     } else {
-                        return fanTestRepository.findByCustomQuery(getCustomQueryFanTest(request, userDetails), Integer.parseInt(pageNo) - 1);
+                        return fanTestRepository.findByCustomQuery(getCustomQuery(FanTestData.class, request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
                 .flatMap(fanTestData -> Mono.just(fanTestRepository.countByCustomQuery(getCustomCountQuery(FanTestData.class, request, userDetails)))
@@ -1545,19 +1377,6 @@ public class TestServiceImpl implements TestService {
                 )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Fan Tests")));
-    }
-
-    private TypedQuery<FanTestData> getCustomQueryFanTest(GetByPatternRequest request, UserDetails userDetails) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM FanTestData v JOIN v.device d");
-
-        List<String> filterParts = new ArrayList<>();
-
-        calculateFilterParts(request, filterParts, userDetails);
-
-        TypedQuery<FanTestData> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
-                .append(" ORDER BY v.dateTime DESC").toString(), FanTestData.class);
-
-        return exchangeDateFilterInQuery(query, request);
     }
 
     private List<FanTestDto> getFanDtoFromEntity(List<FanTestData> fanTestData) {
@@ -1647,6 +1466,18 @@ public class TestServiceImpl implements TestService {
         calculateFilterParts(request, filterParts, userDetails);
 
         TypedQuery<Long> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder).toString(), Long.class);
+
+        return exchangeDateFilterInQuery(query, request);
+    }
+
+    private <T> TypedQuery<T> getCustomQuery(Class<T> entityClass, GetByPatternRequest request, UserDetails userDetails) {
+        StringBuilder queryBuilder = new StringBuilder("SELECT v FROM " + entityClass.getSimpleName() + " v JOIN v.device d");
+
+        List<String> filterParts = new ArrayList<>();
+        calculateFilterParts(request, filterParts, userDetails);
+
+        TypedQuery<T> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder)
+                .append(" ORDER BY v.dateTime DESC").toString(), entityClass);
 
         return exchangeDateFilterInQuery(query, request);
     }
