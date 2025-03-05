@@ -80,7 +80,7 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public Mono<ResponseEntity<ApiResponse<GetPowerSupplyTestResponse>>> getPowerSupplyTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
+    public Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<PowerSupplyTestDto>>>> getPowerSupplyTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
         return Mono.just(request)
                 .map(req -> {
                     log.info("Getting power supply test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
@@ -91,21 +91,16 @@ public class TestServiceImpl implements TestService {
                         return powerSupplyTestRepository.findByCustomQuery(getCustomQueryPowerSupplyTest(request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
-                .flatMap(powerSupplyTestData -> {
-                    long total = powerSupplyTestData.size();
-                    long totalFailed = powerSupplyTestData.stream()
-                            .filter(data -> !data.getStatus())
-                            .count();
-                    return Mono.just(ApiResponse.<GetPowerSupplyTestResponse>builder()
-                            .status("S1000")
-                            .statusDescription("Request successful")
-                            .data(GetPowerSupplyTestResponse.builder()
-                                    .powerSupplyTests(getPowerSupplyDtoFromEntity(powerSupplyTestData))
-                                    .totalRecords(total)
-                                    .totalFailed(totalFailed)
-                                    .build())
-                            .build());
-                })
+                .flatMap(powerSupplyTestData -> Mono.just(valveTestRepository.countByCustomQuery(getCustomCountQuery(PowerSupplyTestData.class, request, userDetails)))
+                        .map(totalRecords -> ApiResponse.<GetTestResponse<PowerSupplyTestDto>>builder()
+                                .status("S1000")
+                                .statusDescription("Request successful")
+                                .data(GetTestResponse.<PowerSupplyTestDto>builder()
+                                        .tests(getPowerSupplyDtoFromEntity(powerSupplyTestData))
+                                        .totalRecords(totalRecords)
+                                        .build())
+                                .build())
+                )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> {
                     log.error("Error getting power supply tests", e);
@@ -187,7 +182,7 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public Mono<ResponseEntity<ApiResponse<GetValveTestResponse>>> getValveTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
+    public Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<ValveTestDto>>>> getValveTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
         return Mono.just(request)
                 .map(req -> {
                     log.info("Getting valve test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
@@ -198,21 +193,16 @@ public class TestServiceImpl implements TestService {
                         return valveTestRepository.findByCustomQuery(getCustomQueryValveTest(request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
-                .flatMap(valveTestData -> {
-                    long total = valveTestData.size();
-                    long totalFailed = valveTestData.stream()
-                            .filter(data -> !data.getStatus())
-                            .count();
-                    return Mono.just(ApiResponse.<GetValveTestResponse>builder()
-                            .status("S1000")
-                            .statusDescription("Request successful")
-                            .data(GetValveTestResponse.builder()
-                                    .valveTests(getValveDtoFromEntity(valveTestData))
-                                    .totalRecords(total)
-                                    .totalFailed(totalFailed)
-                                    .build())
-                            .build());
-                })
+                .flatMap(valveTestData -> Mono.just(valveTestRepository.countByCustomQuery(getCustomCountQuery(ValveTestData.class, request, userDetails)))
+                        .map(totalRecords -> ApiResponse.<GetTestResponse<ValveTestDto>>builder()
+                                .status("S1000")
+                                .statusDescription("Request successful")
+                                .data(GetTestResponse.<ValveTestDto>builder()
+                                        .tests(getValveDtoFromEntity(valveTestData))
+                                        .totalRecords(totalRecords)
+                                        .build())
+                                .build())
+                )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> {
                     log.error("Error getting valve tests", e);
@@ -300,7 +290,7 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public Mono<ResponseEntity<ApiResponse<GetAirPumpTestResponse>>> getAirPumpTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
+    public Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<AirPumpTestDto>>>> getAirPumpTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
         return Mono.just(request)
                 .map(req -> {
                     log.info("Getting air pump test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
@@ -310,21 +300,16 @@ public class TestServiceImpl implements TestService {
                         return airPumpTestRepository.findByCustomQuery(getCustomQueryAirPumpTest(request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
-                .flatMap(airPumpTestData -> {
-                    long total = airPumpTestData.size();
-                    long totalFailed = airPumpTestData.stream()
-                            .filter(data -> !data.getStatus())
-                            .count();
-                    return Mono.just(ApiResponse.<GetAirPumpTestResponse>builder()
-                            .status("S1000")
-                            .statusDescription("Request successful")
-                            .data(GetAirPumpTestResponse.builder()
-                                    .airPumpTests(getAirPumpDtoFromEntity(airPumpTestData))
-                                    .totalRecords(total)
-                                    .totalFailed(totalFailed)
-                                    .build())
-                            .build());
-                })
+                .flatMap(airPumpTestData -> Mono.just(powerPCBTestRepository.countByCustomQuery(getCustomCountQuery(AirPumpTestData.class, request, userDetails)))
+                        .map(totalRecords -> ApiResponse.<GetTestResponse<AirPumpTestDto>>builder()
+                                .status("S1000")
+                                .statusDescription("Request successful")
+                                .data(GetTestResponse.<AirPumpTestDto>builder()
+                                        .tests(getAirPumpDtoFromEntity(airPumpTestData))
+                                        .totalRecords(totalRecords)
+                                        .build())
+                                .build())
+                )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Air Pump Tests")));
 
@@ -398,7 +383,7 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public Mono<ResponseEntity<ApiResponse<GetTestResponse<PowerPCBTestDto>>>> getPowerPCBTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
+    public Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<PowerPCBTestDto>>>> getPowerPCBTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
         return Mono.just(request)
                 .map(req -> {
                     log.info("Getting power pcb test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
@@ -408,21 +393,16 @@ public class TestServiceImpl implements TestService {
                         return powerPCBTestRepository.findByCustomQuery(getCustomQueryPowerPCPTest(request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
-                .flatMap(powerPCBTestData -> {
-                    long total = powerPCBTestData.size();
-                    long totalFailed = powerPCBTestData.stream()
-                            .filter(data -> !data.getStatus())
-                            .count();
-                    return Mono.just(ApiResponse.<GetTestResponse<PowerPCBTestDto>>builder()
-                            .status("S1000")
-                            .statusDescription("Request successful")
-                            .data(GetTestResponse.<PowerPCBTestDto>builder()
-                                    .tests(getPowerPCPDtoFromEntity(powerPCBTestData))
-                                    .totalRecords(total)
-                                    .totalFailed(totalFailed)
-                                    .build())
-                            .build());
-                })
+                .flatMap(powerPCBTestData -> Mono.just(powerPCBTestRepository.countByCustomQuery(getCustomCountQuery(PowerPCBTestData.class, request, userDetails)))
+                        .map(totalRecords -> ApiResponse.<GetTestResponse<PowerPCBTestDto>>builder()
+                                .status("S1000")
+                                .statusDescription("Request successful")
+                                .data(GetTestResponse.<PowerPCBTestDto>builder()
+                                        .tests(getPowerPCPDtoFromEntity(powerPCBTestData))
+                                        .totalRecords(totalRecords)
+                                        .build())
+                                .build())
+                )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Power PCB Tests")));
     }
@@ -504,21 +484,16 @@ public class TestServiceImpl implements TestService {
                         return airPumpV2TestRepository.findByCustomQuery(getCustomQueryAirPumpV2Test(request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
-                .flatMap(airPumpV2TestData -> {
-                    long total = airPumpV2TestData.size();
-                    long totalFailed = airPumpV2TestData.stream()
-                            .filter(data -> !data.getStatus())
-                            .count();
-                    return Mono.just(ApiResponse.<GetTestResponse<AirPumpV2TestDto>>builder()
-                            .status("S1000")
-                            .statusDescription("Request successful")
-                            .data(GetTestResponse.<AirPumpV2TestDto>builder()
-                                    .tests(getAirPumpV2DtoFromEntity(airPumpV2TestData))
-                                    .totalRecords(total)
-                                    .totalFailed(totalFailed)
-                                    .build())
-                            .build());
-                })
+                .flatMap(airPumpV2TestData -> Mono.just(airPumpV2TestRepository.countByCustomQuery(getCustomCountQuery(AirPumpV2TestData.class, request, userDetails)))
+                        .map(totalRecords -> ApiResponse.<GetTestResponse<AirPumpV2TestDto>>builder()
+                                .status("S1000")
+                                .statusDescription("Request successful")
+                                .data(GetTestResponse.<AirPumpV2TestDto>builder()
+                                        .tests(getAirPumpV2DtoFromEntity(airPumpV2TestData))
+                                        .totalRecords(totalRecords)
+                                        .build())
+                                .build())
+                )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Air Pump V2 Tests")));
     }
@@ -603,21 +578,16 @@ public class TestServiceImpl implements TestService {
                         return powerPCBV2TestRepository.findByCustomQuery(getCustomQueryPowerPCBV2Test(request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
-                .flatMap(powerPCBV2TestData -> {
-                    long total = powerPCBV2TestData.size();
-                    long totalFailed = powerPCBV2TestData.stream()
-                            .filter(data -> !data.getStatus())
-                            .count();
-                    return Mono.just(ApiResponse.<GetTestResponse<PowerPCBV2TestDto>>builder()
-                            .status("S1000")
-                            .statusDescription("Request successful")
-                            .data(GetTestResponse.<PowerPCBV2TestDto>builder()
-                                    .tests(getPowerPCBV2DtoFromEntity(powerPCBV2TestData))
-                                    .totalRecords(total)
-                                    .totalFailed(totalFailed)
-                                    .build())
-                            .build());
-                })
+                .flatMap(powerPCBV2TestData -> Mono.just(powerPCBV2TestRepository.countByCustomQuery(getCustomCountQuery(PowerPCBV2TestData.class, request, userDetails)))
+                        .map(totalRecords -> ApiResponse.<GetTestResponse<PowerPCBV2TestDto>>builder()
+                                .status("S1000")
+                                .statusDescription("Request successful")
+                                .data(GetTestResponse.<PowerPCBV2TestDto>builder()
+                                        .tests(getPowerPCBV2DtoFromEntity(powerPCBV2TestData))
+                                        .totalRecords(totalRecords)
+                                        .build())
+                                .build())
+                )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Power PCB V2 Tests")));
     }
@@ -699,21 +669,16 @@ public class TestServiceImpl implements TestService {
                         return powerSupplyV2TestRepository.findByCustomQuery(getCustomQueryPowerSupplyV2Test(request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
-                .flatMap(powerSupplyV2TestData -> {
-                    long total = powerSupplyV2TestData.size();
-                    long totalFailed = powerSupplyV2TestData.stream()
-                            .filter(data -> !data.getStatus())
-                            .count();
-                    return Mono.just(ApiResponse.<GetTestResponse<PowerSupplyV2TestDto>>builder()
-                            .status("S1000")
-                            .statusDescription("Request successful")
-                            .data(GetTestResponse.<PowerSupplyV2TestDto>builder()
-                                    .tests(getPowerSupplyV2DtoFromEntity(powerSupplyV2TestData))
-                                    .totalRecords(total)
-                                    .totalFailed(totalFailed)
-                                    .build())
-                            .build());
-                })
+                .flatMap(powerSupplyV2TestData -> Mono.just(valveSequenceTestRepository.countByCustomQuery(getCustomCountQuery(PowerSupplyV2TestData.class, request, userDetails)))
+                        .map(totalRecords -> ApiResponse.<GetTestResponse<PowerSupplyV2TestDto>>builder()
+                                .status("S1000")
+                                .statusDescription("Request successful")
+                                .data(GetTestResponse.<PowerSupplyV2TestDto>builder()
+                                        .tests(getPowerSupplyV2DtoFromEntity(powerSupplyV2TestData))
+                                        .totalRecords(totalRecords)
+                                        .build())
+                                .build())
+                )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Power Supply V2 Tests")));
     }
@@ -797,21 +762,16 @@ public class TestServiceImpl implements TestService {
                         return opValveTestRepository.findByCustomQuery(getCustomQueryOpValveTest(request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
-                .flatMap(opValveTestData -> {
-                    long total = opValveTestData.size();
-                    long totalFailed = opValveTestData.stream()
-                            .filter(data -> !data.getStatus())
-                            .count();
-                    return Mono.just(ApiResponse.<GetTestResponse<OpValveTestDto>>builder()
-                            .status("S1000")
-                            .statusDescription("Request successful")
-                            .data(GetTestResponse.<OpValveTestDto>builder()
-                                    .tests(getOpValveDtoFromEntity(opValveTestData))
-                                    .totalRecords(total)
-                                    .totalFailed(totalFailed)
-                                    .build())
-                            .build());
-                })
+                .flatMap(opValveTestData -> Mono.just(valveSequenceTestRepository.countByCustomQuery(getCustomCountQuery(OpValveTestData.class, request, userDetails)))
+                        .map(totalRecords -> ApiResponse.<GetTestResponse<OpValveTestDto>>builder()
+                                .status("S1000")
+                                .statusDescription("Request successful")
+                                .data(GetTestResponse.<OpValveTestDto>builder()
+                                        .tests(getOpValveDtoFromEntity(opValveTestData))
+                                        .totalRecords(totalRecords)
+                                        .build())
+                                .build())
+                )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Op Valve Tests")));
     }
@@ -1016,21 +976,16 @@ public class TestServiceImpl implements TestService {
                         return valveSequenceTestRepository.findByCustomQuery(getCustomQueryValveSequenceTest(request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
-                .flatMap(valveSequenceTestData -> {
-                    long total = valveSequenceTestData.size();
-                    long totalFailed = valveSequenceTestData.stream()
-                            .filter(data -> !data.getStatus())
-                            .count();
-                    return Mono.just(ApiResponse.<GetTestResponse<ValveSequenceTestDto>>builder()
-                            .status("S1000")
-                            .statusDescription("Request successful")
-                            .data(GetTestResponse.<ValveSequenceTestDto>builder()
-                                    .tests(getValveSequenceDtoFromEntity(valveSequenceTestData))
-                                    .totalRecords(total)
-                                    .totalFailed(totalFailed)
-                                    .build())
-                            .build());
-                })
+                .flatMap(valveSequenceTestData -> Mono.just(valveSequenceTestRepository.countByCustomQuery(getCustomCountQuery(ValveSequenceTestData.class, request, userDetails)))
+                        .map(totalRecords -> ApiResponse.<GetTestResponse<ValveSequenceTestDto>>builder()
+                                .status("S1000")
+                                .statusDescription("Request successful")
+                                .data(GetTestResponse.<ValveSequenceTestDto>builder()
+                                        .tests(getValveSequenceDtoFromEntity(valveSequenceTestData))
+                                        .totalRecords(totalRecords)
+                                        .build())
+                                .build())
+                )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Valve Sequence Tests")));
     }
@@ -1237,21 +1192,16 @@ public class TestServiceImpl implements TestService {
                         return valveCardTestRepository.findByCustomQuery(getCustomQueryValveCardTest(request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
-                .flatMap(valveCardTestData -> {
-                    long total = valveCardTestData.size();
-                    long totalFailed = valveCardTestData.stream()
-                            .filter(data -> !data.getStatus())
-                            .count();
-                    return Mono.just(ApiResponse.<GetTestResponse<ValveCardTestDto>>builder()
-                            .status("S1000")
-                            .statusDescription("Request successful")
-                            .data(GetTestResponse.<ValveCardTestDto>builder()
-                                    .tests(getValveCardDtoFromEntity(valveCardTestData))
-                                    .totalRecords(total)
-                                    .totalFailed(totalFailed)
-                                    .build())
-                            .build());
-                })
+                .flatMap(valveCardTestData -> Mono.just(valveCardTestRepository.countByCustomQuery(getCustomCountQuery(ValveCardTestData.class, request, userDetails)))
+                        .map(totalRecords -> ApiResponse.<GetTestResponse<ValveCardTestDto>>builder()
+                                .status("S1000")
+                                .statusDescription("Request successful")
+                                .data(GetTestResponse.<ValveCardTestDto>builder()
+                                        .tests(getValveCardDtoFromEntity(valveCardTestData))
+                                        .totalRecords(totalRecords)
+                                        .build())
+                                .build())
+                )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Valve Card Tests")));
     }
@@ -1328,21 +1278,16 @@ public class TestServiceImpl implements TestService {
                         return maniFoldLeakTestRepository.findByCustomQuery(getCustomQueryManiFoldLeakTest(request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
-                .flatMap(maniFoldLeakTestData -> {
-                    long total = maniFoldLeakTestData.size();
-                    long totalFailed = maniFoldLeakTestData.stream()
-                            .filter(data -> !data.getStatus())
-                            .count();
-                    return Mono.just(ApiResponse.<GetTestResponse<ManiFoldLeakTestDto>>builder()
-                            .status("S1000")
-                            .statusDescription("Request successful")
-                            .data(GetTestResponse.<ManiFoldLeakTestDto>builder()
-                                    .tests(getManiFoldLeakDtoFromEntity(maniFoldLeakTestData))
-                                    .totalRecords(total)
-                                    .totalFailed(totalFailed)
-                                    .build())
-                            .build());
-                })
+                .flatMap(maniFoldLeakTestData -> Mono.just(maniFoldLeakTestRepository.countByCustomQuery(getCustomCountQuery(ManiFoldLeakTestData.class, request, userDetails)))
+                        .map(totalRecords -> ApiResponse.<GetTestResponse<ManiFoldLeakTestDto>>builder()
+                                .status("S1000")
+                                .statusDescription("Request successful")
+                                .data(GetTestResponse.<ManiFoldLeakTestDto>builder()
+                                        .tests(getManiFoldLeakDtoFromEntity(maniFoldLeakTestData))
+                                        .totalRecords(totalRecords)
+                                        .build())
+                                .build())
+                )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Manifold Leak Tests")));
     }
@@ -1412,21 +1357,16 @@ public class TestServiceImpl implements TestService {
                         return uiPcbTestRepository.findByCustomQuery(getCustomQueryUiPcbTest(request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
-                .flatMap(uiPcbTestData -> {
-                    long total = uiPcbTestData.size();
-                    long totalFailed = uiPcbTestData.stream()
-                            .filter(data -> !data.getStatus())
-                            .count();
-                    return Mono.just(ApiResponse.<GetTestResponse<UiPcbTestDto>>builder()
-                            .status("S1000")
-                            .statusDescription("Request successful")
-                            .data(GetTestResponse.<UiPcbTestDto>builder()
-                                    .tests(getUiPcbDtoFromEntity(uiPcbTestData))
-                                    .totalRecords(total)
-                                    .totalFailed(totalFailed)
-                                    .build())
-                            .build());
-                })
+                .flatMap(uiPcbTestData -> Mono.just(uiPcbTestRepository.countByCustomQuery(getCustomCountQuery(UiPcbTestData.class, request, userDetails)))
+                        .map(totalRecords -> ApiResponse.<GetTestResponse<UiPcbTestDto>>builder()
+                                .status("S1000")
+                                .statusDescription("Request successful")
+                                .data(GetTestResponse.<UiPcbTestDto>builder()
+                                        .tests(getUiPcbDtoFromEntity(uiPcbTestData))
+                                        .totalRecords(totalRecords)
+                                        .build())
+                                .build())
+                )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get UI PCB Tests")));
     }
@@ -1505,21 +1445,16 @@ public class TestServiceImpl implements TestService {
                         return cableTestRepository.findByCustomQuery(getCustomQueryCableTest(request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
-                .flatMap(cableTestData -> {
-                    long total = cableTestData.size();
-                    long totalFailed = cableTestData.stream()
-                            .filter(data -> !data.getStatus())
-                            .count();
-                    return Mono.just(ApiResponse.<GetTestResponse<CableTestDto>>builder()
-                            .status("S1000")
-                            .statusDescription("Request successful")
-                            .data(GetTestResponse.<CableTestDto>builder()
-                                    .tests(getCableDtoFromEntity(cableTestData))
-                                    .totalRecords(total)
-                                    .totalFailed(totalFailed)
-                                    .build())
-                            .build());
-                })
+                .flatMap(cableTestData -> Mono.just(cableTestRepository.countByCustomQuery(getCustomCountQuery(CableTestData.class, request, userDetails)))
+                        .map(totalRecords -> ApiResponse.<GetTestResponse<CableTestDto>>builder()
+                                .status("S1000")
+                                .statusDescription("Request successful")
+                                .data(GetTestResponse.<CableTestDto>builder()
+                                        .tests(getCableDtoFromEntity(cableTestData))
+                                        .totalRecords(totalRecords)
+                                        .build())
+                                .build())
+                )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Cable Tests")));
     }
@@ -1598,21 +1533,16 @@ public class TestServiceImpl implements TestService {
                         return fanTestRepository.findByCustomQuery(getCustomQueryFanTest(request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
-                .flatMap(fanTestData -> {
-                    long total = fanTestData.size();
-                    long totalFailed = fanTestData.stream()
-                            .filter(data -> !data.getStatus())
-                            .count();
-                    return Mono.just(ApiResponse.<GetTestResponse<FanTestDto>>builder()
-                            .status("S1000")
-                            .statusDescription("Request successful")
-                            .data(GetTestResponse.<FanTestDto>builder()
-                                    .tests(getFanDtoFromEntity(fanTestData))
-                                    .totalRecords(total)
-                                    .totalFailed(totalFailed)
-                                    .build())
-                            .build());
-                })
+                .flatMap(fanTestData -> Mono.just(fanTestRepository.countByCustomQuery(getCustomCountQuery(FanTestData.class, request, userDetails)))
+                        .map(totalRecords -> ApiResponse.<GetTestResponse<FanTestDto>>builder()
+                                .status("S1000")
+                                .statusDescription("Request successful")
+                                .data(GetTestResponse.<FanTestDto>builder()
+                                        .tests(getFanDtoFromEntity(fanTestData))
+                                        .totalRecords(totalRecords)
+                                        .build())
+                                .build())
+                )
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Fan Tests")));
     }
@@ -1707,6 +1637,18 @@ public class TestServiceImpl implements TestService {
         }
 
         return query;
+    }
+
+
+    private <T> TypedQuery<Long> getCustomCountQuery(Class<T> entityClass, GetByPatternRequest request, UserDetails userDetails) {
+        StringBuilder queryBuilder = new StringBuilder("SELECT COUNT(v) FROM " + entityClass.getSimpleName() + " v JOIN v.device d");
+        List<String> filterParts = new ArrayList<>();
+
+        calculateFilterParts(request, filterParts, userDetails);
+
+        TypedQuery<Long> query = entityManager.createQuery(getQueryByFilterPartsAndBaseQuery(filterParts, queryBuilder).toString(), Long.class);
+
+        return exchangeDateFilterInQuery(query, request);
     }
 
 }

@@ -34,9 +34,7 @@ public class TestController {
     }
 
     @PostMapping("/get/power-supply-test/{pageNo}")
-    Mono<ResponseEntity<ApiResponse<GetPowerSupplyTestResponse>>> getPowerSupplyTest(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                                     @RequestBody GetByPatternRequest request,
-                                                                                     @PathVariable("pageNo") String pageNo) {
+    Mono<ResponseEntity<ApiResponse<GetTestResponse<PowerSupplyTestDto>>>> getPowerSupplyTest(@AuthenticationPrincipal Mono<UserDetails> principal, @RequestBody GetByPatternRequest request, @PathVariable("pageNo") String pageNo) {
         log.info("Received request to get power supply test with pattern: {}", request.getFilterValue());
         return principal
                 .flatMap(userDetails -> {
@@ -56,9 +54,7 @@ public class TestController {
     }
 
     @PostMapping("/get/valve-test/{pageNo}")
-    Mono<ResponseEntity<ApiResponse<GetValveTestResponse>>> getValveTest(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                         @RequestBody GetByPatternRequest request,
-                                                                         @PathVariable("pageNo") String pageNo) {
+    Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<ValveTestDto>>>> getValveTest(@AuthenticationPrincipal Mono<UserDetails> principal, @RequestBody GetByPatternRequest request, @PathVariable("pageNo") String pageNo) {
         log.info("Received request to get valve test with pattern: {}", request.getFilterValue());
         return principal
                 .flatMap(userDetails -> {
@@ -78,9 +74,7 @@ public class TestController {
     }
 
     @PostMapping("/get/air-pump-test/{pageNo}")
-    Mono<ResponseEntity<ApiResponse<GetAirPumpTestResponse>>> getAirPumpTest(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                             @RequestBody GetByPatternRequest request,
-                                                                             @PathVariable("pageNo") String pageNo) {
+    Mono<ResponseEntity<ApiResponse<GetTestResponse<AirPumpTestDto>>>> getAirPumpTest(@AuthenticationPrincipal Mono<UserDetails> principal, @RequestBody GetByPatternRequest request, @PathVariable("pageNo") String pageNo) {
         log.info("Received request to get air pump test with pattern: {}", request.getFilterValue());
         return principal
                 .flatMap(userDetails -> {
@@ -100,9 +94,7 @@ public class TestController {
     }
 
     @PostMapping("/get/power-pcb-test/{pageNo}")
-    Mono<ResponseEntity<ApiResponse<GetTestResponse<PowerPCBTestDto>>>> getPowerPCBTest(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                                        @RequestBody GetByPatternRequest request,
-                                                                                        @PathVariable("pageNo") String pageNo) {
+    Mono<ResponseEntity<ApiResponse<GetTestResponse<PowerPCBTestDto>>>> getPowerPCBTest(@AuthenticationPrincipal Mono<UserDetails> principal, @RequestBody GetByPatternRequest request, @PathVariable("pageNo") String pageNo) {
         log.info("Received request to get power pcb test with pattern: {}", request.getFilterValue());
         return principal
                 .flatMap(userDetails -> {
