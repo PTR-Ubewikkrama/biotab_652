@@ -275,7 +275,12 @@ export default function PowerPcbV2TestList() {
                                     {box.loadCurrentLowThresh}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.usbCPowerOutletConnectivity}
+                                    {box.usbCPowerOutletConnectivity.toLowerCase() === "true"
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : box.usbCPowerOutletConnectivity.toLowerCase() != "false"
+                                        ? <Typography sx={{ color: "black", fontWeight: 'bold' }}>N/A</Typography>
+                                        : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
                                     {box.loadVoltage}

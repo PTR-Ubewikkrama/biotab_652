@@ -27,7 +27,9 @@ export function handleGeneratePcbV2TestExcel(datas: List<PowerPcbV2TestDto>) {
       data.serialNumber,
       data.loadVoltageLowThresh,
       data.loadCurrentLowThresh,
-      data.usbCPowerOutletConnectivity,
+      data.usbCPowerOutletConnectivity && data.usbCPowerOutletConnectivity.toLowerCase() === "true"
+        ? "Pass"
+        : data.usbCPowerOutletConnectivity && data.usbCPowerOutletConnectivity.toLowerCase() != "false" ? "N/A" : "Fail",
       data.loadVoltage,
       data.loadVoltageStatus && data.loadVoltageStatus === true ? "Pass" : "Fail",
       data.loadCurrentStatus && data.loadCurrentStatus === true ? "Pass" : "Fail",

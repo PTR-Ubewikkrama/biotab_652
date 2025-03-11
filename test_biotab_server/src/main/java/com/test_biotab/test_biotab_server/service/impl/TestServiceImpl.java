@@ -85,10 +85,10 @@ public class TestServiceImpl implements TestService {
                 .map(req -> {
                     log.info("Getting power supply test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
                     if (pageNo != null && pageNo.equals("all")) {
-                        return powerSupplyTestRepository.findByCustomQuery(getCustomQuery(PowerSupplyTestData.class,request, userDetails));
+                        return powerSupplyTestRepository.findByCustomQuery(getCustomQuery(PowerSupplyTestData.class, request, userDetails));
                     } else {
                         assert pageNo != null;
-                        return powerSupplyTestRepository.findByCustomQuery(getCustomQuery(PowerSupplyTestData.class,request, userDetails), Integer.parseInt(pageNo) - 1);
+                        return powerSupplyTestRepository.findByCustomQuery(getCustomQuery(PowerSupplyTestData.class, request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
                 .flatMap(powerSupplyTestData -> Mono.just(valveTestRepository.countByCustomQuery(getCustomCountQuery(PowerSupplyTestData.class, request, userDetails)))
@@ -175,10 +175,10 @@ public class TestServiceImpl implements TestService {
                 .map(req -> {
                     log.info("Getting valve test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
                     if (pageNo != null && pageNo.equals("all")) {
-                        return valveTestRepository.findByCustomQuery(getCustomQuery(ValveTestData.class,request, userDetails));
+                        return valveTestRepository.findByCustomQuery(getCustomQuery(ValveTestData.class, request, userDetails));
                     } else {
                         assert pageNo != null;
-                        return valveTestRepository.findByCustomQuery(getCustomQuery(ValveTestData.class,request, userDetails), Integer.parseInt(pageNo) - 1);
+                        return valveTestRepository.findByCustomQuery(getCustomQuery(ValveTestData.class, request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
                 .flatMap(valveTestData -> Mono.just(valveTestRepository.countByCustomQuery(getCustomCountQuery(ValveTestData.class, request, userDetails)))
@@ -270,9 +270,9 @@ public class TestServiceImpl implements TestService {
                 .map(req -> {
                     log.info("Getting air pump test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
                     if (pageNo != null && pageNo.equals("all")) {
-                        return airPumpTestRepository.findByCustomQuery(getCustomQuery(AirPumpTestData.class,request, userDetails));
+                        return airPumpTestRepository.findByCustomQuery(getCustomQuery(AirPumpTestData.class, request, userDetails));
                     } else {
-                        return airPumpTestRepository.findByCustomQuery(getCustomQuery(AirPumpTestData.class,request, userDetails), Integer.parseInt(pageNo) - 1);
+                        return airPumpTestRepository.findByCustomQuery(getCustomQuery(AirPumpTestData.class, request, userDetails), Integer.parseInt(pageNo) - 1);
                     }
                 })
                 .flatMap(airPumpTestData -> Mono.just(powerPCBTestRepository.countByCustomQuery(getCustomCountQuery(AirPumpTestData.class, request, userDetails)))
@@ -416,7 +416,11 @@ public class TestServiceImpl implements TestService {
                 .loadCurrent(airPumpV2TestAddRequest.getLoadCurrent())
                 .loadCurrentStatus(airPumpV2TestAddRequest.getLoadCurrentStatus())
                 .noiseLevelStatus(airPumpV2TestAddRequest.getNoiseLevelStatus())
-                .status(airPumpV2TestAddRequest.getFlowRateStatus() && airPumpV2TestAddRequest.getLoadVoltageStatus() && airPumpV2TestAddRequest.getLoadCurrentStatus() && airPumpV2TestAddRequest.getNoiseLevelStatus())
+                .status(airPumpV2TestAddRequest.getFlowRateStatus()
+                        && airPumpV2TestAddRequest.getPressureStatus()
+                        && airPumpV2TestAddRequest.getLoadVoltageStatus()
+                        && airPumpV2TestAddRequest.getLoadCurrentStatus()
+                        && airPumpV2TestAddRequest.getNoiseLevelStatus())
                 .dateTime(LocalDateTime.now())
                 .build();
 
@@ -498,7 +502,12 @@ public class TestServiceImpl implements TestService {
                 .loadCurrent(powerPCBV2TestAddRequest.getLoadCurrent())
                 .deviceStatus(powerPCBV2TestAddRequest.getDeviceStatus())
                 .noiseLevelStatus(powerPCBV2TestAddRequest.getNoiseLevelStatus())
-                .status(powerPCBV2TestAddRequest.getLoadVoltageStatus() && powerPCBV2TestAddRequest.getLoadCurrentStatus() && powerPCBV2TestAddRequest.getNoiseLevelStatus() && powerPCBV2TestAddRequest.getDeviceStatus())
+                .status(powerPCBV2TestAddRequest.getLoadVoltageStatus()
+                        && powerPCBV2TestAddRequest.getLoadCurrentStatus()
+                        && powerPCBV2TestAddRequest.getNoiseLevelStatus()
+                        && powerPCBV2TestAddRequest.getDeviceStatus()
+                        && (!powerPCBV2TestAddRequest.getUsbCPowerOutletConnectivity().equalsIgnoreCase("false"))
+                )
                 .dateTime(LocalDateTime.now())
                 .build();
     }
@@ -576,7 +585,9 @@ public class TestServiceImpl implements TestService {
                 .loadCurrentStatus(powerSupplyV2TestAddRequest.getLoadCurrentStatus())
                 .operatingPower(powerSupplyV2TestAddRequest.getOperatingPower())
                 .noiseLevel(powerSupplyV2TestAddRequest.getNoiseLevel())
-                .status(powerSupplyV2TestAddRequest.getIdleVolStatus() && powerSupplyV2TestAddRequest.getLoadVolStatus() && powerSupplyV2TestAddRequest.getLoadCurrentStatus())
+                .status(powerSupplyV2TestAddRequest.getIdleVolStatus()
+                        && powerSupplyV2TestAddRequest.getLoadVolStatus()
+                        && powerSupplyV2TestAddRequest.getLoadCurrentStatus())
                 .dateTime(LocalDateTime.now())
                 .build();
     }
@@ -656,7 +667,10 @@ public class TestServiceImpl implements TestService {
                 .closingPressure(opValveTestAddRequest.getClosingPressure())
                 .valveClosingState(opValveTestAddRequest.getValveClosingState())
                 .overallOpValveState(opValveTestAddRequest.getOverallOpValveState())
-                .status(opValveTestAddRequest.getPhysicalInspectionState() && opValveTestAddRequest.getValveStartOpeningState() && opValveTestAddRequest.getValveFullyOpeningState() && opValveTestAddRequest.getValveClosingState())
+                .status(opValveTestAddRequest.getPhysicalInspectionState()
+                        && opValveTestAddRequest.getValveStartOpeningState()
+                        && opValveTestAddRequest.getValveFullyOpeningState()
+                        && opValveTestAddRequest.getValveClosingState())
                 .dateTime(LocalDateTime.now())
                 .build();
     }
@@ -857,7 +871,72 @@ public class TestServiceImpl implements TestService {
                 .valve64State(valveSequenceTestAddRequest.getValve64State())
                 .overallValveSequenceState(valveSequenceTestAddRequest.getOverallValveSequenceState())
 //                .overallValveSequenceState(valveSequenceTestAddRequest.getPhysicalInspectionState() && valveSequenceTestAddRequest.getManifoldPressureState() && valveSequenceTestAddRequest.getValve1State() && valveSequenceTestAddRequest.getValve3State() && valveSequenceTestAddRequest.getValve5State() && valveSequenceTestAddRequest.getValve7State() && valveSequenceTestAddRequest.getValve9State() && valveSequenceTestAddRequest.getValve11State() && valveSequenceTestAddRequest.getValve13State() && valveSequenceTestAddRequest.getValve15State() && valveSequenceTestAddRequest.getValve17State() && valveSequenceTestAddRequest.getValve19State() && valveSequenceTestAddRequest.getValve21State() && valveSequenceTestAddRequest.getValve23State() && valveSequenceTestAddRequest.getValve25State() && valveSequenceTestAddRequest.getValve27State() && valveSequenceTestAddRequest.getValve29State() && valveSequenceTestAddRequest.getValve31State() && valveSequenceTestAddRequest.getValve33State() && valveSequenceTestAddRequest.getValve35State() && valveSequenceTestAddRequest.getValve37State() && valveSequenceTestAddRequest.getValve39State() && valveSequenceTestAddRequest.getValve41State() && valveSequenceTestAddRequest.getValve43State() && valveSequenceTestAddRequest.getValve45State() && valveSequenceTestAddRequest.getValve47State() && valveSequenceTestAddRequest.getValve49State() && valveSequenceTestAddRequest.getValve51State() && valveSequenceTestAddRequest.getValve53State() && valveSequenceTestAddRequest.getValve55State() && valveSequenceTestAddRequest.getValve57State() && valveSequenceTestAddRequest.getValve59State() && valveSequenceTestAddRequest.getValve61State() && valveSequenceTestAddRequest.getValve63State() && valveSequenceTestAddRequest.getValve2State() && valveSequenceTestAddRequest.getValve4State() && valveSequenceTestAddRequest.getValve6State() && valveSequenceTestAddRequest.getValve8State() && valveSequenceTestAddRequest.getValve10State() && valveSequenceTestAddRequest.getValve12State() && valveSequenceTestAddRequest.getValve14State() && valveSequenceTestAddRequest.getValve16State() && valveSequenceTestAddRequest.getValve18State() && valveSequenceTestAddRequest.getValve20State() && valveSequenceTestAddRequest.getValve22State() && valveSequenceTestAddRequest.getValve24State() && valveSequenceTestAddRequest.getValve26State() && valveSequenceTestAddRequest.getValve28State() && valveSequenceTestAddRequest.getValve30State() && valveSequenceTestAddRequest.getValve32State() && valveSequenceTestAddRequest.getValve34State() && valveSequenceTestAddRequest.getValve36State() && valveSequenceTestAddRequest.getValve38State() && valveSequenceTestAddRequest.getValve40State() && valveSequenceTestAddRequest.getValve42State() && valveSequenceTestAddRequest.getValve44State() && valveSequenceTestAddRequest.getValve46State() && valveSequenceTestAddRequest.getValve48State() && valveSequenceTestAddRequest.getValve50State() && valveSequenceTestAddRequest.getValve52State() && valveSequenceTestAddRequest.getValve54State() && valveSequenceTestAddRequest.getValve56State() && valveSequenceTestAddRequest.getValve58State() && valveSequenceTestAddRequest.getValve60State() && valveSequenceTestAddRequest.getValve62State() && valveSequenceTestAddRequest.getValve64State())
-                .status(valveSequenceTestAddRequest.getPhysicalInspectionState() && valveSequenceTestAddRequest.getManifoldPressureState() && valveSequenceTestAddRequest.getValve1State() && valveSequenceTestAddRequest.getValve3State() && valveSequenceTestAddRequest.getValve5State() && valveSequenceTestAddRequest.getValve7State() && valveSequenceTestAddRequest.getValve9State() && valveSequenceTestAddRequest.getValve11State() && valveSequenceTestAddRequest.getValve13State() && valveSequenceTestAddRequest.getValve15State() && valveSequenceTestAddRequest.getValve17State() && valveSequenceTestAddRequest.getValve19State() && valveSequenceTestAddRequest.getValve21State() && valveSequenceTestAddRequest.getValve23State() && valveSequenceTestAddRequest.getValve25State() && valveSequenceTestAddRequest.getValve27State() && valveSequenceTestAddRequest.getValve29State() && valveSequenceTestAddRequest.getValve31State() && valveSequenceTestAddRequest.getValve33State() && valveSequenceTestAddRequest.getValve35State() && valveSequenceTestAddRequest.getValve37State() && valveSequenceTestAddRequest.getValve39State() && valveSequenceTestAddRequest.getValve41State() && valveSequenceTestAddRequest.getValve43State() && valveSequenceTestAddRequest.getValve45State() && valveSequenceTestAddRequest.getValve47State() && valveSequenceTestAddRequest.getValve49State() && valveSequenceTestAddRequest.getValve51State() && valveSequenceTestAddRequest.getValve53State() && valveSequenceTestAddRequest.getValve55State() && valveSequenceTestAddRequest.getValve57State() && valveSequenceTestAddRequest.getValve59State() && valveSequenceTestAddRequest.getValve61State() && valveSequenceTestAddRequest.getValve63State() && valveSequenceTestAddRequest.getValve2State() && valveSequenceTestAddRequest.getValve4State() && valveSequenceTestAddRequest.getValve6State() && valveSequenceTestAddRequest.getValve8State() && valveSequenceTestAddRequest.getValve10State() && valveSequenceTestAddRequest.getValve12State() && valveSequenceTestAddRequest.getValve14State() && valveSequenceTestAddRequest.getValve16State() && valveSequenceTestAddRequest.getValve18State() && valveSequenceTestAddRequest.getValve20State() && valveSequenceTestAddRequest.getValve22State() && valveSequenceTestAddRequest.getValve24State() && valveSequenceTestAddRequest.getValve26State() && valveSequenceTestAddRequest.getValve28State() && valveSequenceTestAddRequest.getValve30State() && valveSequenceTestAddRequest.getValve32State() && valveSequenceTestAddRequest.getValve34State() && valveSequenceTestAddRequest.getValve36State() && valveSequenceTestAddRequest.getValve38State() && valveSequenceTestAddRequest.getValve40State() && valveSequenceTestAddRequest.getValve42State() && valveSequenceTestAddRequest.getValve44State() && valveSequenceTestAddRequest.getValve46State() && valveSequenceTestAddRequest.getValve48State() && valveSequenceTestAddRequest.getValve50State() && valveSequenceTestAddRequest.getValve52State() && valveSequenceTestAddRequest.getValve54State() && valveSequenceTestAddRequest.getValve56State() && valveSequenceTestAddRequest.getValve58State() && valveSequenceTestAddRequest.getValve60State() && valveSequenceTestAddRequest.getValve62State() && valveSequenceTestAddRequest.getValve64State())
+                .status(valveSequenceTestAddRequest.getPhysicalInspectionState()
+                        && valveSequenceTestAddRequest.getManifoldPressureState()
+                        && valveSequenceTestAddRequest.getValve1State()
+                        && valveSequenceTestAddRequest.getValve3State()
+                        && valveSequenceTestAddRequest.getValve5State()
+                        && valveSequenceTestAddRequest.getValve7State()
+                        && valveSequenceTestAddRequest.getValve9State()
+                        && valveSequenceTestAddRequest.getValve11State()
+                        && valveSequenceTestAddRequest.getValve13State()
+                        && valveSequenceTestAddRequest.getValve15State()
+                        && valveSequenceTestAddRequest.getValve17State()
+                        && valveSequenceTestAddRequest.getValve19State()
+                        && valveSequenceTestAddRequest.getValve21State()
+                        && valveSequenceTestAddRequest.getValve23State()
+                        && valveSequenceTestAddRequest.getValve25State()
+                        && valveSequenceTestAddRequest.getValve27State()
+                        && valveSequenceTestAddRequest.getValve29State()
+                        && valveSequenceTestAddRequest.getValve31State()
+                        && valveSequenceTestAddRequest.getValve33State()
+                        && valveSequenceTestAddRequest.getValve35State()
+                        && valveSequenceTestAddRequest.getValve37State()
+                        && valveSequenceTestAddRequest.getValve39State()
+                        && valveSequenceTestAddRequest.getValve41State()
+                        && valveSequenceTestAddRequest.getValve43State()
+                        && valveSequenceTestAddRequest.getValve45State()
+                        && valveSequenceTestAddRequest.getValve47State()
+                        && valveSequenceTestAddRequest.getValve49State()
+                        && valveSequenceTestAddRequest.getValve51State()
+                        && valveSequenceTestAddRequest.getValve53State()
+                        && valveSequenceTestAddRequest.getValve55State()
+                        && valveSequenceTestAddRequest.getValve57State()
+                        && valveSequenceTestAddRequest.getValve59State()
+                        && valveSequenceTestAddRequest.getValve61State()
+                        && valveSequenceTestAddRequest.getValve63State()
+                        && valveSequenceTestAddRequest.getValve2State()
+                        && valveSequenceTestAddRequest.getValve4State()
+                        && valveSequenceTestAddRequest.getValve6State()
+                        && valveSequenceTestAddRequest.getValve8State()
+                        && valveSequenceTestAddRequest.getValve10State()
+                        && valveSequenceTestAddRequest.getValve12State()
+                        && valveSequenceTestAddRequest.getValve14State()
+                        && valveSequenceTestAddRequest.getValve16State()
+                        && valveSequenceTestAddRequest.getValve18State()
+                        && valveSequenceTestAddRequest.getValve20State()
+                        && valveSequenceTestAddRequest.getValve22State()
+                        && valveSequenceTestAddRequest.getValve24State()
+                        && valveSequenceTestAddRequest.getValve26State()
+                        && valveSequenceTestAddRequest.getValve28State()
+                        && valveSequenceTestAddRequest.getValve30State()
+                        && valveSequenceTestAddRequest.getValve32State()
+                        && valveSequenceTestAddRequest.getValve34State()
+                        && valveSequenceTestAddRequest.getValve36State()
+                        && valveSequenceTestAddRequest.getValve38State()
+                        && valveSequenceTestAddRequest.getValve40State()
+                        && valveSequenceTestAddRequest.getValve42State()
+                        && valveSequenceTestAddRequest.getValve44State()
+                        && valveSequenceTestAddRequest.getValve46State()
+                        && valveSequenceTestAddRequest.getValve48State()
+                        && valveSequenceTestAddRequest.getValve50State()
+                        && valveSequenceTestAddRequest.getValve52State()
+                        && valveSequenceTestAddRequest.getValve54State()
+                        && valveSequenceTestAddRequest.getValve56State()
+                        && valveSequenceTestAddRequest.getValve58State()
+                        && valveSequenceTestAddRequest.getValve60State()
+                        && valveSequenceTestAddRequest.getValve62State()
+                        && valveSequenceTestAddRequest.getValve64State())
                 .dateTime(LocalDateTime.now())
                 .build();
     }

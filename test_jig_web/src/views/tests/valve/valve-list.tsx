@@ -229,7 +229,7 @@ export default function ValveList() {
                             }, page: "all"
                           }).unwrap()
                             .then((payload) => {
-                              handleGenerateValveExcel(payload.data!.valveTests)
+                              handleGenerateValveExcel(payload.data!.tests)
                             });
                         }}>
                           Download
@@ -284,7 +284,7 @@ export default function ValveList() {
                           </StyledTableRow>
                         </TableHead>
                         <TableBody>
-                          {data?.data?.valveTests
+                          {data?.data?.tests
                             .map((box) => {
                               return (
                                 <StyledTableRow

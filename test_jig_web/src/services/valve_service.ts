@@ -27,7 +27,7 @@ export interface ValveTest {
 }
 
 interface Data {
-    valveTests: ValveTest[];
+    tests: ValveTest[];
     totalRecords: number;
     totalFailed: number;
 }

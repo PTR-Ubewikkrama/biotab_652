@@ -204,7 +204,7 @@ export default function PowerSupplyList() {
                             }, page: "all"
                           }).unwrap()
                             .then((payload) => {
-                              handleGeneratePowerSupplyExcel(payload.data!.powerSupplyTests)
+                              handleGeneratePowerSupplyExcel(payload.data!.tests)
                             });
                         }}>
                           Download
@@ -259,7 +259,7 @@ export default function PowerSupplyList() {
                           </StyledTableRow>
                         </TableHead>
                         <TableBody>
-                          {data?.data?.powerSupplyTests
+                          {data?.data?.tests
                             .map((box) => {
                               return (
                                 <StyledTableRow

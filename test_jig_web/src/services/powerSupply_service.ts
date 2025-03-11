@@ -49,7 +49,7 @@ export interface PowerSupplyTestsResponse {
     status: string;
     statusDescription: string;
     data: {
-        powerSupplyTests: PowerSupplyTest[];
+        tests: PowerSupplyTest[];
         totalRecords: number;
     };
 }

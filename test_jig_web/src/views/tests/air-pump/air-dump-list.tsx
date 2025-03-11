@@ -234,7 +234,7 @@ export default function AirPumpList() {
                             }, page: "all"
                           }).unwrap()
                             .then((payload) => {
-                              handleGenerateAirDumpExcel(payload.data!.airPumpTests)
+                              handleGenerateAirDumpExcel(payload.data!.tests)
                             });
                         }}>
                           Download
@@ -289,7 +289,7 @@ export default function AirPumpList() {
                           </StyledTableRow>
                         </TableHead>
                         <TableBody>
-                          {data?.data?.airPumpTests
+                          {data?.data?.tests
                             .map((box) => {
                               return (
                                 <StyledTableRow

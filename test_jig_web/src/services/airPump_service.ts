@@ -68,7 +68,7 @@ export interface ApiResponse {
     status: string;
     statusDescription: string;
     data: {
-        airPumpTests: AirPumpTest[];
+        tests: AirPumpTest[];
         totalRecords: number;
         totalFailed: number;
     };

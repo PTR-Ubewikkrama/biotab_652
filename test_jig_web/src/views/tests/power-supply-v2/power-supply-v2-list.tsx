@@ -73,6 +73,11 @@ const columns: GridColDef[] = [
     width: 100,
   },
   {
+    field: "idleVolStatus",
+    headerName: "Idle Voltage Status",
+    width: 100,
+  },
+  {
     field: "LoadVoltage",
     headerName: "Load Voltage",
     width: 100,
@@ -301,6 +306,11 @@ export default function PowerSupplyV2List() {
                                     {box.idleVol}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
+                                    {box.idleVolStatus ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
                                     {box.loadVol}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
@@ -309,9 +319,7 @@ export default function PowerSupplyV2List() {
                                     }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.loadCurrent ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
-                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
-                                    }
+                                    {box.loadCurrent}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
                                     {box.loadCurrentStatus ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
