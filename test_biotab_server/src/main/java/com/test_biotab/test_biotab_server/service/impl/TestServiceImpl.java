@@ -42,6 +42,7 @@ public class TestServiceImpl implements TestService {
     private final UiPcbTestRepository uiPcbTestRepository;
     private final CableTestRepository cableTestRepository;
     private final FanTestRepository fanTestRepository;
+    private final DisplayTestRepository displayTestRepository;
     private final DeviceService deviceService;
 
     @PersistenceContext
@@ -1476,6 +1477,80 @@ public class TestServiceImpl implements TestService {
                 .toList();
     }
 
+    @Override
+    public Mono<ResponseEntity<CommonResponse>> addDisplayTest(DisplayTestAddRequest displayTestAddRequest) {
+        return Mono.just(displayTestAddRequest)
+                .flatMap(request -> deviceService.getDeviceByMac(displayTestAddRequest.getDeviceMac())
+                        .map(device -> toDisplayTest(displayTestAddRequest, device))
+                        .map(displayTestRepository::save))
+                .switchIfEmpty(Mono.error(new RuntimeException("Device not found")))
+                .map(opDisplayTest -> ResponseEntity.ok(CommonResponse.builder().message("Display test added successfully").status("SUCCESS").build()));
+    }
+
+    private DisplayTestData toDisplayTest(DisplayTestAddRequest displayTestAddRequest, Device device) {
+        return DisplayTestData.builder()
+                .device(device)
+                .serialNumber(displayTestAddRequest.getQrCode())
+                .backLightOn(displayTestAddRequest.getBacklighton())
+                .blueScreenOn(displayTestAddRequest.getBluescreenon())
+                .greenScreenOn(displayTestAddRequest.getGreenscreenon())
+                .redScreenOn(displayTestAddRequest.getRedscreenon())
+                .physicalInspectionState(displayTestAddRequest.getPhysicalinspectionstate())
+                .BTDisplayText(displayTestAddRequest.getBTdisplaytext())
+                .colorPatch(displayTestAddRequest.getColorpatch())
+                .screenOff(displayTestAddRequest.getScreenoff())
+                .overallDisplayStatus(displayTestAddRequest.getOverallDisplayStatus())
+                .status(displayTestAddRequest.getPhysicalinspectionstate() && displayTestAddRequest.getBacklighton() && displayTestAddRequest.getRedscreenon() && displayTestAddRequest.getRedscreenon())
+                .dateTime(LocalDateTime.now())
+                .build();
+    }
+
+    @Override
+    public Mono<? extends ResponseEntity<ApiResponse<GetTestResponse<DisplayTestDto>>>> getDisplayTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
+        return Mono.just(request)
+                .map(req -> {
+                    log.info("Getting display test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
+                    if (pageNo != null && pageNo.equals("all")) {
+                        return displayTestRepository.findByCustomQuery(getCustomQuery(DisplayTestData.class, request, userDetails));
+                    } else {
+                        return displayTestRepository.findByCustomQuery(getCustomQuery(DisplayTestData.class, request, userDetails), Integer.parseInt(pageNo) - 1);
+                    }
+                })
+                .flatMap(displayTestData -> Mono.just(displayTestRepository.countByCustomQuery(getCustomCountQuery(DisplayTestData.class, request, userDetails)))
+                        .map(totalRecords -> ApiResponse.<GetTestResponse<DisplayTestDto>>builder()
+                                .status("S1000")
+                                .statusDescription("Request successful")
+                                .data(GetTestResponse.<DisplayTestDto>builder()
+                                        .tests(getDisplayDtoFromEntity(displayTestData))
+                                        .totalRecords(totalRecords)
+                                        .build())
+                                .build())
+                )
+                .map(ResponseEntity::ok)
+                .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Display Tests")));
+    }
+
+    private List<DisplayTestDto> getDisplayDtoFromEntity(List<DisplayTestData> displayTestData) {
+        return displayTestData.stream()
+                .map(displayTest -> DisplayTestDto.builder()
+                        .testId(displayTest.getTestId())
+                        .deviceId(displayTest.getDevice().getDeviceId())
+                        .serialNumber(displayTest.getSerialNumber())
+                        .backLightOn(displayTest.getBackLightOn())
+                        .blueScreenOn(displayTest.getBlueScreenOn())
+                        .greenScreenOn(displayTest.getGreenScreenOn())
+                        .redScreenOn(displayTest.getRedScreenOn())
+                        .physicalInspectionState(displayTest.getPhysicalInspectionState())
+                        .BTDisplayText(displayTest.getBTDisplayText())
+                        .colorPatch(displayTest.getColorPatch())
+                        .screenOff(displayTest.getScreenOff())
+                        .overallDisplayStatus(displayTest.getOverallDisplayStatus())
+                        .status(displayTest.getStatus())
+                        .dateTime(displayTest.getDateTime())
+                        .build())
+                .toList();
+    }
+
     private static void calculateFilterParts(GetByPatternRequest request, List<String> filterParts, UserDetails userDetails) {
         if (request.getFilterType() != null && !request.getFilterValue().isEmpty()) {
             switch (request.getFilterType()) {
@@ -1503,7 +1578,7 @@ public class TestServiceImpl implements TestService {
             switch (request.getRequestType()) {
                 case "AIR_PUMP", "POWER_PCB", "POWER_SUPPLY", "VALVE", "AIR_PUMP_V2", "POWER_PCB_V2",
                      "POWER_SUPPLY_V2", "OP_VALVE", "VALVE_SEQUENCE", "VALVE_CARD", "MANI_FOLD_LEAK", "UI_PCB", "CABLE",
-                     "FAN" -> filterParts.add("v.status = " + status);
+                     "FAN", "DISPLAY" -> filterParts.add("v.status = " + status);
             }
         }
     }

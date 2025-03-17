@@ -324,6 +324,28 @@ public class TestController {
                 });
     }
 
+    @PostMapping("/add/display-test")
+    public Mono<ResponseEntity<CommonResponse>> addDisplayTest(@RequestBody DisplayTestAddRequest displayTestAddRequest) {
+        if (!displayTestAddRequest.getHashKey().equals(hashKey)) {
+            return sendInvalidResponse(displayTestAddRequest.getHashKey());
+        }
+        log.info("Request received to add display : {}", displayTestAddRequest);
+        return testService.addDisplayTest(displayTestAddRequest);
+    }
+
+    @PostMapping("/get/display-test/{pageNo}")
+    Mono<ResponseEntity<ApiResponse<GetTestResponse<DisplayTestDto>>>> getDisplayTest(@AuthenticationPrincipal Mono<UserDetails> principal,
+                                                                              @RequestBody GetByPatternRequest request,
+                                                                              @PathVariable("pageNo") String pageNo) {
+        log.info("Received request to get display test with pattern: {}", request.getFilterValue());
+        return principal
+                .flatMap(userDetails -> {
+                    log.info("Getting display test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
+                    request.setRequestType("DISPLAY");
+                    return testService.getDisplayTest(request, userDetails, pageNo);
+                });
+    }
+
     private static Mono<ResponseEntity<CommonResponse>> sendInvalidResponse(String valueTestAddRequest) {
         log.error("Invalid hash key received: {}", valueTestAddRequest);
         return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED)

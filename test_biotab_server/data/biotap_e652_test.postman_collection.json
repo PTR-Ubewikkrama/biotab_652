@@ -59,7 +59,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"filterType\": \"TEST_ID\",\n    \"filterValue\": \"ABC1234\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\"\n}",
+					"raw": "{\n    \"filterType\": \"serialNumber\",\n    \"filterValue\": \"ABC1234\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -106,7 +106,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"filterType\": \"TEST_ID\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\"\n}",
+					"raw": "{\n    \"filterType\": \"TEST_ID\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-03T10:40:36.456Z\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -153,7 +153,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"filterType\": \"TEST_ID\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\"\n}",
+					"raw": "{\n    \"filterType\": \"serialNumber\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -371,7 +371,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"filterType\": \"TEST_ID\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"POWER_PCB\"\n}",
+					"raw": "{\n    \"filterType\": \"serialNumber\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"POWER_PCB\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -468,7 +468,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"filterType\": \"TEST_ID\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"AIR_PUMP_V2\"\n}",
+					"raw": "{\n    \"filterType\": \"serialNumber\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"AIR_PUMP_V2\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -565,7 +565,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"filterType\": \"TEST_ID\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"POWER_PCB_V2\"\n}",
+					"raw": "{\n    \"filterType\": \"serialNumber\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"POWER_PCB_V2\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -662,7 +662,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"filterType\": \"TEST_ID\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"POWER_SUPPLY_V2\"\n}",
+					"raw": "{\n    \"filterType\": \"serialNumber\",\n    \"filterValue\": \"SN123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"POWER_SUPPLY_V2\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -759,7 +759,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"filterType\": \"TEST_ID\",\n    \"filterValue\": \"QR123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"OP_VALVE\"\n}",
+					"raw": "{\n    \"filterType\": \"qrCode\",\n    \"filterValue\": \"QR123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"OP_VALVE\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -856,7 +856,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"filterType\": \"TEST_ID\",\n    \"filterValue\": \"QR123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"VALVE_SEQUENCE\"\n}",
+					"raw": "{\n    \"filterType\": \"qrCode\",\n    \"filterValue\": \"QR123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"VALVE_SEQUENCE\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1178,7 +1178,7 @@
 			"response": []
 		},
 		{
-			"name": "Add Cable Test",
+			"name": "Add Display Test",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -1189,7 +1189,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"hashKey\": \"asdfghjkljhgfdlsmsfdfsmfsdfsdfj\",\n    \"deviceMac\": \"AA:BB:CC:DD:EE:01\",\n    \"qrCode\": \"QR123456\",\n    \"cableSelection\": 1,\n    \"visualInspection\": true,\n    \"cable1\": true,\n    \"cable2\": true,\n    \"cable3\": true,\n    \"cable4\": true,\n    \"cable5\": true,\n    \"cable6\": true,\n    \"cable7\": true,\n    \"cable8\": true,\n    \"cable9\": true,\n    \"cable10\": true,\n    \"overallCableState\": true\n}",
+					"raw": "{\n    \"hashKey\": \"asdfghjkljhgfdlsmsfdfsmfsdfsdfj\",\n    \"deviceMac\": \"AA:BB:CC:DD:EE:01\",\n    \"qrCode\": \"QR123458\",\n    \"physicalinspectionstate\": true,\n    \"backlighton\": false,\n    \"redscreenon\": true,\n    \"greenscreenon\": true\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1197,7 +1197,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/add/cable-test",
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/add/display-test",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -1212,14 +1212,14 @@
 						"v1",
 						"test",
 						"add",
-						"cable-test"
+						"display-test"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Get Cable Test",
+			"name": "Get Display Test",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -1244,7 +1244,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"filterValue\": \"qrCode\",\n    \"filterValue\": \"QR123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"CABLE\"\n}",
+					"raw": "{\n    \"filterType\": \"TEST_ID\",\n    \"filterValue\": \"QR123458\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-18T10:40:36.456Z\",\n    \"requestType\": \"DISPLAY\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1252,7 +1252,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/get/cable-test/1",
+					"raw": "http://127.0.0.1:6500/biotab_e652/api/v1/test/get/display-test/1",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -1267,7 +1267,7 @@
 						"v1",
 						"test",
 						"get",
-						"cable-test",
+						"display-test",
 						"1"
 					]
 				}
@@ -1286,7 +1286,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"hashKey\": \"asdfghjkljhgfdlsmsfdfsmfsdfsdfj\",\n    \"deviceMac\": \"AA:BB:CC:DD:EE:01\",\n    \"qrCode\": \"QR123456\",\n    \"visualInspection\": true,\n    \"drawCurrent\": 1.2,\n    \"drawCurrentState\": true,\n    \"fanSpeed\": 1500.0,\n    \"fanSpeedState\": true,\n    \"overallFanState\": true\n}",
+					"raw": "{\n    \"hashKey\": \"asdfghjkljhgfdlsmsfdfsmfsdfsdfj\",\n    \"deviceMac\": \"AA:BB:CC:DD:EE:01\",\n    \"qrCode\": \"QR123457\",\n    \"visualInspection\": true,\n    \"drawCurrent\": 1.2,\n    \"drawCurrentState\": true,\n    \"fanSpeed\": 1500.0,\n    \"fanSpeedState\": true,\n    \"overallFanState\": true\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1341,7 +1341,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"filterValue\": \"qrCode\",\n    \"filterValue\": \"QR123456\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-02T10:40:36.456Z\",\n    \"requestType\": \"FAN\"\n}",
+					"raw": "{\n    \"filterType\": \"TEST_ID\",\n    \"filterValue\": \"QR123457\",\n    \"status\": \"ACTIVE\",\n    \"fromDate\": \"2025-02-26T10:40:36.456Z\",\n    \"toDate\": \"2025-03-06T10:40:36.456Z\",\n    \"requestType\": \"FAN\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
