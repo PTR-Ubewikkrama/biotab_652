@@ -4,9 +4,14 @@ import {
   Card,
   CardContent,
   Container,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Divider,
   Grid,
   Pagination,
+  TableCell,
+  TableRow,
   Typography,
 } from "@mui/material";
 import { GridColDef } from "@mui/x-data-grid";
@@ -18,13 +23,14 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import { Download } from "@mui/icons-material";
 import { useState } from "react";
-import { handleGenerateManiFoldLeakExcel } from "./ui-pcb-excel";
+import { handleGenerateMainPCBExcel } from "./main-pcb-excel";
 import SessionTimeoutPopup from "../../common_components/session_logout";
 import { StyledTableCell, StyledTableRow } from "../../common_components/common";
 import GridOnIcon from '@mui/icons-material/GridOn';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import TableSearchFormCommon from "../../common_components/table_search_form";
 import { format, parseISO } from "date-fns";
-import { UIPcbTest, useGetUIPcbTestQQuery, useGetUIPcbTestsMutation } from "../../../services/ui_pcb_service";
+import { MainPCBTest, useGetMainPCBTestQQuery, useGetMainPCBTestsMutation } from "../../../services/Main_PCB_test_service";
 
 const columns: GridColDef[] = [
   {
@@ -38,34 +44,19 @@ const columns: GridColDef[] = [
     width: 150,
   },
   {
-    field: "physicalInspectionState",
-    headerName: "Physical Inspection State",
-    width: 200,
-  },
-  {
-    field: "redLedState",
-    headerName: "Red Led State",
+    field: "Software Version",
+    headerName: "Software Version",
     width: 150,
   },
   {
-    field: "whiteLedState",
-    headerName: "White Led State",
+    field: "Batch Number",
+    headerName: "Batch Number",
     width: 150,
   },
   {
-    field: "ledRingOnState",
-    headerName: "Led Ring On State",
+    field: "Test Result",
+    headerName: "Test Result",
     width: 150,
-  },
-  {
-    field: "ledRingFadeState",
-    headerName: "Led Ring Fade State",
-    width: 150,
-  },
-  {
-    field: "overallUiPcbState",
-    headerName: "Overall UiPcb State",
-    width: 200,
   },
   {
     field: "Status",
@@ -76,10 +67,10 @@ const columns: GridColDef[] = [
     field: "dateTime",
     headerName: "Date Time",
     width: 200,
-  },
+  }
 ];
 
-export default function UIPcbList() {
+export default function MainPCBList() {
   const [page, setPage] = useState(1);
   const [fromDate, setFromDate] = React.useState<Date | null>(null);
   const [toDate, setToDate] = React.useState<Date | null>(null);
@@ -88,9 +79,11 @@ export default function UIPcbList() {
   const [filterType, setFilterType] = React.useState('');
   const [filterValue, setFilterValue] = React.useState('');
   const [status, setStatus] = React.useState('');
-  const [selectedRows, setSelectedRows] = React.useState<UIPcbTest[]>([]);
+  const [selectedRows, setSelectedRows] = React.useState<MainPCBTest[]>([]);
+  const [openDetailView, setOpenDetailView] = React.useState(false);
+  const [selectedTest, setSelectedTest] = React.useState<MainPCBTest | null>(null);
 
-  var { data, error, isLoading } = useGetUIPcbTestQQuery({
+  var { data, error, isLoading } = useGetMainPCBTestQQuery({
     data: {
       filterType: filterType,
       filterValue: filterValue,
@@ -99,13 +92,13 @@ export default function UIPcbList() {
       status: status
     }, page: page.toString()
   })
-  const [getAll] = useGetUIPcbTestsMutation();
+  const [getAll] = useGetMainPCBTestsMutation();
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
 
-  const handleRowClick = (item: UIPcbTest) => {
+  const handleRowClick = (item: MainPCBTest) => {
     if (selectedRows.includes(item)) {
       setSelectedRows(selectedRows.filter((rowId) => rowId !== item));
     } else {
@@ -153,13 +146,13 @@ export default function UIPcbList() {
                   <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
                     <Grid item xs={4} sm={4} md={6} >
                       <Typography gutterBottom variant="h5" component="div" color="grey">
-                        UI PCB Test Results
+                        Main PCB Test Results
                       </Typography>
                     </Grid>
                     <Grid item xs={4} sm={4} md={6} >
                       <Box display="flex" justifyContent="flex-end">
                         <Button variant="contained" startIcon={<Download />} color="success" onClick={() =>
-                          handleGenerateManiFoldLeakExcel(selectedRows)
+                          handleGenerateMainPCBExcel(selectedRows)
                         } disabled={selectedRows.length == 0}>
                           Download selected
                         </Button>
@@ -174,7 +167,7 @@ export default function UIPcbList() {
                             }, page: "all"
                           }).unwrap()
                             .then((payload) => {
-                              handleGenerateManiFoldLeakExcel(payload.data!.tests)
+                              handleGenerateMainPCBExcel(payload.data!.tests)
                             });
                         }}>
                           Download
@@ -250,41 +243,25 @@ export default function UIPcbList() {
                                     {box.serialNumber}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.physicalInspectionState
-                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
-                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
-                                    }
+                                    {box.softwareVersion}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.redLedState
-                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
-                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
-                                    }
+                                    {box.batchNumber}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.whiteLedState
-                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
-                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
-                                    }
+                                    <Button
+                                      variant="contained"
+                                      color="primary"
+                                      startIcon={<VisibilityIcon />}
+                                      onClick={() => {
+                                        setSelectedTest(box);
+                                        setOpenDetailView(true);
+                                      }}
+                                    >
+                                      View
+                                    </Button>
                                   </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.ledRingOnState
-                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
-                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
-                                    }
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.ledRingFadeState
-                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
-                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
-                                    }
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.overallUiPcbState
-                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
-                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
-                                    }
-                                  </StyledTableCell>
+
                                   <StyledTableCell align={"left"}>
                                     {box.status
                                       ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
@@ -312,6 +289,49 @@ export default function UIPcbList() {
             </Box>
           </>
         </Container>
+
+        <Dialog open={openDetailView} onClose={() => {
+          setOpenDetailView(false);
+          setSelectedTest(null);
+        }} maxWidth="md" fullWidth>
+          <DialogTitle>Test Result Details</DialogTitle>
+          <DialogContent>
+            {selectedTest && (
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Test Name</TableCell>
+                    <TableCell>Test Type</TableCell>
+                    <TableCell>Validation Type</TableCell>
+                    <TableCell>Actual Value</TableCell>
+                    <TableCell>Min Value</TableCell>
+                    <TableCell>Max Value</TableCell>
+                    <TableCell>Unit</TableCell>
+                    <TableCell>Status</TableCell>
+                    <TableCell>Date/Time</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {selectedTest.testResultData.map((unit, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{unit.testName}</TableCell>
+                      <TableCell>{unit.testType}</TableCell>
+                      <TableCell>{unit.validationType}</TableCell>
+                      <TableCell>{unit.actualValue}</TableCell>
+                      <TableCell>{unit.minValue}</TableCell>
+                      <TableCell>{unit.maxValue}</TableCell>
+                      <TableCell>{unit.unit}</TableCell>
+                      <TableCell>{unit.status
+                        ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                        : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>}</TableCell>
+                      <TableCell>{format(parseISO(unit.dateTime), "yyyy-MM-dd HH:mm:ss")}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </DialogContent>
+        </Dialog>
       </Box>
     )
   }

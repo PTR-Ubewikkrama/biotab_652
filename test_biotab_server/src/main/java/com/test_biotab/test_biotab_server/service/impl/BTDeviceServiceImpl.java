@@ -44,6 +44,7 @@ public class BTDeviceServiceImpl implements BTDeviceService {
     private final ValveSequenceTestRepository valveSequenceTestRepository;
     private final PowerSupplyV2TestRepository powerSupplyV2TestRepository;
     private final DisplayTestRepository displayTestRepository;
+    private final MainPCBTestRepository mainPCBTestRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -550,6 +551,21 @@ public class BTDeviceServiceImpl implements BTDeviceService {
                                                                 .build())
                                                         .build());
                                             }
+                                        }
+                                    }
+                                    case "MAIN PCB" -> {
+                                        MainPCBTestData mainPCBTest = mainPCBTestRepository.findByCode(validateRequest.getCode());
+                                        if (mainPCBTest != null) {
+                                            return ResponseEntity.ok(ApiResponse.<ComponentVerificationResponse>builder()
+                                                    .status("S1000")
+                                                    .statusDescription("Component verified successfully")
+                                                    .data(ComponentVerificationResponse.builder()
+                                                            .btDeviceCode("UNKNOWN")
+                                                            .componentCode(request.getCode())
+                                                            .componentType("MAIN PCB")
+                                                            .componentStatus(mainPCBTest.isStatus() ? "VERIFIED" : "NOT_VERIFIED")
+                                                            .build())
+                                                    .build());
                                         }
                                     }
                                     default -> {
@@ -1181,6 +1197,50 @@ public class BTDeviceServiceImpl implements BTDeviceService {
                 .onErrorResume(e -> Mono.just(ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
                         .status("E1000")
                         .statusDescription("Error occurred while validating Display test code")
+                        .build())));
+    }
+
+    @Override
+    public Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateMainPcbTestCode(ValidateRequest request, UserDetails userDetails) {
+        return Mono.just(request)
+                .map(validateRequest -> {
+                    log.info("Validating Main PCB test code: {} by user: {}", validateRequest, userDetails.getUsername());
+                    TypedQuery<BTDevice> query = entityManager.createQuery("SELECT d FROM BTDevice d WHERE d.mainPcbCode LIKE '%" + validateRequest.getCode() + "%'", BTDevice.class);
+                    List<BTDevice> devices = query.getResultList();
+
+                    if (!devices.isEmpty()) {
+                        BTDevice device = devices.getFirst();
+                        return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
+                                .status("E1000")
+                                .statusDescription("Main PCB test code found")
+                                .data(ValidateComponentResponse.builder()
+                                        .hhDeviceCode(device.getDeviceCode())
+                                        .build())
+                                .build());
+                    } else {
+                        MainPCBTestData mainPcbTest = mainPCBTestRepository.findVerifiedByCode(validateRequest.getCode());
+                        if (mainPcbTest == null) {
+                            return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
+                                    .status("E1000")
+                                    .statusDescription("Main PCB test code not found")
+                                    .data(ValidateComponentResponse.builder()
+                                            .hhDeviceCode(null)
+                                            .build())
+                                    .build());
+                        } else {
+                            return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
+                                    .status("S1000")
+                                    .statusDescription("Main PCB test code found")
+                                    .data(ValidateComponentResponse.builder()
+                                            .hhDeviceCode(null)
+                                            .build())
+                                    .build());
+                        }
+                    }
+                })
+                .onErrorResume(e -> Mono.just(ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
+                        .status("E1000")
+                        .statusDescription("Error occurred while validating Main PCB test code")
                         .build())));
     }
 }

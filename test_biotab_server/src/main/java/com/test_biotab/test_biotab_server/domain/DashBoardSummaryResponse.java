@@ -43,5 +43,7 @@ public class DashBoardSummaryResponse {
     long totalSuccessDisplayTest;
     long totalFailedDisplayTest;
     long totalFinalAssembly;
+    long totalSuccessMainPcbTest;
+    long totalFailedMainPcbTest;
     long totalHHDevice;
 }

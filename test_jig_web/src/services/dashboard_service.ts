@@ -38,6 +38,8 @@ export interface DashBoardSummaryResponse {
         totalFinalAssembly: number;
         totalSuccessDisplayTest: number;
         totalFailedDisplayTest: number;
+        totalSuccessMainPcbTest: number;
+        totalFailedMainPcbTest: number;
         totalHHDevice: number;
     };
 }

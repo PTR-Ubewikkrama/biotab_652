@@ -6,9 +6,7 @@ import com.test_biotab.test_biotab_server.entity.*;
 import com.test_biotab.test_biotab_server.repository.*;
 import com.test_biotab.test_biotab_server.service.DeviceService;
 import com.test_biotab.test_biotab_server.service.TestService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
+import jakarta.persistence.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -44,6 +42,8 @@ public class TestServiceImpl implements TestService {
     private final FanTestRepository fanTestRepository;
     private final DisplayTestRepository displayTestRepository;
     private final DeviceService deviceService;
+    private final MainPCBTestRepository mainPCBTestRepository;
+    private final MainPCBTestUnitRepository mainPCBTestUnitRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -1530,6 +1530,107 @@ public class TestServiceImpl implements TestService {
                 .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Display Tests")));
     }
 
+    @Override
+    public Mono<ResponseEntity<CommonResponse>> addMainPCBTest(MainPCBTestAddRequest mainPCBTestAddRequest) {
+        return Mono.just(mainPCBTestAddRequest)
+                .flatMap(request -> deviceService.getDeviceByMac(mainPCBTestAddRequest.getDeviceMac())
+                        .map(device -> toMainPCBTest(mainPCBTestAddRequest, device))
+                        .map(mainPCBTest -> {
+                                    MainPCBTestData mainPCBTestData = mainPCBTestRepository.save(mainPCBTest);
+
+                                    if (mainPCBTestData != null) {
+                                        mainPCBTestAddRequest.getTestResultData().forEach(testResultData -> {
+                                            MainPCBTestUnit testData = MainPCBTestUnit.builder()
+                                                    .mainTestId(mainPCBTestData.getId())
+                                                    .testName(testResultData.getTestName())
+                                                    .testType(testResultData.getTestType())
+                                                    .validationType(testResultData.getValidationType())
+                                                    .actualValue(testResultData.getActualValue())
+                                                    .minValue(testResultData.getMinValue())
+                                                    .maxValue(testResultData.getMaxValue())
+                                                    .unit(testResultData.getUnit())
+                                                    .status(testResultData.isStatus())
+                                                    .dateTime(LocalDateTime.now())
+                                                    .build();
+                                            mainPCBTestUnitRepository.save(testData);
+                                        });
+                                    }
+                                    log.info("Main PCB test added successfully for device: {}", mainPCBTestAddRequest.getDeviceMac());
+                                    return mainPCBTest;
+                                }
+                        )
+                        .switchIfEmpty(Mono.error(new RuntimeException("Device not found")))
+                        .map(opMainPCBTest -> ResponseEntity.ok(CommonResponse.builder().message("Main PCB test added successfully").status("SUCCESS").build())));
+    }
+
+    private MainPCBTestData toMainPCBTest(MainPCBTestAddRequest mainPCBTestAddRequest, Device device) {
+        return MainPCBTestData.builder()
+                .device(device)
+                .serialNumber(mainPCBTestAddRequest.getSerialNumber())
+                .softwareVersion(mainPCBTestAddRequest.getSoftwareVersion())
+                .batchNumber(mainPCBTestAddRequest.getBatchNumber())
+                .testId(mainPCBTestAddRequest.getTestId())
+                .status(mainPCBTestAddRequest.isStatus())
+                .dateTime(LocalDateTime.now())
+                .build();
+    }
+
+    @Override
+    public Mono<ResponseEntity<ApiResponse<GetTestResponse<MainPCBTestDto>>>> getMainPCBTest(GetByPatternRequest request, UserDetails userDetails, String pageNo) {
+        return Mono.just(request)
+                .map(req -> {
+                    log.info("Getting main PCB test with pattern: {} by user: {}", req.getFilterValue(), userDetails.getUsername());
+                    if (pageNo != null && pageNo.equals("all")) {
+                        return mainPCBTestRepository.findByCustomQuery(getCustomQuery(MainPCBTestData.class, request, userDetails));
+                    } else {
+                        return mainPCBTestRepository.findByCustomQuery(getCustomQuery(MainPCBTestData.class, request, userDetails), Integer.parseInt(pageNo) - 1);
+                    }
+                })
+                .flatMap(mainPCBTestData -> Mono.just(mainPCBTestRepository.countByCustomQuery(getCustomCountQuery(MainPCBTestData.class, request, userDetails)))
+                        .map(totalRecords -> ApiResponse.<GetTestResponse<MainPCBTestDto>>builder()
+                                .status("S1000")
+                                .statusDescription("Request successful")
+                                .data(GetTestResponse.<MainPCBTestDto>builder()
+                                        .tests(getMainPCBDtoFromEntity(mainPCBTestData))
+                                        .totalRecords(totalRecords)
+                                        .build())
+                                .build())
+                )
+                .map(ResponseEntity::ok)
+                .onErrorResume(e -> Mono.just(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "E1004", "Failed to get Main PCB Tests")));
+    }
+
+    private List<MainPCBTestDto> getMainPCBDtoFromEntity(List<MainPCBTestData> mainPCBTestData) {
+        return mainPCBTestData.stream()
+                .map(mainPCBTest -> MainPCBTestDto.builder()
+                        .testId(mainPCBTest.getTestId())
+                        .deviceId(mainPCBTest.getDevice().getDeviceId())
+                        .serialNumber(mainPCBTest.getSerialNumber())
+                        .softwareVersion(mainPCBTest.getSoftwareVersion())
+                        .batchNumber(mainPCBTest.getBatchNumber())
+                        .status(mainPCBTest.isStatus())
+                        .testResultData(setTestResultData(mainPCBTest.getId()))
+                        .dateTime(mainPCBTest.getDateTime())
+                        .build())
+                .toList();
+    }
+
+    private List<MainPCBTestUnitDto> setTestResultData(int mainTestId) {
+        return mainPCBTestUnitRepository.getMainPCBTestUnitByMainTestId(mainTestId).stream()
+                .map(testData -> MainPCBTestUnitDto.builder()
+                        .testName(testData.getTestName())
+                        .testType(testData.getTestType())
+                        .validationType(testData.getValidationType())
+                        .actualValue(testData.getActualValue())
+                        .minValue(testData.getMinValue())
+                        .maxValue(testData.getMaxValue())
+                        .unit(testData.getUnit())
+                        .status(testData.isStatus())
+                        .dateTime(testData.getDateTime())
+                        .build())
+                .toList();
+    }
+
     private List<DisplayTestDto> getDisplayDtoFromEntity(List<DisplayTestData> displayTestData) {
         return displayTestData.stream()
                 .map(displayTest -> DisplayTestDto.builder()
@@ -1611,7 +1712,6 @@ public class TestServiceImpl implements TestService {
 
         return query;
     }
-
 
     private <T> TypedQuery<Long> getCustomCountQuery(Class<T> entityClass, GetByPatternRequest request, UserDetails userDetails) {
         StringBuilder queryBuilder = new StringBuilder("SELECT COUNT(v) FROM " + entityClass.getSimpleName() + " v JOIN v.device d");

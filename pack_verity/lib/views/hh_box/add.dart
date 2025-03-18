@@ -571,7 +571,13 @@ class _AddBTDevicePageState extends State<AddBTDevicePage> {
       case 5:
         return {'status': true, 'message': 'Valid Encloser Code'};
       case 6:
-        return {'status': true, 'message': 'Valid Main PCB Code'};
+        ValidateComponentResp? resp =
+            await _btDeviceService.validateMainPcbTest(val);
+        if (resp != null && resp.isSuccess()) {
+          return {'status': true, 'message': resp.statusDescription};
+        } else {
+          return {'status': false, 'message': resp!.statusDescription};
+        }
       case 7:
         ValidateComponentResp? resp =
             await _btDeviceService.validateManiFoldTest(val);

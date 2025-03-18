@@ -10,6 +10,7 @@ const String validatePcbTestCode = "bt_device/validate/pcbTestCode";
 const String validateAirPumpTestCode = "bt_device/validate/airPumpTestCode";
 const String validateFanTestCode = "bt_device/validate/fanTestCode";
 const String validateUIPcbTestCode = "bt_device/validate/uiPcbTestCode";
+const String validateMainPCBTestCode = "bt_device/validate/mainPcbTestCode";
 const String validateManiFoldTestCode = "bt_device/validate/manifoldTestCode";
 const String validateLatchButtonTestCode =
     "bt_device/validate/latchButtonTestCode";

@@ -19,6 +19,7 @@ import { uiPcbApi } from '../services/ui_pcb_service'
 import { cableTestApi } from '../services/cable_test_service'
 import { fanTestApi } from '../services/fan_test_service'
 import { displayTestApi } from '../services/display_test_service'
+import { mainPCBTestApi } from '../services/Main_PCB_test_service'
 
 export const store = configureStore({
     reducer: {
@@ -41,6 +42,7 @@ export const store = configureStore({
         [cableTestApi.reducerPath]: cableTestApi.reducer,
         [fanTestApi.reducerPath]: fanTestApi.reducer,
         [displayTestApi.reducerPath]: displayTestApi.reducer,
+        [mainPCBTestApi.reducerPath]: mainPCBTestApi.reducer,
         loginStatus: loginSlice.reducer
     },
     middleware: (getDefaultMiddleware) =>
@@ -62,6 +64,7 @@ export const store = configureStore({
             .concat(cableTestApi.middleware)
             .concat(fanTestApi.middleware)
             .concat(displayTestApi.middleware)
+            .concat(mainPCBTestApi.middleware)
             .concat(valveApi.middleware),
 })
 

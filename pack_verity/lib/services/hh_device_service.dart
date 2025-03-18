@@ -565,6 +565,44 @@ class BTDeviceService {
     return null;
   }
 
+  Future<ValidateComponentResp?> validateMainPcbTest(String code) async {
+    String? jwt = await sl.get<FlutterSecureStorage>().read(key: jwtDB);
+
+    try {
+      final response = await dio
+          .post('$baseUrl$validateMainPCBTestCode',
+              data: {'code': code},
+              options: Options(headers: {'Authorization': 'Bearer $jwt'}))
+          .timeout(const Duration(seconds: 20));
+
+      final data = response.data;
+
+      if (data is Map<String, dynamic>) {
+        return ValidateComponentResp.fromJson(data);
+      }
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout) {
+        return ValidateComponentResp(
+            status: "E2000",
+            statusDescription: 'Server Connection Timeout',
+            data: null);
+      }
+      if (kDebugMode) {
+        print(e.error.toString());
+      }
+      return ValidateComponentResp(
+          status: "E2000",
+          statusDescription: 'Something went wrong',
+          data: null);
+    } on Exception {
+      return ValidateComponentResp(
+          status: "E2000",
+          statusDescription: 'Something went wrong',
+          data: null);
+    }
+    return null;
+  }
+
   Future<ValidateComponentResp?> validateFrontBracketAssemblyTest(
       String code) async {
     String? jwt = await sl.get<FlutterSecureStorage>().read(key: jwtDB);

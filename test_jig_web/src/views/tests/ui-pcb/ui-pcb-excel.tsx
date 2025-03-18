@@ -36,5 +36,5 @@ export function handleGenerateManiFoldLeakExcel(datas: UIPcbTest[]) {
   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
 
   // Save the workbook as an Excel file
-  XLSX.writeFile(workbook, "UI-Pcb_Test_" + new Date().toISOString() + ".xlsx");
+  XLSX.writeFile(workbook, "UI_PCB_Test_" + new Date().toISOString() + ".xlsx");
 }

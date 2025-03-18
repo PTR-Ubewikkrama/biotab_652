@@ -44,5 +44,5 @@ export function handleGeneratePcbV2TestExcel(datas: List<PowerPcbV2TestDto>) {
   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
 
   // Save the workbook as an Excel file
-  XLSX.writeFile(workbook, "Power_Pcb_v2_Test_" + new Date().toISOString() + ".xlsx");
+  XLSX.writeFile(workbook, "Power_PCB_v2_Test_" + new Date().toISOString() + ".xlsx");
 }

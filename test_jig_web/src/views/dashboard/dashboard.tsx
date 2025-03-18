@@ -109,7 +109,7 @@ export default function Dashboard() {
           </Grid>
           <Grid item xl={2} lg={3} sm={6} xs={12}>
             <SummaryCard
-              title="Power Pcb Test"
+              title="Power PCB Test"
               icon={<InventoryIcon />}
               value={((data?.data.totalFailedPowerPcbTest ?? 0) + (data?.data.totalSuccessPowerPcbTest ?? 0)).toString() || "0"}
               color="success.dark"
@@ -145,6 +145,16 @@ export default function Dashboard() {
               color="success.main"
               path="/power-pcb-test-2"
               image={card4}
+            />
+          </Grid>
+          <Grid item xl={2} lg={3} sm={6} xs={12}>
+            <SummaryCard
+              title="Main PCB Test"
+              icon={<ListAltIcon />}
+              value={((data?.data.totalFailedMainPcbTest ?? 0) + (data?.data.totalSuccessMainPcbTest ?? 0)).toString() || "0"}
+              color="success.main"
+              path="/main-pcb-test"
+              image={card1}
             />
           </Grid>
           <Grid item xl={2} lg={3} sm={6} xs={12}>
@@ -236,16 +246,6 @@ export default function Dashboard() {
               color="success.dark"
               path="/bt-device"
               image={card4}
-            />
-          </Grid>
-          <Grid item xl={2} lg={3} sm={6} xs={12}>
-            <SummaryCard
-              title="Final Assembly"
-              icon={<ListAltIcon />}
-              value={((data?.data.totalFinalAssembly ?? 0) + (data?.data.totalFinalAssembly ?? 0)).toString() || "0"}
-              color="success.main"
-              path="/fas"
-              image={card2}
             />
           </Grid>
         </Grid>

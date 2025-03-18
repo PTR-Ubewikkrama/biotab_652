@@ -38,4 +38,6 @@ public interface BTDeviceService {
     Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateValveSequenceTestCode(ValidateRequest request, UserDetails userDetails);
 
     Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateDisplayTestCode(ValidateRequest request, UserDetails userDetails);
+
+    Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateMainPcbTestCode(ValidateRequest request, UserDetails userDetails);
 }

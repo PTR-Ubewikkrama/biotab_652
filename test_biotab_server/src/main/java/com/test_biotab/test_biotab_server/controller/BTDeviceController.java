@@ -163,6 +163,17 @@ public class BTDeviceController {
                 });
     }
 
+    @PostMapping("/validate/mainPcbTestCode")
+    public Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateMainPcbTestCode(@AuthenticationPrincipal Mono<UserDetails> principal,
+                                                                                                @RequestBody ValidateRequest request) {
+        log.info("Received request to validate Main PCB test code: {}", request);
+        return principal
+                .flatMap(userDetails -> {
+                    log.info("Validating Main PCB test code: {} by user: {}", request, userDetails.getUsername());
+                    return service.validateMainPcbTestCode(request, userDetails);
+                });
+    }
+
     @PostMapping("/validate/overPressureValveTestCode")
     public Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateOverPressureValveTestCode(@AuthenticationPrincipal Mono<UserDetails> principal,
                                                                                                           @RequestBody ValidateRequest request) {
@@ -176,7 +187,7 @@ public class BTDeviceController {
 
     @PostMapping("/validate/displayTestCode")
     public Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateDisplayTestCode(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                                                 @RequestBody ValidateRequest request) {
+                                                                                                @RequestBody ValidateRequest request) {
         log.info("Received request to validate Display test code: {}", request);
         return principal
                 .flatMap(userDetails -> {
@@ -187,7 +198,7 @@ public class BTDeviceController {
 
     @PostMapping("/validate/valveSequenceTestCode")
     public Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateValveSequenceTestCode(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                                                          @RequestBody ValidateRequest request) {
+                                                                                                      @RequestBody ValidateRequest request) {
         log.info("Received request to validate Valve Sequence test code: {}", request);
         return principal
                 .flatMap(userDetails -> {

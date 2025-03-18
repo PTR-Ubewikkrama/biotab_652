@@ -335,14 +335,36 @@ public class TestController {
 
     @PostMapping("/get/display-test/{pageNo}")
     Mono<ResponseEntity<ApiResponse<GetTestResponse<DisplayTestDto>>>> getDisplayTest(@AuthenticationPrincipal Mono<UserDetails> principal,
-                                                                              @RequestBody GetByPatternRequest request,
-                                                                              @PathVariable("pageNo") String pageNo) {
+                                                                                      @RequestBody GetByPatternRequest request,
+                                                                                      @PathVariable("pageNo") String pageNo) {
         log.info("Received request to get display test with pattern: {}", request.getFilterValue());
         return principal
                 .flatMap(userDetails -> {
                     log.info("Getting display test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
                     request.setRequestType("DISPLAY");
                     return testService.getDisplayTest(request, userDetails, pageNo);
+                });
+    }
+
+    @PostMapping("/add/main-pcb-test")
+    public Mono<ResponseEntity<CommonResponse>> addMainPCBTest(@RequestBody MainPCBTestAddRequest mainPCBTestAddRequest) {
+        if (!mainPCBTestAddRequest.getHashKey().equals(hashKey)) {
+            return sendInvalidResponse(mainPCBTestAddRequest.getHashKey());
+        }
+        log.info("Request received to add main pcb : {}", mainPCBTestAddRequest);
+        return testService.addMainPCBTest(mainPCBTestAddRequest);
+    }
+
+    @PostMapping("/get/main-pcb-test/{pageNo}")
+    Mono<ResponseEntity<ApiResponse<GetTestResponse<MainPCBTestDto>>>> getMainPCBTest(@AuthenticationPrincipal Mono<UserDetails> principal,
+                                                                                      @RequestBody GetByPatternRequest request,
+                                                                                      @PathVariable("pageNo") String pageNo) {
+        log.info("Received request to get main pcb test with pattern: {}", request.getFilterValue());
+        return principal
+                .flatMap(userDetails -> {
+                    log.info("Getting main pcb test with pattern: {} by user: {}", request.getFilterValue(), userDetails.getUsername());
+                    request.setRequestType("MAIN_PCB");
+                    return testService.getMainPCBTest(request, userDetails, pageNo);
                 });
     }
 

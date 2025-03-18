@@ -26,6 +26,7 @@ import UIPcbList from "./views/tests/ui-pcb/ui-pcb-list";
 import CableList from "./views/tests/cable/cable-list";
 import FanList from "./views/tests/fan/fan-list";
 import DisplayList from "./views/tests/display/display-list";
+import MainPCBList from "./views/tests/main-pcb/main-pcb-list";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -40,6 +41,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
               <Route path="/air-pump-2" element={<AirPumpV2List />} />
               <Route path="/power-supply-test" element={<PowerSupplyList />} />
               <Route path="/power-supply-test-2" element={<PowerSupplyV2List />} />
+              <Route path="/main-pcb-test" element={<MainPCBList />} />
               <Route path="/valve-test" element={<ValveList />} />
               <Route path="/power-pcb-test" element={<PowerPcbTestList />} />
               <Route path="/power-pcb-test-2" element={<PowerPcbV2TestList />} />
@@ -52,7 +54,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
               <Route path="/cable-test" element={<CableList />} />
               <Route path="/fan-test" element={<FanList />} />
               <Route path="/bt-device" element={<BTDeviceList />} />
-              <Route path="/fas" element={<FinalAssemblyList />} />
+              {/* <Route path="/fas" element={<FinalAssemblyList />} /> */}
               <Route path="*" element={<Dashboard />} />
             </Routes>
           </App>

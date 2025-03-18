@@ -52,6 +52,11 @@ const items = [
     title: "Power Supply Test v2.0",
   },
   {
+    href: "/main-pcb-test",
+    icon: <SettingsInputCompositeIcon fontSize="small" />,
+    title: "Main PCB Test",
+  },
+  {
     href: "/valve-test",
     icon: <Support fontSize="small" />,
     title: "Valve Test",
@@ -111,11 +116,11 @@ const items = [
     icon: <DeveloperBoardIcon fontSize="small" />,
     title: "BT Device",
   },
-  {
-    href: "/fas",
-    icon: <ListAltIcon fontSize="small" />,
-    title: "Final Assembly",
-  },
+  // {
+  //   href: "/fas",
+  //   icon: <ListAltIcon fontSize="small" />,
+  //   title: "Final Assembly",
+  // },
 ];
 
 type DashboardSidebarData = {

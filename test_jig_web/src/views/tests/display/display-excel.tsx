@@ -42,5 +42,5 @@ export function handleGenerateDisplayExcel(datas: DisplayTest[]) {
   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
 
   // Save the workbook as an Excel file
-  XLSX.writeFile(workbook, "Fan_Test_" + new Date().toISOString() + ".xlsx");
+  XLSX.writeFile(workbook, "Display_Test_" + new Date().toISOString() + ".xlsx");
 }

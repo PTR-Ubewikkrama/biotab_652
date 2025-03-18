@@ -14,3 +14,5 @@ INSERT INTO devices (device_type, device_name, device_mac, date_time)  VALUES ('
 INSERT INTO devices (device_type, device_name, device_mac, date_time)  VALUES ('UI PCB', 'UI PCB Test Jig', '00:1A:2B:3C:4D:0C', NOW());
 INSERT INTO devices (device_type, device_name, device_mac, date_time)  VALUES ('Cable', 'Cable Test Jig', '00:1A:2B:3C:4D:0D', NOW());
 INSERT INTO devices (device_type, device_name, device_mac, date_time)  VALUES ('Fan', 'Fan Test Jig', '00:1A:2B:3C:4D:10', NOW());
+INSERT INTO devices (device_type, device_name, device_mac, date_time)  VALUES ('Main PCB', 'Main PCB Test Jig', '00:1A:2B:3C:4D:11', NOW());
+INSERT INTO devices (device_type, device_name, device_mac, date_time)  VALUES ('Display', 'Display Test Jig', '00:1A:2B:3C:4D:12', NOW());

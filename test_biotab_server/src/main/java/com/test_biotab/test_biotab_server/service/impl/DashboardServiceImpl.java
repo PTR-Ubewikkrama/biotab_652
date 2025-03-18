@@ -38,6 +38,7 @@ public class DashboardServiceImpl implements DashboardService {
     private final BTDeviceRepository BTDeviceRepository;
     private final FinalAssemblyRepository finalAssemblyRepository;
     private final DisplayTestRepository displayTestRepository;
+    private final MainPCBTestRepository mainPCBTestRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -205,6 +206,16 @@ public class DashboardServiceImpl implements DashboardService {
                                         "SELECT COUNT(d) FROM DisplayTestData d WHERE d.status = false",
                                         Long.class
                                 )))
+                        ),
+                        Mono.zip(
+                                Mono.fromSupplier(() -> mainPCBTestRepository.countByCustomQuery(entityManager.createQuery(
+                                        "SELECT COUNT(m) FROM MainPCBTestData m WHERE m.status = true",
+                                        Long.class
+                                ))),
+                                Mono.fromSupplier(() -> mainPCBTestRepository.countByCustomQuery(entityManager.createQuery(
+                                        "SELECT COUNT(m) FROM MainPCBTestData m WHERE m.status = false",
+                                        Long.class
+                                )))
                         )
                 ),
                 objects -> {
@@ -224,6 +235,7 @@ public class DashboardServiceImpl implements DashboardService {
                     Tuple2<Long, Long> cableTestCounts = (Tuple2<Long, Long>) objects[13];
                     Tuple2<Long, Long> fanTestCounts = (Tuple2<Long, Long>) objects[14];
                     Tuple2<Long, Long> displayTestCounts = (Tuple2<Long, Long>) objects[15];
+                    Tuple2<Long, Long> mainPCBTestCounts = (Tuple2<Long, Long>) objects[16];
 
                     Long totalSuccessValueTest = valueTestCounts.getT1();
                     Long totalFailedValueTest = valueTestCounts.getT2();
@@ -273,6 +285,9 @@ public class DashboardServiceImpl implements DashboardService {
                     Long totalSuccessDisplayTest = displayTestCounts.getT1();
                     Long totalFailedDisplayTest = displayTestCounts.getT2();
 
+                    Long totalSuccessMainPcbTest = mainPCBTestCounts.getT1();
+                    Long totalFailedMainPcbTest = mainPCBTestCounts.getT2();
+
                     return ResponseEntity.ok(
                             ApiResponse.<DashBoardSummaryResponse>builder()
                                     .status("S1000")
@@ -310,6 +325,8 @@ public class DashboardServiceImpl implements DashboardService {
                                             .totalHHDevice(totalHHDevice)
                                             .totalFailedDisplayTest(totalFailedDisplayTest)
                                             .totalSuccessDisplayTest(totalSuccessDisplayTest)
+                                            .totalFailedMainPcbTest(totalFailedMainPcbTest)
+                                            .totalSuccessMainPcbTest(totalSuccessMainPcbTest)
                                             .build()
                                     )
                                     .build()
