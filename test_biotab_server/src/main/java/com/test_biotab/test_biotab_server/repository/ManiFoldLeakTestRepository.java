@@ -14,5 +14,7 @@ public interface ManiFoldLeakTestRepository {
 
     Long countByCustomQuery(TypedQuery<Long> query);
 
+    ManiFoldLeakTestData findVerifiedByCode(String code);
+
     ManiFoldLeakTestData findByCode(String code);
 }

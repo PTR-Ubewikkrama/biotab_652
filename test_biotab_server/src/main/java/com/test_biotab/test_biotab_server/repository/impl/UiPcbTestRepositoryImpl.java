@@ -47,11 +47,26 @@ public class UiPcbTestRepositoryImpl implements UiPcbTestRepository {
     }
 
     @Override
-    public UiPcbTestData findByCode(String code) {
+    public UiPcbTestData findVerifiedByCode(String code) {
         log.info("Finding UiPcbTestData by code: {}", code);
         TypedQuery<UiPcbTestData> query = entityManager.createQuery("SELECT v FROM UiPcbTestData v WHERE v.serialNumber = :code AND v.status = :status", UiPcbTestData.class);
         query.setParameter("code", code);
         query.setParameter("status", true);
+        query.setMaxResults(1);
+
+        try {
+            return query.getSingleResult();
+        } catch (Exception e) {
+            log.error("Error while finding UiPcbTestData by code: {}", code, e);
+        }
+        return null;
+    }
+
+    @Override
+    public UiPcbTestData findByCode(String code) {
+        log.info("Finding UiPcbTestData by code: {}", code);
+        TypedQuery<UiPcbTestData> query = entityManager.createQuery("SELECT v FROM UiPcbTestData v WHERE v.serialNumber = :code", UiPcbTestData.class);
+        query.setParameter("code", code);
         query.setMaxResults(1);
 
         try {

@@ -18,8 +18,12 @@ import BatterySaverIcon from '@mui/icons-material/BatterySaver';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import CompressIcon from '@mui/icons-material/Compress';
 import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
-import InventoryIcon from '@mui/icons-material/Inventory';
 import ListAltIcon from '@mui/icons-material/ListAlt';
+import SettingsInputCompositeIcon from '@mui/icons-material/SettingsInputComposite';
+import CableIcon from '@mui/icons-material/Cable';
+import AcUnitIcon from '@mui/icons-material/AcUnit';
+import DeveloperBoardIcon from '@mui/icons-material/DeveloperBoard';
+import TvIcon from '@mui/icons-material/Tv';
 
 const items = [
   {
@@ -68,6 +72,11 @@ const items = [
     title: "OP Valve Test",
   },
   {
+    href: "/display-test",
+    icon: <TvIcon fontSize="small" />,
+    title: "Display Test",
+  },
+  {
     href: "/valve-sequence-test",
     icon: <CompressIcon fontSize="small" />,
     title: "Valve Sequence Test",
@@ -84,18 +93,23 @@ const items = [
   },
   {
     href: "/ui-pcb-test",
-    icon: <InventoryIcon fontSize="small" />,
+    icon: <SettingsInputCompositeIcon fontSize="small" />,
     title: "UI PCB Test",
   },
   {
     href: "/cable-test",
-    icon: <InventoryIcon fontSize="small" />,
+    icon: <CableIcon fontSize="small" />,
     title: "Cable Test",
   },
   {
     href: "/fan-test",
-    icon: <InventoryIcon fontSize="small" />,
+    icon: <AcUnitIcon fontSize="small" />,
     title: "Fan Test",
+  },
+  {
+    href: "/bt-device",
+    icon: <DeveloperBoardIcon fontSize="small" />,
+    title: "BT Device",
   },
   {
     href: "/fas",

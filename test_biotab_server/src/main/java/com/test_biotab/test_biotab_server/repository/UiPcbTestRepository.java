@@ -15,5 +15,7 @@ public interface UiPcbTestRepository {
 
     Long countByCustomQuery(TypedQuery<Long> query);
 
+    UiPcbTestData findVerifiedByCode(String code);
+
     UiPcbTestData findByCode(String code);
 }

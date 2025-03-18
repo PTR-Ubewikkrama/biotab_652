@@ -47,11 +47,25 @@ public class DisplayTestRepositoryImpl implements DisplayTestRepository {
     }
 
     @Override
-    public DisplayTestData findByCode(String code) {
+    public DisplayTestData findVerifiedByCode(String code) {
         log.info("Finding DisplayTestData by code: {}", code);
         TypedQuery<DisplayTestData> query = entityManager.createQuery("SELECT v FROM DisplayTestData v WHERE v.serialNumber = :code AND v.status = :status", DisplayTestData.class);
         query.setParameter("code", code);
         query.setParameter("status", true);
+        query.setMaxResults(1);
+
+        try {
+            return query.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public DisplayTestData findByCode(String code) {
+        log.info("Finding DisplayTestData by code: {}", code);
+        TypedQuery<DisplayTestData> query = entityManager.createQuery("SELECT v FROM DisplayTestData v WHERE v.serialNumber = :code", DisplayTestData.class);
+        query.setParameter("code", code);
         query.setMaxResults(1);
 
         try {

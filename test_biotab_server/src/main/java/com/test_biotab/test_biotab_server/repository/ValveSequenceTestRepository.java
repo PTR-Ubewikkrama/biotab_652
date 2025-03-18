@@ -14,5 +14,7 @@ public interface ValveSequenceTestRepository {
 
     Long countByCustomQuery(TypedQuery<Long> query);
 
+    ValveSequenceTestData findVerifiedByCode(String code);
+
     ValveSequenceTestData findByCode(String code);
 }

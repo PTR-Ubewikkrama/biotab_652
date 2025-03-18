@@ -48,11 +48,26 @@ public class AirPumpTestRepositoryImpl implements AirPumpTestRepository {
     }
 
     @Override
-    public AirPumpTestData findByCode(String code) {
+    public AirPumpTestData findVerifiedByCode(String code) {
         log.info("Finding AirPumpTestData by code: {}", code);
         TypedQuery<AirPumpTestData> query = entityManager.createQuery("SELECT v FROM AirPumpTestData v WHERE v.serialNumber = :code AND v.status = :status", AirPumpTestData.class);
         query.setParameter("code", code);
         query.setParameter("status", true);
+        query.setMaxResults(1);
+
+        try {
+            return query.getSingleResult();
+        } catch (Exception e) {
+            log.error("Error while finding AirPumpTestData by code: {}", code, e);
+            return null;
+        }
+    }
+
+    @Override
+    public AirPumpTestData findByCode(String code) {
+        log.info("Finding AirPumpTestData by code: {}", code);
+        TypedQuery<AirPumpTestData> query = entityManager.createQuery("SELECT v FROM AirPumpTestData v WHERE v.serialNumber = :code", AirPumpTestData.class);
+        query.setParameter("code", code);
         query.setMaxResults(1);
 
         try {

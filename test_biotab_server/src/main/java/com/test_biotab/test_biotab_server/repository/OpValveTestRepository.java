@@ -15,5 +15,7 @@ public interface OpValveTestRepository {
 
     Long countByCustomQuery(TypedQuery<Long> query);
 
+    OpValveTestData findVerifiedByCode(String code);
+
     OpValveTestData findByCode(String code);
 }

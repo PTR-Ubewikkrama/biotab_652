@@ -14,5 +14,7 @@ public interface ValveCardTestRepository {
 
     Long countByCustomQuery(TypedQuery<Long> query);
 
+    ValveCardTestData findVerifiedByCode(String code);
+
     ValveCardTestData findByCode(String code);
 }

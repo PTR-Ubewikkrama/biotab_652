@@ -48,11 +48,26 @@ public class ValveCardTestRepositoryImpl implements ValveCardTestRepository {
     }
 
     @Override
-    public ValveCardTestData findByCode(String code) {
+    public ValveCardTestData findVerifiedByCode(String code) {
         log.info("Finding ValveCardTestData by code: {}", code);
         TypedQuery<ValveCardTestData> query = entityManager.createQuery("SELECT v FROM ValveCardTestData v WHERE v.serialNumber = :code AND v.status = :status", ValveCardTestData.class);
         query.setParameter("code", code);
         query.setParameter("status", true);
+        query.setMaxResults(1);
+
+        try {
+            return query.getSingleResult();
+        } catch (Exception e) {
+            log.error("Error while finding ValveCardTestData by code: {}", code, e);
+            return null;
+        }
+    }
+
+    @Override
+    public ValveCardTestData findByCode(String code) {
+        log.info("Finding ValveCardTestData by code: {}", code);
+        TypedQuery<ValveCardTestData> query = entityManager.createQuery("SELECT v FROM ValveCardTestData v WHERE v.serialNumber = :code", ValveCardTestData.class);
+        query.setParameter("code", code);
         query.setMaxResults(1);
 
         try {

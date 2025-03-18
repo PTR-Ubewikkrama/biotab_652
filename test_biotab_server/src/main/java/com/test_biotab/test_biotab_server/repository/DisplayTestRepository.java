@@ -14,5 +14,7 @@ public interface DisplayTestRepository {
 
     Long countByCustomQuery(TypedQuery<Long> query);
 
+    DisplayTestData findVerifiedByCode(String code);
+
     DisplayTestData findByCode(String code);
 }

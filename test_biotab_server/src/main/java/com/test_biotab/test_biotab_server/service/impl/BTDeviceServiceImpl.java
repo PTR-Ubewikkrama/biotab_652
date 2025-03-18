@@ -43,6 +43,7 @@ public class BTDeviceServiceImpl implements BTDeviceService {
     private final OpValveTestRepository opValveTestRepository;
     private final ValveSequenceTestRepository valveSequenceTestRepository;
     private final PowerSupplyV2TestRepository powerSupplyV2TestRepository;
+    private final DisplayTestRepository displayTestRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -308,27 +309,39 @@ public class BTDeviceServiceImpl implements BTDeviceService {
                                 .status("S1000")
                                 .statusDescription("Component verified successfully")
                                 .data(ComponentVerificationResponse.builder()
-                                        .hhDeviceCode(device.getDeviceCode())
+                                        .btDeviceCode(device.getDeviceCode())
                                         .componentCode(request.getCode())
                                         .componentType("BT_DEVICE")
                                         .componentStatus("VERIFIED")
                                         .build())
                                 .build());
                     } else {
-                        List<String> componentTypes = List.of("PCB", "VALVE", "AIR_PUMP", "LATCH_BUTTON",
-                                "OVER_PRESSURE_VALVE", "BATTERY", "ENCLOSURE", "AIR_BLADDER", "POWER_SUPPLY");
+                        List<String> componentTypes = List.of("POWER PCB", "PUMP", "FAN", "UI PCB", "MAIN PCB",
+                                "MANIFOLD", "VALVE CARD", "OVER PRESSURE VALVE", "DISPLAY", "FRONT BRACKET ASSEMBLY",
+                                "POWER ADAPTOR");
 
                         TypedQuery<BTDevice> query = entityManager.createQuery("SELECT d FROM BTDevice d WHERE " +
-                                "d.pcbTestCode LIKE '%" + validateRequest.getCode() + "%' OR " +
-                                "d.valveTestOneCode LIKE '%" + validateRequest.getCode() + "%' OR " +
-                                "d.valveTestTwoCode LIKE '%" + validateRequest.getCode() + "%' OR " +
-                                "d.airPumpTestCode LIKE '%" + validateRequest.getCode() + "%' OR " +
-                                "d.latchButtonTestCode LIKE '%" + validateRequest.getCode() + "%' OR " +
-                                "d.overPressureValveTestCode LIKE '%" + validateRequest.getCode() + "%' OR " +
-                                "d.batteryTestCode LIKE '%" + validateRequest.getCode() + "%' OR " +
-                                "d.enclosureCode LIKE '%" + validateRequest.getCode() + "%' OR " +
-                                "d.airBladderCode LIKE '%" + validateRequest.getCode() + "%' OR " +
-                                "d.powerSupplyTestCode LIKE '%" + validateRequest.getCode() + "%'", BTDevice.class);
+                                "d.powerPcbCode LIKE '%" + validateRequest.getCode() + "%' OR " +
+                                "d.pumpCode LIKE '%" + validateRequest.getCode() + "%' OR " +
+                                "d.fanCode LIKE '%" + validateRequest.getCode() + "%' OR " +
+                                "d.uiPcbCode LIKE '%" + validateRequest.getCode() + "%' OR " +
+                                "d.encoderCode LIKE '%" + validateRequest.getCode() + "%' OR " +
+                                "d.mainPcbCode LIKE '%" + validateRequest.getCode() + "%' OR " +
+                                "d.manifoldCode LIKE '%" + validateRequest.getCode() + "%' OR " +
+                                "d.valveCardInsideCableSetCode LIKE '%" + validateRequest.getCode() + "%' OR " +
+                                "d.valveCardInputOutputCableSetCode LIKE '%" + validateRequest.getCode() + "%' OR " +
+                                "d.overPressureValveCode LIKE '%" + validateRequest.getCode() + "%' OR " +
+                                "d.powerCableCode LIKE '%" + validateRequest.getCode() + "%' OR " +
+                                "d.uiCableCode LIKE '%" + validateRequest.getCode() + "%' OR " +
+                                "d.displayCode LIKE '%" + validateRequest.getCode() + "%' OR " +
+                                "d.frontBracketAssemblyCode LIKE '%" + validateRequest.getCode() + "%' OR " +
+                                "d.powerAdaptorCode LIKE '%" + validateRequest.getCode() + "%' OR " +
+                                "d.enclosureTopCode LIKE '%" + validateRequest.getCode() + "%' OR " +
+                                "d.enclosureBottomCode LIKE '%" + validateRequest.getCode() + "%' OR " +
+                                "d.backVentCode LIKE '%" + validateRequest.getCode() + "%' OR " +
+                                "d.fanMountCode LIKE '%" + validateRequest.getCode() + "%' OR " +
+                                "d.encoderSupporterCode LIKE '%" + validateRequest.getCode() + "%' OR " +
+                                "d.pcbHolderCode LIKE '%" + validateRequest.getCode() + "%'", BTDevice.class);
 
                         List<BTDevice> devices = query.getResultList();
 
@@ -338,7 +351,7 @@ public class BTDeviceServiceImpl implements BTDeviceService {
                                     .status("S1000")
                                     .statusDescription("Component verified successfully")
                                     .data(ComponentVerificationResponse.builder()
-                                            .hhDeviceCode(deviceToVerify.getDeviceCode())
+                                            .btDeviceCode(deviceToVerify.getDeviceCode())
                                             .componentCode(request.getCode())
                                             .componentType(getComponentType(deviceToVerify, request))
                                             .componentStatus("VERIFIED")
@@ -347,49 +360,196 @@ public class BTDeviceServiceImpl implements BTDeviceService {
                         } else {
                             for (String componentType : componentTypes) {
                                 switch (componentType) {
-                                    case "VALVE" -> {
-                                        ValveTestData valveTest = valveTestRepository.findByCode(request.getCode());
-                                        if (valveTest != null) {
-                                            return ResponseEntity.ok(ApiResponse.<ComponentVerificationResponse>builder()
-                                                    .status("S1000")
-                                                    .statusDescription("Component verified successfully")
-                                                    .data(ComponentVerificationResponse.builder()
-                                                            .hhDeviceCode("UNKNOWN")
-                                                            .componentCode(request.getCode())
-                                                            .componentType("VALVE")
-                                                            .componentStatus(valveTest.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
-                                                            .build())
-                                                    .build());
-                                        }
-                                    }
-                                    case "AIR_PUMP" -> {
-                                        AirPumpTestData airPumpTest = airPumpTestRepository.findByCode(request.getCode());
+                                    case "PUMP" -> {
+                                        AirPumpTestData airPumpTest = airPumpTestRepository.findByCode(validateRequest.getCode());
                                         if (airPumpTest != null) {
                                             return ResponseEntity.ok(ApiResponse.<ComponentVerificationResponse>builder()
                                                     .status("S1000")
                                                     .statusDescription("Component verified successfully")
                                                     .data(ComponentVerificationResponse.builder()
-                                                            .hhDeviceCode("UNKNOWN")
+                                                            .btDeviceCode("UNKNOWN")
                                                             .componentCode(request.getCode())
-                                                            .componentType("AIR_PUMP")
+                                                            .componentType("PUMP")
                                                             .componentStatus(airPumpTest.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
+                                                            .build())
+                                                    .build());
+                                        } else {
+                                            AirPumpV2TestData airPumpV2Test = airPumpV2TestRepository.findByCode(validateRequest.getCode());
+                                            if (airPumpV2Test != null) {
+                                                return ResponseEntity.ok(ApiResponse.<ComponentVerificationResponse>builder()
+                                                        .status("S1000")
+                                                        .statusDescription("Component verified successfully")
+                                                        .data(ComponentVerificationResponse.builder()
+                                                                .btDeviceCode("UNKNOWN")
+                                                                .componentCode(request.getCode())
+                                                                .componentType("PUMP")
+                                                                .componentStatus(airPumpV2Test.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
+                                                                .build())
+                                                        .build());
+                                            }
+                                        }
+                                    }
+                                    case "POWER PCB" -> {
+                                        PowerPCBTestData powerPCBTest = powerPCBTestRepository.findByCode(validateRequest.getCode());
+                                        if (powerPCBTest != null) {
+                                            return ResponseEntity.ok(ApiResponse.<ComponentVerificationResponse>builder()
+                                                    .status("S1000")
+                                                    .statusDescription("Component verified successfully")
+                                                    .data(ComponentVerificationResponse.builder()
+                                                            .btDeviceCode("UNKNOWN")
+                                                            .componentCode(request.getCode())
+                                                            .componentType("POWER PCB")
+                                                            .componentStatus(powerPCBTest.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
+                                                            .build())
+                                                    .build());
+                                        } else {
+                                            PowerPCBV2TestData powerPCBV2Test = powerPCBV2TestRepository.findByCode(validateRequest.getCode());
+                                            if (powerPCBV2Test != null) {
+                                                return ResponseEntity.ok(ApiResponse.<ComponentVerificationResponse>builder()
+                                                        .status("S1000")
+                                                        .statusDescription("Component verified successfully")
+                                                        .data(ComponentVerificationResponse.builder()
+                                                                .btDeviceCode("UNKNOWN")
+                                                                .componentCode(request.getCode())
+                                                                .componentType("POWER PCB")
+                                                                .componentStatus(powerPCBV2Test.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
+                                                                .build())
+                                                        .build());
+                                            }
+                                        }
+                                    }
+                                    case "FAN" -> {
+                                        FanTestData fanTest = fanTestRepository.findByCode(validateRequest.getCode());
+                                        if (fanTest != null) {
+                                            return ResponseEntity.ok(ApiResponse.<ComponentVerificationResponse>builder()
+                                                    .status("S1000")
+                                                    .statusDescription("Component verified successfully")
+                                                    .data(ComponentVerificationResponse.builder()
+                                                            .btDeviceCode("UNKNOWN")
+                                                            .componentCode(request.getCode())
+                                                            .componentType("FAN")
+                                                            .componentStatus(fanTest.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
                                                             .build())
                                                     .build());
                                         }
                                     }
-                                    case "POWER_SUPPLY" -> {
-                                        PowerSupplyTestData powerSupplyTest = powerSupplyTestRepository.findByCode(request.getCode());
+                                    case "UI PCB" -> {
+                                        UiPcbTestData uiPcbTest = uiPcbTestRepository.findByCode(validateRequest.getCode());
+                                        if (uiPcbTest != null) {
+                                            return ResponseEntity.ok(ApiResponse.<ComponentVerificationResponse>builder()
+                                                    .status("S1000")
+                                                    .statusDescription("Component verified successfully")
+                                                    .data(ComponentVerificationResponse.builder()
+                                                            .btDeviceCode("UNKNOWN")
+                                                            .componentCode(request.getCode())
+                                                            .componentType("UI PCB")
+                                                            .componentStatus(uiPcbTest.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
+                                                            .build())
+                                                    .build());
+                                        }
+                                    }
+                                    case "MANIFOLD" -> {
+                                        ManiFoldLeakTestData manifoldTest = maniFoldLeakTestRepository.findByCode(validateRequest.getCode());
+                                        if (manifoldTest != null) {
+                                            return ResponseEntity.ok(ApiResponse.<ComponentVerificationResponse>builder()
+                                                    .status("S1000")
+                                                    .statusDescription("Component verified successfully")
+                                                    .data(ComponentVerificationResponse.builder()
+                                                            .btDeviceCode("UNKNOWN")
+                                                            .componentCode(request.getCode())
+                                                            .componentType("MANIFOLD")
+                                                            .componentStatus(manifoldTest.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
+                                                            .build())
+                                                    .build());
+                                        }
+                                    }
+                                    case "VALVE CARD" -> {
+                                        ValveCardTestData valveTest = valveCardTestRepository.findByCode(validateRequest.getCode());
+                                        if (valveTest != null) {
+                                            return ResponseEntity.ok(ApiResponse.<ComponentVerificationResponse>builder()
+                                                    .status("S1000")
+                                                    .statusDescription("Component verified successfully")
+                                                    .data(ComponentVerificationResponse.builder()
+                                                            .btDeviceCode("UNKNOWN")
+                                                            .componentCode(request.getCode())
+                                                            .componentType("VALVE CARD")
+                                                            .componentStatus(valveTest.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
+                                                            .build())
+                                                    .build());
+                                        }
+                                    }
+                                    case "OVER PRESSURE VALVE" -> {
+                                        OpValveTestData opValveTest = opValveTestRepository.findByCode(validateRequest.getCode());
+                                        if (opValveTest != null) {
+                                            return ResponseEntity.ok(ApiResponse.<ComponentVerificationResponse>builder()
+                                                    .status("S1000")
+                                                    .statusDescription("Component verified successfully")
+                                                    .data(ComponentVerificationResponse.builder()
+                                                            .btDeviceCode("UNKNOWN")
+                                                            .componentCode(request.getCode())
+                                                            .componentType("OVER PRESSURE VALVE")
+                                                            .componentStatus(opValveTest.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
+                                                            .build())
+                                                    .build());
+                                        }
+                                    }
+                                    case "DISPLAY" -> {
+                                        DisplayTestData displayTest = displayTestRepository.findByCode(validateRequest.getCode());
+                                        if (displayTest != null) {
+                                            return ResponseEntity.ok(ApiResponse.<ComponentVerificationResponse>builder()
+                                                    .status("S1000")
+                                                    .statusDescription("Component verified successfully")
+                                                    .data(ComponentVerificationResponse.builder()
+                                                            .btDeviceCode("UNKNOWN")
+                                                            .componentCode(request.getCode())
+                                                            .componentType("DISPLAY")
+                                                            .componentStatus(displayTest.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
+                                                            .build())
+                                                    .build());
+                                        }
+                                    }
+                                    case "FRONT BRACKET ASSEMBLY" -> {
+                                        ValveSequenceTestData valveSequenceTest = valveSequenceTestRepository.findByCode(validateRequest.getCode());
+                                        if (valveSequenceTest != null) {
+                                            return ResponseEntity.ok(ApiResponse.<ComponentVerificationResponse>builder()
+                                                    .status("S1000")
+                                                    .statusDescription("Component verified successfully")
+                                                    .data(ComponentVerificationResponse.builder()
+                                                            .btDeviceCode("UNKNOWN")
+                                                            .componentCode(request.getCode())
+                                                            .componentType("FRONT BRACKET ASSEMBLY")
+                                                            .componentStatus(valveSequenceTest.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
+                                                            .build())
+                                                    .build());
+                                        }
+                                    }
+                                    case "POWER ADAPTOR" -> {
+                                        PowerSupplyTestData powerSupplyTest = powerSupplyTestRepository.findByCode(validateRequest.getCode());
                                         if (powerSupplyTest != null) {
                                             return ResponseEntity.ok(ApiResponse.<ComponentVerificationResponse>builder()
                                                     .status("S1000")
                                                     .statusDescription("Component verified successfully")
                                                     .data(ComponentVerificationResponse.builder()
-                                                            .hhDeviceCode("UNKNOWN")
+                                                            .btDeviceCode("UNKNOWN")
                                                             .componentCode(request.getCode())
-                                                            .componentType("POWER_SUPPLY")
+                                                            .componentType("POWER ADAPTOR")
                                                             .componentStatus(powerSupplyTest.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
                                                             .build())
                                                     .build());
+                                        } else {
+                                            PowerSupplyV2TestData powerSupplyV2Test = powerSupplyV2TestRepository.findByCode(validateRequest.getCode());
+                                            if (powerSupplyV2Test != null) {
+                                                return ResponseEntity.ok(ApiResponse.<ComponentVerificationResponse>builder()
+                                                        .status("S1000")
+                                                        .statusDescription("Component verified successfully")
+                                                        .data(ComponentVerificationResponse.builder()
+                                                                .btDeviceCode("UNKNOWN")
+                                                                .componentCode(request.getCode())
+                                                                .componentType("POWER ADAPTOR")
+                                                                .componentStatus(powerSupplyV2Test.getStatus() ? "VERIFIED" : "NOT_VERIFIED")
+                                                                .build())
+                                                        .build());
+                                            }
                                         }
                                     }
                                     default -> {
@@ -416,26 +576,48 @@ public class BTDeviceServiceImpl implements BTDeviceService {
     private String getComponentType(BTDevice deviceToVerify, ValidateRequest request) {
         if (deviceToVerify.getDeviceCode().contains(request.getCode())) {
             return "BT_DEVICE";
-//        }
-//        else if (deviceToVerify.getPcbTestCode().contains(request.getCode())) {
-//            return "PCB";
-//        } else if (deviceToVerify.getValveTestOneCode().contains(request.getCode()) ||
-//                deviceToVerify.getValveTestTwoCode().contains(request.getCode())) {
-//            return "VALVE";
-//        } else if (deviceToVerify.getAirPumpTestCode().contains(request.getCode())) {
-//            return "AIR_PUMP";
-//        } else if (deviceToVerify.getLatchButtonTestCode().contains(request.getCode())) {
-//            return "LATCH_BUTTON";
-//        } else if (deviceToVerify.getOverPressureValveTestCode().contains(request.getCode())) {
-//            return "OVER_PRESSURE_VALVE";
-//        } else if (deviceToVerify.getBatteryTestCode().contains(request.getCode())) {
-//            return "BATTERY";
-//        } else if (deviceToVerify.getEnclosureCode().contains(request.getCode())) {
-//            return "ENCLOSURE";
-//        } else if (deviceToVerify.getAirBladderCode().contains(request.getCode())) {
-//            return "AIR_BLADDER";
-//        } else if (deviceToVerify.getPowerSupplyTestCode().contains(request.getCode())) {
-//            return "POWER_SUPPLY";
+        } else if (deviceToVerify.getPowerPcbCode().contains(request.getCode())) {
+            return "POWER_PCB";
+        } else if (deviceToVerify.getPumpCode().contains(request.getCode())) {
+            return "PUMP";
+        } else if (deviceToVerify.getFanCode().contains(request.getCode())) {
+            return "FAN";
+        } else if (deviceToVerify.getUiPcbCode().contains(request.getCode())) {
+            return "UI_PCB";
+        } else if (deviceToVerify.getEncoderCode().contains(request.getCode())) {
+            return "ENCODER";
+        } else if (deviceToVerify.getMainPcbCode().contains(request.getCode())) {
+            return "MAIN_PCB";
+        } else if (deviceToVerify.getManifoldCode().contains(request.getCode())) {
+            return "MANIFOLD";
+        } else if (deviceToVerify.getValveCardInsideCableSetCode().contains(request.getCode())) {
+            return "VALVE_CARD_INSIDE_CABLE_SET";
+        } else if (deviceToVerify.getValveCardInputOutputCableSetCode().contains(request.getCode())) {
+            return "VALVE_CARD_INPUT_OUTPUT_CABLE_SET";
+        } else if (deviceToVerify.getOverPressureValveCode().contains(request.getCode())) {
+            return "OVER_PRESSURE_VALVE";
+        } else if (deviceToVerify.getPowerCableCode().contains(request.getCode())) {
+            return "POWER_CABLE";
+        } else if (deviceToVerify.getUiCableCode().contains(request.getCode())) {
+            return "UI_CABLE";
+        } else if (deviceToVerify.getDisplayCode().contains(request.getCode())) {
+            return "DISPLAY";
+        } else if (deviceToVerify.getFrontBracketAssemblyCode().contains(request.getCode())) {
+            return "FRONT_BRACKET_ASSEMBLY";
+        } else if (deviceToVerify.getPowerAdaptorCode().contains(request.getCode())) {
+            return "POWER_ADAPTOR";
+        } else if (deviceToVerify.getEnclosureTopCode().contains(request.getCode())) {
+            return "ENCLOSURE_TOP";
+        } else if (deviceToVerify.getEnclosureBottomCode().contains(request.getCode())) {
+            return "ENCLOSURE_BOTTOM";
+        } else if (deviceToVerify.getBackVentCode().contains(request.getCode())) {
+            return "BACK_VENT";
+        } else if (deviceToVerify.getFanMountCode().contains(request.getCode())) {
+            return "FAN_MOUNT";
+        } else if (deviceToVerify.getEncoderSupporterCode().contains(request.getCode())) {
+            return "ENCODER_SUPPORTER";
+        } else if (deviceToVerify.getPcbHolderCode().contains(request.getCode())) {
+            return "PCB_HOLDER";
         } else {
             return "UNKNOWN";
         }
@@ -548,8 +730,8 @@ public class BTDeviceServiceImpl implements BTDeviceService {
                                         .build())
                                 .build());
                     } else {
-                        AirPumpTestData airPumpTest = airPumpTestRepository.findByCode(validateRequest.getCode());
-                        AirPumpV2TestData airPumpV2Test = airPumpV2TestRepository.findByCode(validateRequest.getCode());
+                        AirPumpTestData airPumpTest = airPumpTestRepository.findVerifiedByCode(validateRequest.getCode());
+                        AirPumpV2TestData airPumpV2Test = airPumpV2TestRepository.findVerifiedByCode(validateRequest.getCode());
                         if (airPumpTest == null && airPumpV2Test == null) {
                             return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
                                     .status("E1000")
@@ -593,8 +775,8 @@ public class BTDeviceServiceImpl implements BTDeviceService {
                                         .build())
                                 .build());
                     } else {
-                        PowerSupplyTestData powerSupplyTest = powerSupplyTestRepository.findByCode(validateRequest.getCode());
-                        PowerSupplyV2TestData powerSupplyV2Test = powerSupplyV2TestRepository.findByCode(validateRequest.getCode());
+                        PowerSupplyTestData powerSupplyTest = powerSupplyTestRepository.findVerifiedByCode(validateRequest.getCode());
+                        PowerSupplyV2TestData powerSupplyV2Test = powerSupplyV2TestRepository.findVerifiedByCode(validateRequest.getCode());
                         if (powerSupplyTest == null && powerSupplyV2Test == null) {
                             return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
                                     .status("E1000")
@@ -638,7 +820,7 @@ public class BTDeviceServiceImpl implements BTDeviceService {
                                         .build())
                                 .build());
                     } else {
-                        ValveCardTestData valveTest = valveCardTestRepository.findByCode(validateRequest.getCode());
+                        ValveCardTestData valveTest = valveCardTestRepository.findVerifiedByCode(validateRequest.getCode());
                         if (valveTest == null) {
                             return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
                                     .status("E1000")
@@ -711,8 +893,8 @@ public class BTDeviceServiceImpl implements BTDeviceService {
                                         .build())
                                 .build());
                     } else {
-                        PowerPCBTestData powerPCBTest = powerPCBTestRepository.findByCode(validateRequest.getCode());
-                        PowerPCBV2TestData powerPCBV2Test = powerPCBV2TestRepository.findByCode(validateRequest.getCode());
+                        PowerPCBTestData powerPCBTest = powerPCBTestRepository.findVerifiedByCode(validateRequest.getCode());
+                        PowerPCBV2TestData powerPCBV2Test = powerPCBV2TestRepository.findVerifiedByCode(validateRequest.getCode());
                         if (powerPCBTest == null && powerPCBV2Test == null) {
                             return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
                                     .status("E1000")
@@ -756,7 +938,7 @@ public class BTDeviceServiceImpl implements BTDeviceService {
                                         .build())
                                 .build());
                     } else {
-                        FanTestData fanTest = fanTestRepository.findByCode(validateRequest.getCode());
+                        FanTestData fanTest = fanTestRepository.findVerifiedByCode(validateRequest.getCode());
                         if (fanTest == null) {
                             return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
                                     .status("E1000")
@@ -800,7 +982,7 @@ public class BTDeviceServiceImpl implements BTDeviceService {
                                         .build())
                                 .build());
                     } else {
-                        UiPcbTestData uiPcbTest = uiPcbTestRepository.findByCode(validateRequest.getCode());
+                        UiPcbTestData uiPcbTest = uiPcbTestRepository.findVerifiedByCode(validateRequest.getCode());
                         if (uiPcbTest == null) {
                             return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
                                     .status("E1000")
@@ -844,7 +1026,7 @@ public class BTDeviceServiceImpl implements BTDeviceService {
                                         .build())
                                 .build());
                     } else {
-                        ManiFoldLeakTestData manifoldTest = maniFoldLeakTestRepository.findByCode(validateRequest.getCode());
+                        ManiFoldLeakTestData manifoldTest = maniFoldLeakTestRepository.findVerifiedByCode(validateRequest.getCode());
                         if (manifoldTest == null) {
                             return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
                                     .status("E1000")
@@ -888,7 +1070,7 @@ public class BTDeviceServiceImpl implements BTDeviceService {
                                         .build())
                                 .build());
                     } else {
-                        OpValveTestData overPressureValveTest = opValveTestRepository.findByCode(validateRequest.getCode());
+                        OpValveTestData overPressureValveTest = opValveTestRepository.findVerifiedByCode(validateRequest.getCode());
                         if (overPressureValveTest == null) {
                             return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
                                     .status("E1000")
@@ -932,7 +1114,7 @@ public class BTDeviceServiceImpl implements BTDeviceService {
                                         .build())
                                 .build());
                     } else {
-                        ValveSequenceTestData valveSequenceTest = valveSequenceTestRepository.findByCode(validateRequest.getCode());
+                        ValveSequenceTestData valveSequenceTest = valveSequenceTestRepository.findVerifiedByCode(validateRequest.getCode());
                         if (valveSequenceTest == null) {
                             return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
                                     .status("E1000")
@@ -955,6 +1137,50 @@ public class BTDeviceServiceImpl implements BTDeviceService {
                 .onErrorResume(e -> Mono.just(ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
                         .status("E1000")
                         .statusDescription("Error occurred while validating Valve Sequence test code")
+                        .build())));
+    }
+
+    @Override
+    public Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateDisplayTestCode(ValidateRequest request, UserDetails userDetails) {
+        return Mono.just(request)
+                .map(validateRequest -> {
+                    log.info("Validating Display test code: {} by user: {}", validateRequest, userDetails.getUsername());
+                    TypedQuery<BTDevice> query = entityManager.createQuery("SELECT d FROM BTDevice d WHERE d.displayCode LIKE '%" + validateRequest.getCode() + "%'", BTDevice.class);
+                    List<BTDevice> devices = query.getResultList();
+
+                    if (!devices.isEmpty()) {
+                        BTDevice device = devices.getFirst();
+                        return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
+                                .status("E1000")
+                                .statusDescription("Display test code found")
+                                .data(ValidateComponentResponse.builder()
+                                        .hhDeviceCode(device.getDeviceCode())
+                                        .build())
+                                .build());
+                    } else {
+                        DisplayTestData displayTest = displayTestRepository.findVerifiedByCode(validateRequest.getCode());
+                        if (displayTest == null) {
+                            return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
+                                    .status("E1000")
+                                    .statusDescription("Display test code not found")
+                                    .data(ValidateComponentResponse.builder()
+                                            .hhDeviceCode(null)
+                                            .build())
+                                    .build());
+                        } else {
+                            return ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
+                                    .status("S1000")
+                                    .statusDescription("Display test code found")
+                                    .data(ValidateComponentResponse.builder()
+                                            .hhDeviceCode(null)
+                                            .build())
+                                    .build());
+                        }
+                    }
+                })
+                .onErrorResume(e -> Mono.just(ResponseEntity.ok(ApiResponse.<ValidateComponentResponse>builder()
+                        .status("E1000")
+                        .statusDescription("Error occurred while validating Display test code")
                         .build())));
     }
 }

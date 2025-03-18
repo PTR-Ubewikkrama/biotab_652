@@ -603,7 +603,13 @@ class _AddBTDevicePageState extends State<AddBTDevicePage> {
       case 20:
         return {'status': true, 'message': 'Valid UI Cable Code'};
       case 21:
-        return {'status': true, 'message': 'Valid Display Code'};
+        ValidateComponentResp? resp =
+            await _btDeviceService.validateDisplayTest(val);
+        if (resp != null && resp.isSuccess()) {
+          return {'status': true, 'message': resp.statusDescription};
+        } else {
+          return {'status': false, 'message': resp!.statusDescription};
+        }
       case 22:
         ValidateComponentResp? resp =
             await _btDeviceService.validateFrontBracketAssemblyTest(val);

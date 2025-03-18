@@ -15,5 +15,7 @@ public interface FanTestRepository {
 
     Long countByCustomQuery(TypedQuery<Long> query);
 
+    FanTestData findVerifiedByCode(String code);
+
     FanTestData findByCode(String code);
 }

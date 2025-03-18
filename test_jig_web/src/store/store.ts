@@ -8,7 +8,7 @@ import { powerSupplyApi } from '../services/powerSupply_service'
 import { valveApi } from '../services/valve_service'
 import { loginSlice } from '../views/login/auth-slice'
 import { pcbTestApi } from '../services/pcb_test_service'
-import { hhDeviceApi } from '../services/hh_device_service'
+import { btDeviceApi } from '../services/bt_device_service'
 import { faApi } from '../services/fa_service'
 import { powerPcbTestApi } from '../services/power_pcb_test_service'
 import { opValveApi } from '../services/op_valve_service'
@@ -18,6 +18,7 @@ import { maniFoldLeakApi } from '../services/mani_fold_leak_service'
 import { uiPcbApi } from '../services/ui_pcb_service'
 import { cableTestApi } from '../services/cable_test_service'
 import { fanTestApi } from '../services/fan_test_service'
+import { displayTestApi } from '../services/display_test_service'
 
 export const store = configureStore({
     reducer: {
@@ -30,7 +31,7 @@ export const store = configureStore({
         [valveApi.reducerPath]: valveApi.reducer,
         [pcbTestApi.reducerPath]: pcbTestApi.reducer,
         [powerPcbTestApi.reducerPath]: powerPcbTestApi.reducer,
-        [hhDeviceApi.reducerPath]: hhDeviceApi.reducer,
+        [btDeviceApi.reducerPath]: btDeviceApi.reducer,
         [opValveApi.reducerPath]: opValveApi.reducer,
         [faApi.reducerPath]: faApi.reducer,
         [valveSequenceApi.reducerPath]: valveSequenceApi.reducer,
@@ -39,6 +40,7 @@ export const store = configureStore({
         [uiPcbApi.reducerPath]: uiPcbApi.reducer,
         [cableTestApi.reducerPath]: cableTestApi.reducer,
         [fanTestApi.reducerPath]: fanTestApi.reducer,
+        [displayTestApi.reducerPath]: displayTestApi.reducer,
         loginStatus: loginSlice.reducer
     },
     middleware: (getDefaultMiddleware) =>
@@ -49,7 +51,7 @@ export const store = configureStore({
             .concat(airPumpApi.middleware)
             .concat(powerSupplyApi.middleware)
             .concat(pcbTestApi.middleware)
-            .concat(hhDeviceApi.middleware)
+            .concat(btDeviceApi.middleware)
             .concat(faApi.middleware)
             .concat(powerPcbTestApi.middleware)
             .concat(opValveApi.middleware)
@@ -59,6 +61,7 @@ export const store = configureStore({
             .concat(uiPcbApi.middleware)
             .concat(cableTestApi.middleware)
             .concat(fanTestApi.middleware)
+            .concat(displayTestApi.middleware)
             .concat(valveApi.middleware),
 })
 

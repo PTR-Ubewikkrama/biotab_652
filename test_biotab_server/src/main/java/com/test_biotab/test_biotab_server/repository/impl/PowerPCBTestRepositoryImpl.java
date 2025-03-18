@@ -47,11 +47,26 @@ public class PowerPCBTestRepositoryImpl implements PowerPCBTestRepository {
     }
 
     @Override
-    public PowerPCBTestData findByCode(String code) {
+    public PowerPCBTestData findVerifiedByCode(String code) {
         log.info("Finding PowerPCBTestData by code: {}", code);
         TypedQuery<PowerPCBTestData> query = entityManager.createQuery("SELECT v FROM PowerPCBTestData v WHERE v.serialNumber = :code AND v.status = :status", PowerPCBTestData.class);
         query.setParameter("code", code);
         query.setParameter("status", true);
+        query.setMaxResults(1);
+
+        try {
+            return query.getSingleResult();
+        } catch (Exception e) {
+            log.error("Error while finding PowerPCBTestData by code: {}", code, e);
+            return null;
+        }
+    }
+
+    @Override
+    public PowerPCBTestData findByCode(String code) {
+        log.info("Finding PowerPCBTestData by code: {}", code);
+        TypedQuery<PowerPCBTestData> query = entityManager.createQuery("SELECT v FROM PowerPCBTestData v WHERE v.serialNumber = :code", PowerPCBTestData.class);
+        query.setParameter("code", code);
         query.setMaxResults(1);
 
         try {

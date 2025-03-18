@@ -13,5 +13,5 @@ public class ComponentVerificationResponse {
     private String componentCode;
     private String componentType;
     private String componentStatus;
-    private String hhDeviceCode;
+    private String btDeviceCode;
 }

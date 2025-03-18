@@ -14,5 +14,7 @@ public interface PowerPCBTestRepository {
 
     Long countByCustomQuery(TypedQuery<Long> query);
 
+    PowerPCBTestData findVerifiedByCode(String code);
+
     PowerPCBTestData findByCode(String code);
 }

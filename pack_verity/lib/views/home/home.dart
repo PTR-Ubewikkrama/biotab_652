@@ -7,7 +7,6 @@ import 'package:pack_verity/utils/colors.dart';
 import 'package:pack_verity/utils/keyBox.dart';
 import 'package:pack_verity/views/auth/login/login.dart';
 import 'package:pack_verity/views/common_components/home_button_card.dart';
-import 'package:pack_verity/views/final_assembly/fa.dart';
 import 'package:pack_verity/views/hh_box/add.dart';
 import 'package:pack_verity/views/history/history.dart';
 import 'package:pack_verity/views/settings/settings.dart';

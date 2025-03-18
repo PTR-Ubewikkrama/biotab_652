@@ -48,11 +48,25 @@ public class PowerSupplyTestRepositoryImpl implements PowerSupplyTestRepository 
     }
 
     @Override
-    public PowerSupplyTestData findByCode(String code) {
+    public PowerSupplyTestData findVerifiedByCode(String code) {
         log.info("Finding PowerSupplyTestData by code: {}", code);
         TypedQuery<PowerSupplyTestData> query = entityManager.createQuery("SELECT v FROM PowerSupplyTestData v WHERE v.serialNumber = :code AND v.status = :status", PowerSupplyTestData.class);
         query.setParameter("code", code);
         query.setParameter("status", true);
+        query.setMaxResults(1);
+
+        try {
+            return query.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public PowerSupplyTestData findByCode(String code) {
+        log.info("Finding PowerSupplyTestData by code: {}", code);
+        TypedQuery<PowerSupplyTestData> query = entityManager.createQuery("SELECT v FROM PowerSupplyTestData v WHERE v.serialNumber = :code", PowerSupplyTestData.class);
+        query.setParameter("code", code);
         query.setMaxResults(1);
 
         try {

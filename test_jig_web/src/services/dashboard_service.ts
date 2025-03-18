@@ -36,6 +36,8 @@ export interface DashBoardSummaryResponse {
         totalSuccessFanTest: number;
         totalFailedFanTest: number;
         totalFinalAssembly: number;
+        totalSuccessDisplayTest: number;
+        totalFailedDisplayTest: number;
         totalHHDevice: number;
     };
 }

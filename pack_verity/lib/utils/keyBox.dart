@@ -17,6 +17,7 @@ const String validateFrontBracketAssemblyPath =
     "bt_device/validate/valveSequenceTestCode";
 const String validateOverPressureValveTestCode =
     "bt_device/validate/overPressureValveTestCode";
+const String validateDisplayTestCode = "bt_device/validate/displayTestCode";
 const String validatePowerSupplyTestCode =
     "bt_device/validate/powerSupplyTestCode";
 const String validateValveCardTestCode = "bt_device/validate/valveCardTestCode";

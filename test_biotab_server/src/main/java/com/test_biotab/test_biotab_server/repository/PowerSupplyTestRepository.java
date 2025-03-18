@@ -14,5 +14,7 @@ public interface PowerSupplyTestRepository {
 
     Long countByCustomQuery(TypedQuery<Long> query);
 
+    PowerSupplyTestData findVerifiedByCode(String code);
+
     PowerSupplyTestData findByCode(String code);
 }

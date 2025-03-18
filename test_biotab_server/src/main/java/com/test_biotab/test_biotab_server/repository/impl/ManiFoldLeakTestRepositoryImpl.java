@@ -46,11 +46,26 @@ public class ManiFoldLeakTestRepositoryImpl implements ManiFoldLeakTestRepositor
     }
 
     @Override
-    public ManiFoldLeakTestData findByCode(String code) {
+    public ManiFoldLeakTestData findVerifiedByCode(String code) {
         log.info("ManiFoldLeakTestRepositoryImpl findByCode");
         TypedQuery<ManiFoldLeakTestData> query = entityManager.createQuery("SELECT v FROM ManiFoldLeakTestData v WHERE v.serialNumber = :code AND v.status = :status", ManiFoldLeakTestData.class);
         query.setParameter("code", code);
         query.setParameter("status", true);
+        query.setMaxResults(1);
+
+        try {
+            return query.getSingleResult();
+        } catch (Exception e) {
+            log.error("Error while finding ManiFoldLeakTestData by code: {}", code, e);
+        }
+        return null;
+    }
+
+    @Override
+    public ManiFoldLeakTestData findByCode(String code) {
+        log.info("ManiFoldLeakTestRepositoryImpl findByCode");
+        TypedQuery<ManiFoldLeakTestData> query = entityManager.createQuery("SELECT v FROM ManiFoldLeakTestData v WHERE v.serialNumber = :code", ManiFoldLeakTestData.class);
+        query.setParameter("code", code);
         query.setMaxResults(1);
 
         try {

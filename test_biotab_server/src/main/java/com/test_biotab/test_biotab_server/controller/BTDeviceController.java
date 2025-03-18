@@ -67,10 +67,10 @@ public class BTDeviceController {
     @PostMapping("/validate")
     public Mono<ResponseEntity<ApiResponse<Void>>> validateDevice(@AuthenticationPrincipal Mono<UserDetails> principal,
                                                                   @RequestBody ValidateRequest request) {
-        log.info("Received request to validate HH device: {}", request);
+        log.info("Received request to validate BT device: {}", request);
         return principal
                 .flatMap(userDetails -> {
-                    log.info("Validating HH device: {} by user: {}", request, userDetails.getUsername());
+                    log.info("Validating BT device: {} by user: {}", request, userDetails.getUsername());
                     return service.validateBTDevice(request, userDetails);
                 });
     }
@@ -171,6 +171,17 @@ public class BTDeviceController {
                 .flatMap(userDetails -> {
                     log.info("Validating Over Pressure Valve test code: {} by user: {}", request, userDetails.getUsername());
                     return service.validateOverPressureValveTestCode(request, userDetails);
+                });
+    }
+
+    @PostMapping("/validate/displayTestCode")
+    public Mono<ResponseEntity<ApiResponse<ValidateComponentResponse>>> validateDisplayTestCode(@AuthenticationPrincipal Mono<UserDetails> principal,
+                                                                                                 @RequestBody ValidateRequest request) {
+        log.info("Received request to validate Display test code: {}", request);
+        return principal
+                .flatMap(userDetails -> {
+                    log.info("Validating Display test code: {} by user: {}", request, userDetails.getUsername());
+                    return service.validateDisplayTestCode(request, userDetails);
                 });
     }
 

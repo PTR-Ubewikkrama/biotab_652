@@ -159,6 +159,16 @@ export default function Dashboard() {
           </Grid>
           <Grid item xl={2} lg={3} sm={6} xs={12}>
             <SummaryCard
+              title="Display Test"
+              icon={<ListAltIcon />}
+              value={((data?.data.totalFailedDisplayTest ?? 0) + (data?.data.totalSuccessDisplayTest ?? 0)).toString() || "0"}
+              color="success.main"
+              path="/display-test"
+              image={card2}
+            />
+          </Grid>
+          <Grid item xl={2} lg={3} sm={6} xs={12}>
+            <SummaryCard
               title="Valve Sequence Test"
               icon={<InventoryIcon />}
               value={((data?.data.totalFailedValveSequenceTest ?? 0) + (data?.data.totalSuccessValveSequenceTest ?? 0)).toString() || "0"}

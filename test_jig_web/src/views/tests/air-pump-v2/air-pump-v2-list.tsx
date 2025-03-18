@@ -26,29 +26,6 @@ import SessionTimeoutPopup from "../../common_components/session_logout";
 import TableSearchFormCommon from "../../common_components/table_search_form";
 import { format, parseISO } from "date-fns";
 
-// testId: number;
-// deviceId: number;
-// flowRateLowThresh: number;
-// flowRateUpThresh: number;
-// loadVoltageLowThresh: number;
-// loadVoltageUpThresh: number;
-// loadCurrentUpThresh: number;
-// pressureLowThresh: number;
-// pressureUpThresh: number;
-// serialNumber: string;
-// pressure: number;
-// pressureStatus: boolean | null;
-// loadVoltage: number;
-// loadVoltageStatus: boolean | null;
-// loadCurrent: number;
-// loadCurrentStatus: boolean | null;
-// flowRate: number;
-// flowRateStatus: boolean | null;
-// noiseLevelStatus: boolean | null;
-// status: boolean | null;
-// deviceStatus: boolean | null;
-// dateTime: string;
-
 const columns: GridColDef[] = [
   {
     field: "Select",

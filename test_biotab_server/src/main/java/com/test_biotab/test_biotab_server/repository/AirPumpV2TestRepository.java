@@ -14,5 +14,7 @@ public interface AirPumpV2TestRepository {
 
     Long countByCustomQuery(TypedQuery<Long> query);
 
+    AirPumpV2TestData findVerifiedByCode(String code);
+
     AirPumpV2TestData findByCode(String code);
 }

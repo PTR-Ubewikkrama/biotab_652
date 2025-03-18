@@ -47,11 +47,26 @@ public class PowerSupplyV2TestRepositoryImpl implements PowerSupplyV2TestReposit
     }
 
     @Override
-    public PowerSupplyV2TestData findByCode(String code) {
+    public PowerSupplyV2TestData findVerifiedByCode(String code) {
         log.info("Finding PowerSupplyV2TestData by code: {}", code);
         TypedQuery<PowerSupplyV2TestData> query = entityManager.createQuery("SELECT v FROM PowerSupplyV2TestData v WHERE v.serialNumber = :code AND v.status = :status", PowerSupplyV2TestData.class);
         query.setParameter("code", code);
         query.setParameter("status", true);
+        query.setMaxResults(1);
+
+        try {
+            return query.getSingleResult();
+        } catch (Exception e) {
+            log.error("Error while finding PowerSupplyV2TestData by code: {}", code, e);
+            return null;
+        }
+    }
+
+    @Override
+    public PowerSupplyV2TestData findByCode(String code) {
+        log.info("Finding PowerSupplyV2TestData by code: {}", code);
+        TypedQuery<PowerSupplyV2TestData> query = entityManager.createQuery("SELECT v FROM PowerSupplyV2TestData v WHERE v.serialNumber = :code", PowerSupplyV2TestData.class);
+        query.setParameter("code", code);
         query.setMaxResults(1);
 
         try {

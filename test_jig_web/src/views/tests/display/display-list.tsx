@@ -18,12 +18,13 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import { Download } from "@mui/icons-material";
 import { useState } from "react";
-import { handleGenerateHHDeviceExcel } from "./hh_device-excel";
+import { handleGenerateDisplayExcel } from "./display-excel";
+import SessionTimeoutPopup from "../../common_components/session_logout";
+import { StyledTableCell, StyledTableRow } from "../../common_components/common";
 import GridOnIcon from '@mui/icons-material/GridOn';
-import { DeviceHHDto, useGetHHDevicesMutation, useGetHHDevicesQQuery } from "../../services/hh_device_service";
-import SessionTimeoutPopup from "../common_components/session_logout";
-import { StyledTableCell, StyledTableRow } from "../common_components/common";
-import TableSearchFormCustom from "../common_components/table_search_form_custom";
+import TableSearchFormCommon from "../../common_components/table_search_form";
+import { format, parseISO } from "date-fns";
+import { DisplayTest, useGetDisplayTestQQuery, useGetDisplayTestsMutation } from "../../../services/display_test_service";
 
 const columns: GridColDef[] = [
   {
@@ -32,150 +33,89 @@ const columns: GridColDef[] = [
     width: 80,
   },
   {
-    field: "deviceCode",
-    headerName: "Device Code",
+    field: "serialNumber",
+    headerName: "Serial Number",
     width: 150,
   },
   {
-    field: "deviceCodeStatus",
-    headerName: "Device Code Status",
+    field: "physicalInspectionState",
+    headerName: "Physical Inspection State",
+    width: 200,
+  },
+  {
+    field: "backLightOn",
+    headerName: "Back Light On",
     width: 150,
   },
   {
-    field: "pcbTestCode",
-    headerName: "PCB Test Code",
+    field: "redScreenOn",
+    headerName: "Red Screen On",
     width: 150,
   },
   {
-    field: "pcbTestCodeStatus",
-    headerName: "PCB Test Code Status",
+    field: "greenScreenOn",
+    headerName: "Green Screen On",
     width: 150,
   },
   {
-    field: "valveTestOneCode",
-    headerName: "Valve Test One Code",
+    field: "blueScreenOn",
+    headerName: "Blue Screen On",
     width: 150,
   },
   {
-    field: "valveTestOneCodeStatus",
-    headerName: "Valve Test One Code Status",
+    field: "colorPatch",
+    headerName: "Color Patch",
     width: 150,
   },
   {
-    field: "valveTestTwoCode",
-    headerName: "Valve Test Two Code",
+    field: "BTDisplayText",
+    headerName: "BT Display Text",
     width: 150,
   },
   {
-    field: "valveTestTwoCodeStatus",
-    headerName: "Valve Test Two Code Status",
+    field: "screenOff",
+    headerName: "Screen Off",
     width: 150,
   },
   {
-    field: "airPumpTestCode",
-    headerName: "Air Pump Test Code",
-    width: 150,
-  },
-  {
-    field: "airPumpTestCodeStatus",
-    headerName: "Air Pump Test Code Status",
-    width: 150,
-  },
-  {
-    field: "latchButtonTestCode",
-    headerName: "Latch Button Test Code",
-    width: 150,
-  },
-  {
-    field: "latchButtonTestCodeStatus",
-    headerName: "Latch Button Test Code Status",
-    width: 150,
-  },
-  {
-    field: "overPressureValveTestCode",
-    headerName: "Over Pressure Valve Test Code",
-    width: 150,
-  },
-  {
-    field: "overPressureValveTestCodeStatus",
-    headerName: "Over Pressure Valve Test Code Status",
-    width: 150,
-  },
-  {
-    field: "batteryTestCode",
-    headerName: "Battery Test Code",
-    width: 150,
-  },
-  {
-    field: "batteryTestCodeStatus",
-    headerName: "Battery Test Code Status",
-    width: 150,
-  },
-  {
-    field: "enclosureCode",
-    headerName: "Enclosure Code",
-    width: 150,
-  },
-  {
-    field: "enclosureCodeStatus",
-    headerName: "Enclosure Code Status",
-    width: 150,
-  },
-  {
-    field: "airBladderCode",
-    headerName: "Air Bladder Code",
-    width: 150,
-  },
-  {
-    field: "airBladderCodeStatus",
-    headerName: "Air Bladder Code Status",
-    width: 150,
-  },
-  {
-    field: "powerSupplyTestCode",
-    headerName: "Power Supply Test Code",
-    width: 150,
-  },
-  {
-    field: "powerSupplyTestCodeStatus",
-    headerName: "Power Supply Test Code Status",
-    width: 150,
-  },
-  {
-    field: "createdBy",
-    headerName: "Created By",
-    width: 150,
+    field: "Status",
+    headerName: "Status",
+    width: 100,
   },
   {
     field: "dateTime",
     headerName: "Date Time",
-    width: 150,
+    width: 200,
   },
 ];
-export default function HHDeviceList() {
 
+export default function DisplayList() {
   const [page, setPage] = useState(1);
   const [fromDate, setFromDate] = React.useState<Date | null>(null);
+  const [toDate, setToDate] = React.useState<Date | null>(null);
   const [pageCount, setPageCount] = React.useState(1);
   const [isFilter, setIsFilter] = useState<boolean>(true);
   const [filterType, setFilterType] = React.useState('');
   const [filterValue, setFilterValue] = React.useState('');
-  const [selectedRows, setSelectedRows] = React.useState<DeviceHHDto[]>([]);
+  const [status, setStatus] = React.useState('');
+  const [selectedRows, setSelectedRows] = React.useState<DisplayTest[]>([]);
 
-  var { data, error, isLoading } = useGetHHDevicesQQuery({
+  var { data, error, isLoading } = useGetDisplayTestQQuery({
     data: {
       filterType: filterType,
       filterValue: filterValue,
       fromDate: fromDate,
+      toDate: toDate,
+      status: status
     }, page: page.toString()
   })
-  const [getAll] = useGetHHDevicesMutation();
+  const [getAll] = useGetDisplayTestsMutation();
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
 
-  const handleRowClick = (item: DeviceHHDto) => {
+  const handleRowClick = (item: DisplayTest) => {
     if (selectedRows.includes(item)) {
       setSelectedRows(selectedRows.filter((rowId) => rowId !== item));
     } else {
@@ -183,16 +123,18 @@ export default function HHDeviceList() {
     }
   };
 
-  function setSearchParams(fromDate: Date | null, filterType: string, filterValue: string) {
+  function setSearchParams(fromDate: Date | null, toDate: Date | null, filterType: string, filterValue: string, status: string) {
     setFilterType(filterType);
     setFilterValue(filterValue);
     setFromDate(fromDate);
+    setToDate(toDate);
+    setStatus(status);
     setPage(1)
   }
 
   React.useEffect(() => {
     if (data?.data != null) {
-      setPageCount(Math.trunc((data.data.total + 15 - 1) / 15))
+      setPageCount(Math.trunc((data.data.totalRecords + 15 - 1) / 15))
     }
   }, [data])
 
@@ -221,13 +163,13 @@ export default function HHDeviceList() {
                   <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
                     <Grid item xs={4} sm={4} md={6} >
                       <Typography gutterBottom variant="h5" component="div" color="grey">
-                        BT Devices
+                        Display Test Results
                       </Typography>
                     </Grid>
                     <Grid item xs={4} sm={4} md={6} >
                       <Box display="flex" justifyContent="flex-end">
                         <Button variant="contained" startIcon={<Download />} color="success" onClick={() =>
-                          handleGenerateHHDeviceExcel(selectedRows)
+                          handleGenerateDisplayExcel(selectedRows)
                         } disabled={selectedRows.length == 0}>
                           Download selected
                         </Button>
@@ -236,11 +178,13 @@ export default function HHDeviceList() {
                             data: {
                               filterType: filterType,
                               filterValue: filterValue,
-                              fromDate: fromDate
+                              fromDate: fromDate,
+                              toDate: toDate,
+                              status: status
                             }, page: "all"
                           }).unwrap()
                             .then((payload) => {
-                              handleGenerateHHDeviceExcel(payload.data!.devices)
+                              handleGenerateDisplayExcel(payload.data!.tests)
                             });
                         }}>
                           Download
@@ -255,19 +199,7 @@ export default function HHDeviceList() {
                       borderStyle: 'dashed'
                     }}
                   />
-                  <TableSearchFormCustom
-                    dropDownItems={{
-                      "ALL": "ALL", "CODE": "DEVICE CODE", "PCB": "PCB TEST CODE",
-                      "VALVE_ONE": "VALVE TEST ONE CODE",
-                      "VALVE_TWO": "VALVE TEST TWO CODE",
-                      "AIR_PUMP": "AIR PUMP TEST CODE",
-                      "LATCH_BUTTON": "LATCH BUTTON TEST CODE",
-                      "OVER_PRESSURE_VALVE": "OVER PRESSURE VALVE TEST CODE",
-                      "BATTERY": "BATTERY TEST CODE",
-                      "ENCLOSURE": "ENCLOSURE CODE",
-                      "AIR_BLADDER": "AIR BLADDER CODE",
-                      "POWER_SUPPLY": "POWER SUPPLY TEST CODE"
-                    }}
+                  <TableSearchFormCommon
                     searchFun={setSearchParams}
                   />
                   <Divider
@@ -307,14 +239,14 @@ export default function HHDeviceList() {
                           </StyledTableRow>
                         </TableHead>
                         <TableBody>
-                          {data?.data?.devices
+                          {data?.data?.tests
                             .map((box) => {
                               return (
                                 <StyledTableRow
                                   hover
                                   role="checkbox"
                                   tabIndex={-1}
-                                  key={box.deviceId}
+                                  key={box.testId}
                                   onClick={() => handleRowClick(box)}
                                   selected={selectedRows.includes(box)}
                                 >
@@ -325,76 +257,64 @@ export default function HHDeviceList() {
                                     />
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.deviceCode}
+                                    {box.serialNumber}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.deviceCodeStatus}
+                                    {box.physicalInspectionState
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.pcbTestCode}
+                                    {box.backLightOn
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.pcbTestCodeStatus}
+                                    {box.redScreenOn
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.valveTestOneCode}
+                                    {box.greenScreenOn
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.valveTestOneCodeStatus}
+                                    {box.blueScreenOn
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.valveTestTwoCode}
+                                    {box.colorPatch
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.valveTestTwoCodeStatus}
+                                    {box.BTDisplayText
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.airPumpTestCode}
+                                    {box.screenOff
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.airPumpTestCodeStatus}
+                                    {box.status
+                                      ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
+                                      : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
+                                    }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.latchButtonTestCode}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.latchButtonTestCodeStatus}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.overPressureValveTestCode}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.overPressureValveTestCodeStatus}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.batteryTestCode}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.batteryTestCodeStatus}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.enclosureCode}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.enclosureCodeStatus}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.airBladderCode}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.airBladderCodeStatus}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.powerSupplyTestCode}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.powerSupplyTestCodeStatus}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.createdBy}
-                                  </StyledTableCell>
-                                  <StyledTableCell align={"left"}>
-                                    {box.dateTime}
+                                    {format(parseISO(box.dateTime), "yyyy-MM-dd HH:mm:ss")}
                                   </StyledTableCell>
                                 </StyledTableRow>
                               );

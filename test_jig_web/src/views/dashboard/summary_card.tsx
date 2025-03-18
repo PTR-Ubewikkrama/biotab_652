@@ -11,25 +11,25 @@ type SummaryCardData = {
   image: any
 }
 
-export function SummaryCard({ title, value, path, color, image}: SummaryCardData) {
+export function SummaryCard({ title, value, path, color, image }: SummaryCardData) {
   const navigate = useNavigate();
 
   return (
     <Link to={path} style={{ textDecoration: 'none' }}>
       <Card
         sx={{
-          maxWidth: 1600, backgroundColor: "#3b487c", 
+          maxWidth: 1600, backgroundColor: "#3b487c",
           boxShadow: "1px 1px 5px 2px #e8e8e8",
           transition: 'transform 0.3s',
           backgroundImage: `url(${image})`,
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover',
-          borderRadius:'20px',
+          borderRadius: '20px',
           '&:hover': {
             transform: 'scale(1.1)', // Adjust the scaling factor as desired
             background: 'linear-gradient(to bottom, #c4fbfd, #c4fbfd)',
-            bgcolor:'#07032B',
-            borderRadius:'20px',
+            bgcolor: '#07032B',
+            borderRadius: '20px',
           },
         }}
       // onClick={() => navigate(path)}
@@ -52,7 +52,7 @@ export function SummaryCard({ title, value, path, color, image}: SummaryCardData
                 sx={{ mt: 2, color: "grey", fontSize: 11 }}
                 color="textPrimary"
               >
-                Total sessions
+                Total count
               </Typography>
               <Typography
                 sx={{ mt: 0.5, fontWeight: "bold", color: "black" }}

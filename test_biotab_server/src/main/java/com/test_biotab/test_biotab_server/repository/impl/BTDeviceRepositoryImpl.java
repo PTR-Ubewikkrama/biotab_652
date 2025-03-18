@@ -65,7 +65,7 @@ public class BTDeviceRepositoryImpl implements BTDeviceRepository {
     @Transactional
     public void deleteByCode(String code) {
         log.info("Deleting BTDevice by code: {}", code);
-        String jpql = "DELETE FROM BTdevice d WHERE d.deviceCode = :code";
+        String jpql = "DELETE FROM BTDevice d WHERE d.deviceCode = :code";
         Query query = entityManager.createQuery(jpql);
         query.setParameter("code", code);
         query.executeUpdate();

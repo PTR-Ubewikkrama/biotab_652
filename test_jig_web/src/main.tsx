@@ -13,7 +13,7 @@ import PowerSupplyList from "./views/tests/power-supply/power-supply-list";
 import ValveList from "./views/tests/valve/valve-list";
 import AirPumpList from "./views/tests/air-pump/air-dump-list";
 import PowerPcbTestList from "./views/tests/power-pcb/power-pcb-test-list";
-import HHDeviceList from "./views/hh_device/hh_device_list";
+import BTDeviceList from "./views/bt_device/bt_device_list";
 import FinalAssemblyList from "./views/fa/fa_list";
 import AirPumpV2List from "./views/tests/air-pump-v2/air-pump-v2-list";
 import PowerPcbV2TestList from "./views/tests/power-pcb-v2/power-pcb-v2-test-list";
@@ -25,6 +25,7 @@ import ManiFoldLeakList from "./views/tests/mani-fold-leak/mani-fold-leak-list";
 import UIPcbList from "./views/tests/ui-pcb/ui-pcb-list";
 import CableList from "./views/tests/cable/cable-list";
 import FanList from "./views/tests/fan/fan-list";
+import DisplayList from "./views/tests/display/display-list";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -43,13 +44,14 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
               <Route path="/power-pcb-test" element={<PowerPcbTestList />} />
               <Route path="/power-pcb-test-2" element={<PowerPcbV2TestList />} />
               <Route path="/op-valve-test" element={<OPValveList />} />
+              <Route path="/display-test" element={<DisplayList />} />
               <Route path="/valve-sequence-test" element={<ValveSequenceList />} />
               <Route path="/valve-card-test" element={<ValveCardList />} />
               <Route path="/mani-fold-leak-test" element={<ManiFoldLeakList />} />
               <Route path="/ui-pcb-test" element={<UIPcbList />} />
               <Route path="/cable-test" element={<CableList />} />
               <Route path="/fan-test" element={<FanList />} />
-              <Route path="/bt-device" element={<HHDeviceList />} />
+              <Route path="/bt-device" element={<BTDeviceList />} />
               <Route path="/fas" element={<FinalAssemblyList />} />
               <Route path="*" element={<Dashboard />} />
             </Routes>

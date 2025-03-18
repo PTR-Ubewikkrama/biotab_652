@@ -46,11 +46,26 @@ public class OpValveTestRepositoryImpl implements OpValveTestRepository {
     }
 
     @Override
-    public OpValveTestData findByCode(String code) {
+    public OpValveTestData findVerifiedByCode(String code) {
         log.info("Finding OpValveTestData by code: {}", code);
         TypedQuery<OpValveTestData> query = entityManager.createQuery("SELECT v FROM OpValveTestData v WHERE v.serialNumber = :code AND v.status = :status", OpValveTestData.class);
         query.setParameter("code", code);
         query.setParameter("status", true);
+        query.setMaxResults(1);
+
+        try {
+            return query.getSingleResult();
+        } catch (Exception e) {
+            log.error("Error while finding OpValveTestData by code: {}", code, e);
+        }
+        return null;
+    }
+
+    @Override
+    public OpValveTestData findByCode(String code) {
+        log.info("Finding OpValveTestData by code: {}", code);
+        TypedQuery<OpValveTestData> query = entityManager.createQuery("SELECT v FROM OpValveTestData v WHERE v.serialNumber = :code", OpValveTestData.class);
+        query.setParameter("code", code);
         query.setMaxResults(1);
 
         try {
