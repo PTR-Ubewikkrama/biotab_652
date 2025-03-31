@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 public class PowerSupplyV2TestDto {
     private Integer testId;
-    private int deviceId;
+    private String deviceMac;
     private double idleVoltageLowTh;
     private double idleVoltageUpTh;
     private double loadVoltageLowTh;

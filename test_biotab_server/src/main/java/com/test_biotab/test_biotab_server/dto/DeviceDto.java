@@ -14,5 +14,6 @@ public class DeviceDto {
     private String deviceType;
     private String deviceName;
     private String deviceMac;
+    private String location;
     private String createdAt;
 }

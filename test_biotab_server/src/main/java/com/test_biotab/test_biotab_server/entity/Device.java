@@ -25,7 +25,10 @@ public class Device {
 
     private String deviceName;
 
+    @Column(unique = true)
     private String deviceMac;
+
+    private String location;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime dateTime;

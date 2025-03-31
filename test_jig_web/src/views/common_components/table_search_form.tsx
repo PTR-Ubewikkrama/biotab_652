@@ -10,7 +10,12 @@ type TableSearchCommonProps = {
     dropDownItems?: { [key: string]: string };
 }
 
-export default function TableSearchFormCommon({ searchFun, dropDownItems = { "ALL": "ALL", "TEST_ID": "TEST ID", "DEVICE_MAC": "DEVICE MAC" } }: TableSearchCommonProps) {
+export default function TableSearchFormCommon({ searchFun, dropDownItems = {
+    "ALL": "ALL",
+    "TEST_ID": "TEST ID",
+    "DEVICE_MAC": "DEVICE MAC",
+    "LOCATION": "DEVICE LOCATION"
+} }: TableSearchCommonProps) {
 
     const [filterVal, setFilterType] = React.useState('');
     const [status, setFilterStatus] = React.useState('');

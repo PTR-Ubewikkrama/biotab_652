@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class PowerSupplyTestDto {
     private Integer testId;
 
-    private int deviceId;
+    private String deviceMac;
 
     private Double idleVolLowTh;
 

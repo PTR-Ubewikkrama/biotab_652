@@ -9,6 +9,8 @@ export function handleGenerateValveCardExcel(datas: ValveCardTest[]) {
   const worksheet = XLSX.utils.aoa_to_sheet([
     [
       "Serial Number",
+      "Device Mac",
+      "Location",
       "Physical Inspection State",
       "Rail",
       "Valve 1",
@@ -28,6 +30,8 @@ export function handleGenerateValveCardExcel(datas: ValveCardTest[]) {
     ],
     ...datas.map((data) => [
       data.serialNumber,
+      data.deviceMac,
+      data.location,
       data.physicalInspectionState ? "Pass" : "Fail",
       data.rail,
       data.valve1,

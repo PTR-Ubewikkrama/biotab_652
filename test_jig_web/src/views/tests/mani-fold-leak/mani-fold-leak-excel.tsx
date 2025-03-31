@@ -9,6 +9,8 @@ export function handleGenerateManiFoldLeakExcel(datas: ManiFoldLeakTest[]) {
   const worksheet = XLSX.utils.aoa_to_sheet([
     [
       "Serial Number",
+      "Device Mac",
+      "Location",
       "Physical Inspection State",
       "Leakage Flowrate",
       "Manifold Leak State",
@@ -19,6 +21,8 @@ export function handleGenerateManiFoldLeakExcel(datas: ManiFoldLeakTest[]) {
     ],
     ...datas.map((data) => [
       data.serialNumber,
+      data.deviceMac,
+      data.location,
       data.physicalInspectionState ? "Pass" : "Fail",
       data.leakageFlowrate,
       data.manifoldLeakState ? "Pass" : "Fail",

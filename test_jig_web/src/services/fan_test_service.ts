@@ -3,7 +3,7 @@ import config from '../config/config';
 
 export interface FanTest {
     testId: number;
-    deviceId: number;
+    deviceMac: string;
     serialNumber: string;
     visualInspection: boolean | null;
     drawCurrent: number | null;

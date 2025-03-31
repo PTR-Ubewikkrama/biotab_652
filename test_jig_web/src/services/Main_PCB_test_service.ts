@@ -3,7 +3,7 @@ import config from '../config/config';
 
 export interface MainPCBTest {
     testId: number;
-    deviceId: number;
+    deviceMac: string;
     serialNumber: string;
     softwareVersion: string;
     batchNumber: string;

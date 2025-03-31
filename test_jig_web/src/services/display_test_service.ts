@@ -3,7 +3,7 @@ import config from '../config/config';
 
 export interface DisplayTest {
     testId: number;
-    deviceId: number;
+    deviceMac: string;
     serialNumber: string;
     physicalInspectionState: boolean | null;
     backLightOn: boolean | null;
@@ -11,7 +11,7 @@ export interface DisplayTest {
     greenScreenOn: boolean | null;
     blueScreenOn: boolean | null;
     colorPatch: boolean | null;
-    BTDisplayText: boolean | null;
+    btdisplayText: boolean | null;
     screenOff: boolean | null;
     overallDisplayStatus: boolean | null;
     status: boolean | null;

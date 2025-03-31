@@ -3,7 +3,7 @@ import config from '../config/config';
 
 export interface CableTest {
     testId: number;
-    deviceId: number;
+    deviceMac: string;
     serialNumber: string;
     cableSelection: number | null;
     visualInspection: boolean | null;

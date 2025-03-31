@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 public class PowerPCBV2TestDto {
     private int testId;
-    private int deviceId;
+    private String deviceMac;
     private Double loadVoltageLowThresh;
     private String serialNumber;
     private Double loadCurrentLowThresh;

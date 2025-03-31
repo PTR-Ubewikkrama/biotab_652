@@ -3,7 +3,7 @@ import config from '../config/config';
 
 export interface OPValveTest {
     testId: number;
-    deviceId: number;
+    deviceMac: string;
     serialNumber: string;
     physicalInspectionState: boolean;
     startOpeningPressure: number;

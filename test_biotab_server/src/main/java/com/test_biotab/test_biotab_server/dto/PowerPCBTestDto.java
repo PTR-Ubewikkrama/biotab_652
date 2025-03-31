@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 public class PowerPCBTestDto {
     private int testId;
-    private int deviceId;
+    private String deviceMac;
     private Double powerGroundResistanceUpperLimit;
     private String serialNumber;
     private Boolean dcBarrelJackConnectivityStatus;

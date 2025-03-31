@@ -217,7 +217,7 @@ class _VerifyComponentPageState extends State<VerifyComponentPage> {
                                   ),
                                   DataRow(
                                     cells: <DataCell>[
-                                      DataCell(Text("HH Device Code")),
+                                      DataCell(Text("BT Device Code")),
                                       DataCell(Text(
                                           hhDeviceResponse!
                                                   .data!.hhDeviceCode ??

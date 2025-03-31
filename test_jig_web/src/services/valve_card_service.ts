@@ -3,7 +3,8 @@ import config from '../config/config';
 
 export interface ValveCardTest {
     testId: number;
-    deviceId: number;
+    deviceMac: string;
+    location: string;
     serialNumber: string;
     physicalInspectionState: boolean | null;
     rail: string;

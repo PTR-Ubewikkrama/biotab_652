@@ -296,7 +296,7 @@ export default function DisplayList() {
                                     }
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
-                                    {box.BTDisplayText
+                                    {box.btdisplayText
                                       ? <Typography sx={{ color: "green", fontWeight: 'bold' }}>Pass</Typography>
                                       : <Typography sx={{ color: "red", fontWeight: 'bold' }}>Fail</Typography>
                                     }

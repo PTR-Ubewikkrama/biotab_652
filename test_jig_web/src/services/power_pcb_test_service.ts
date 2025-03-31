@@ -25,7 +25,7 @@ export interface ApiResponse {
 
 export interface PowerPcbV2TestDto {
     testId: number;
-    deviceId: number;
+    deviceMac: string;
     loadVoltageLowThresh: number;
     serialNumber: string;
     loadCurrentLowThresh: number;

@@ -13,7 +13,7 @@ public class DisplayTestAddRequest {
     private Boolean greenscreenon;
     private Boolean bluescreenon;
     private Boolean colorpatch;
-    private Boolean BTdisplaytext;
+    private Boolean btdisplaytext;
     private Boolean screenoff;
     private Boolean overallDisplayStatus;
 }

@@ -4,7 +4,7 @@ import config from '../config/config';
 
 export interface AirPumpTest {
     testId: number;
-    deviceId: number;
+    deviceMac: string;
     idleVoltageLowThresh: number;
     idleVoltageUpThresh: number;
     idleCurrentUpThresh: number;
@@ -31,7 +31,7 @@ export interface AirPumpTest {
 
 export interface AirPumpV2Test {
     testId: number;
-    deviceId: number;
+    deviceMac: string;
     flowRateLowThresh: number;
     flowRateUpThresh: number;
     loadVoltageLowThresh: number;

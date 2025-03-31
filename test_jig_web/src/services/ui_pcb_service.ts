@@ -3,7 +3,7 @@ import config from '../config/config';
 
 export interface UIPcbTest {
     testId: number;
-    deviceId: number;
+    deviceMac: string;
     serialNumber: string;
     physicalInspectionState: boolean | null;
     redLedState: boolean | null;

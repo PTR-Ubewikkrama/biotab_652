@@ -3,7 +3,7 @@ import config from '../config/config';
 
 export interface ValveSequenceTest {
     testId: number;
-    deviceId: number;
+    deviceMac: string;
     serialNumber: string;
     qrCode: string;
     physicalInspectionState: boolean | null;

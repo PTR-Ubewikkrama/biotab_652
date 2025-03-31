@@ -1,6 +1,5 @@
 package com.test_biotab.test_biotab_server.dto;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +14,7 @@ import java.util.List;
 @Builder
 public class MainPCBTestDto {
     private Integer id;
-    private int deviceId;
+    private String deviceMac;
     private String serialNumber;
     private String softwareVersion;
     private String batchNumber;

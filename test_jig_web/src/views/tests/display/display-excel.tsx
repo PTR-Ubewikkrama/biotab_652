@@ -30,7 +30,7 @@ export function handleGenerateDisplayExcel(datas: DisplayTest[]) {
       data.greenScreenOn ? "Pass" : "Fail",
       data.blueScreenOn ? "Pass" : "Fail",
       data.colorPatch ? "Pass" : "Fail",
-      data.BTDisplayText ? "Pass" : "Fail",
+      data.btdisplayText ? "Pass" : "Fail",
       data.screenOff ? "Pass" : "Fail",
       data.overallDisplayStatus ? "Pass" : "Fail",
       data.status && data.status ? "Pass" : "Fail",

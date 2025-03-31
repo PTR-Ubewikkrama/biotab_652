@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 public class FanTestDto {
     private int testId;
-    private int deviceId;
+    private String deviceMac;
     private String serialNumber;
     private Boolean visualInspection;
     private Double drawCurrent;

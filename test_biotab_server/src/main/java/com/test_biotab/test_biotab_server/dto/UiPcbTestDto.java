@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 public class UiPcbTestDto {
     private Integer testId;
-    private int deviceId;
+    private String deviceMac;
     private String serialNumber;
     private Boolean physicalInspectionState;
     private Boolean redLedState;

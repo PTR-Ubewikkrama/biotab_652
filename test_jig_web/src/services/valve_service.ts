@@ -3,7 +3,7 @@ import config from '../config/config';
 
 export interface ValveTest {
     testId: number;
-    deviceId: number;
+    deviceMac: string;
     serialNumber: string;
     idleVoltageLowThresh: number;
     idleVoltageUpThresh: number;

@@ -3,7 +3,7 @@ import config from '../config/config';
 
 export interface PowerSupplyTest {
     testId: number;
-    deviceId: number;
+    deviceMac: string;
     idleVolLowTh: number;
     idleVolUpTh: number;
     loadVolLowTh: number;
@@ -25,7 +25,7 @@ export interface PowerSupplyTest {
 
 export interface PowerSupplyV2Test {
     testId: number;
-    deviceId: number;
+    deviceMac: string;
     idleVoltageLowTh: number;
     idleVoltageUpTh: number;
     loadVoltageLowTh: number;

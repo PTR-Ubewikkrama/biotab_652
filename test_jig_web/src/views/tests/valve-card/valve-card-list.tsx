@@ -38,6 +38,16 @@ const columns: GridColDef[] = [
     width: 150,
   },
   {
+    field: "deviceMac",
+    headerName: "Device Mac",
+    width: 150,
+  },
+  {
+    field: "location",
+    headerName: "Location",
+    width: 150,
+  },
+  {
     field: "physicalInspectionState",
     headerName: "Physical Inspection State",
     width: 200,
@@ -283,6 +293,12 @@ export default function ValveCardList() {
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
                                     {box.serialNumber}
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
+                                    {box.deviceMac}
+                                  </StyledTableCell>
+                                  <StyledTableCell align={"left"}>
+                                    {box.location}
                                   </StyledTableCell>
                                   <StyledTableCell align={"left"}>
                                     {box.physicalInspectionState

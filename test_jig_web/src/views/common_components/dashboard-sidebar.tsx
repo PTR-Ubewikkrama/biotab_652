@@ -31,21 +31,21 @@ const items = [
     icon: <DashboardIcon fontSize="small" />,
     title: "Dashboard",
   },
-  {
-    href: "/air-pump",
-    icon: <Air fontSize="small" />,
-    title: "AirPump",
-  },
+  // {
+  //   href: "/air-pump",
+  //   icon: <Air fontSize="small" />,
+  //   title: "AirPump",
+  // },
   {
     href: "/air-pump-2",
     icon: <Air fontSize="small" />,
     title: "AirPump v2.0",
   },
-  {
-    href: "/power-supply-test",
-    icon: <Power fontSize="small" />,
-    title: "Power Supply Test",
-  },
+  // {
+  //   href: "/power-supply-test",
+  //   icon: <Power fontSize="small" />,
+  //   title: "Power Supply Test",
+  // },
   {
     href: "/power-supply-test-2",
     icon: <Power fontSize="small" />,
@@ -61,11 +61,11 @@ const items = [
     icon: <Support fontSize="small" />,
     title: "Valve Test",
   },
-  {
-    href: "/power-pcb-test",
-    icon: <MonitorHeartIcon fontSize="small" />,
-    title: "Power PCB Test",
-  },
+  // {
+  //   href: "/power-pcb-test",
+  //   icon: <MonitorHeartIcon fontSize="small" />,
+  //   title: "Power PCB Test",
+  // },
   {
     href: "/power-pcb-test-2",
     icon: <MonitorHeartIcon fontSize="small" />,

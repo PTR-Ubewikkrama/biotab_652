@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 @Builder
 public class ManiFoldLeakTestDto {
     private int testId;
-    private int deviceId;
+    private String deviceMac;
+    private String location;
     private String serialNumber;
     private Boolean physicalInspectionState;
     private Double leakageFlowrate;

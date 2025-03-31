@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 public class AirPumpV2TestDto {
     private int testId;
-    private int deviceId;
+    private String deviceMac;
     private Double flowRateLowThresh;
     private Double flowRateUpThresh;
     private Double loadVoltageLowThresh;

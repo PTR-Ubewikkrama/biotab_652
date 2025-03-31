@@ -67,7 +67,7 @@ export default function Dashboard() {
       // isLoading ? <></> :
       <Container maxWidth={false}>
         <Grid container spacing={3}>
-          <Grid item lg={3} sm={6} xl={2} xs={12}>
+          {/* <Grid item lg={3} sm={6} xl={2} xs={12}>
             <SummaryCard
               title="Air Pump Test"
               icon={<LooksOneIcon />}
@@ -76,8 +76,8 @@ export default function Dashboard() {
               path="/air-pump"
               image={card1}
             />
-          </Grid>
-          <Grid item xl={2} lg={3} sm={6} xs={12}>
+          </Grid> */}
+          {/* <Grid item xl={2} lg={3} sm={6} xs={12}>
             <SummaryCard
               title="PCB Test"
               icon={<LooksTwoIcon />}
@@ -86,8 +86,8 @@ export default function Dashboard() {
               path="/power-pcb-test"
               image={card2}
             />
-          </Grid>
-          <Grid item xl={2} lg={3} sm={6} xs={12}>
+          </Grid> */}
+          {/* <Grid item xl={2} lg={3} sm={6} xs={12}>
             <SummaryCard
               title="Power Supply Test"
               icon={<Looks3Icon />}
@@ -96,7 +96,7 @@ export default function Dashboard() {
               path="/power-supply-test"
               image={card3}
             />
-          </Grid>
+          </Grid> */}
           <Grid item xl={2} lg={3} sm={6} xs={12}>
             <SummaryCard
               title="Valve Test"
@@ -107,7 +107,7 @@ export default function Dashboard() {
               image={card4}
             />
           </Grid>
-          <Grid item xl={2} lg={3} sm={6} xs={12}>
+          {/* <Grid item xl={2} lg={3} sm={6} xs={12}>
             <SummaryCard
               title="Power PCB Test"
               icon={<InventoryIcon />}
@@ -116,7 +116,7 @@ export default function Dashboard() {
               path="/power-pcb-test"
               image={card1}
             />
-          </Grid>
+          </Grid> */}
           <Grid item xl={2} lg={3} sm={6} xs={12}>
             <SummaryCard
               title="Air Pump V2 Test"
